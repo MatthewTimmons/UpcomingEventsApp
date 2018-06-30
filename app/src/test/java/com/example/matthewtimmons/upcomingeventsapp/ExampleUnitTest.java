@@ -1,4 +1,4 @@
-package com.example.matthewtimmons.examplepleasedelete;
+package com.matthewtimmons.upcomingeventsapp;
 
 import org.junit.Test;
 

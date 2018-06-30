@@ -1,4 +1,4 @@
-package com.example.matthewtimmons.examplepleasedelete;
+package com.matthewtimmons.upcomingeventsapp;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.matthewtimmons.examplepleasedelete", appContext.getPackageName());
+        assertEquals("com.matthewtimmons.upcomingeventsapp", appContext.getPackageName());
     }
 }

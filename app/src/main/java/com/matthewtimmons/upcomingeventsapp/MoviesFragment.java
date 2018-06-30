@@ -1,11 +1,12 @@
-package com.example.matthewtimmons.examplepleasedelete;
+package com.matthewtimmons.upcomingeventsapp;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.matthewtimmons.upcomingeventsapp.R;
 
 public class MoviesFragment extends Fragment {
     @Override

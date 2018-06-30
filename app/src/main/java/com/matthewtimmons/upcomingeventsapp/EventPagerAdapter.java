@@ -1,4 +1,4 @@
-package com.example.matthewtimmons.examplepleasedelete;
+package com.matthewtimmons.upcomingeventsapp;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
