@@ -11,8 +11,6 @@ import android.widget.TextView;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.models.Game;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameViewHolder>{
@@ -35,7 +33,9 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
         gameViewHolder.titleTextView.setText(currentGame.getTitle());
         gameViewHolder.releaseConsolesTextView.setText(currentGame.getReleaseConsoles());
         gameViewHolder.releaseDateTextView.setText(currentGame.getReleaseDate());
-//        gameViewHolder.gameArtImageView.setText(currentGame.getTitle());
+//
+//      Update to actual image later
+        gameViewHolder.gameArtImageView.setImageResource(R.drawable.ic_games_blue);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
             super(itemView);
             titleTextView = itemView.findViewById(R.id.game_title);
             releaseConsolesTextView = itemView.findViewById(R.id.release_consoles);
-            releaseDateTextView = itemView.findViewById(R.id.release_date);
+            releaseDateTextView = itemView.findViewById(R.id.game_release_date);
             gameArtImageView = itemView.findViewById(R.id.game_picture);
         }
     }

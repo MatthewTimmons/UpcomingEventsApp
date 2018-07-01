@@ -19,9 +19,9 @@ public class GamesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_games, container, false);
 
+        gameAdapter = new GameListAdapter(Game.getPlaceholderGames());
         recyclerView = v.findViewById(R.id.games_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        gameAdapter = new GameListAdapter(Game.getPlaceholderGames());
         recyclerView.setAdapter(gameAdapter);
 
         return v;

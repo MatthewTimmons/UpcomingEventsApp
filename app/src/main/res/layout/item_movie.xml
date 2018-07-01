@@ -24,14 +24,14 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/movie_name"
+            app:layout_constraintEnd_toStartOf="@+id/movie_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:background="@color/colorPrimaryDark"
             tools:src="@drawable/ic_movies" />
 
         <TextView
-            android:id="@+id/movie_name"
+            android:id="@+id/movie_title"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="48dp"
@@ -51,7 +51,7 @@
             android:lines="1"
             android:text="TextView"
             app:layout_constraintLeft_toRightOf="@id/movie_picture"
-            app:layout_constraintTop_toBottomOf="@id/movie_name"
+            app:layout_constraintTop_toBottomOf="@id/movie_title"
             tools:text="Rating" />
 
         <TextView
@@ -66,7 +66,7 @@
             tools:text="Genre" />
 
         <TextView
-            android:id="@+id/movie_date"
+            android:id="@+id/movie_release_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"

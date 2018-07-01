@@ -14,16 +14,17 @@ public class Game {
         listOfGames.add(new Game("Spiderman", "Playstation 4", "09/07/2018", "spidermanurl.com"));
         return listOfGames;
     }
+
     private String title;
     private String releaseConsoles;
     private String releaseDate;
-    private String imageUrl;
+    private String gameImageUrl;
 
-    public Game(String title, String releaseConsoles, String releaseDate, String imageUrl) {
+    public Game(String title, String releaseConsoles, String releaseDate, String gameImageUrl) {
         this.title = title;
         this.releaseConsoles = releaseConsoles;
         this.releaseDate = releaseDate;
-        this.imageUrl = imageUrl;
+        this.gameImageUrl = gameImageUrl;
     }
 
     public String getTitle() {
@@ -50,11 +51,11 @@ public class Game {
         this.releaseDate = releaseDate;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getGameImageUrl() {
+        return gameImageUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setGameImageUrl(String gameImageUrl) {
+        this.gameImageUrl = gameImageUrl;
     }
 }
