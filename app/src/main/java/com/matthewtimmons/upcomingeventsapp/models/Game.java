@@ -8,31 +8,31 @@ public class Game {
     public static List<Game> getPlaceholderGames() {
         List<Game> listOfGames = new ArrayList<>();
         listOfGames.add(new Game("Spiderman", "Playstation 4", "09/07/2018", "spidermanurl.com"));
-        listOfGames.add(new Game("Spiderman", "Playstation 4", "09/07/2018", "spidermanurl.com"));
-        listOfGames.add(new Game("Spiderman", "Playstation 4", "09/07/2018", "spidermanurl.com"));
-        listOfGames.add(new Game("Spiderman", "Playstation 4", "09/07/2018", "spidermanurl.com"));
-        listOfGames.add(new Game("Spiderman", "Playstation 4", "09/07/2018", "spidermanurl.com"));
+        listOfGames.add(new Game("Shadow of the Tomb Raider", "PC, Xbox One, Playstation 4", "09/14/2018", "tombraider.com"));
+        listOfGames.add(new Game("Super Mario Party", "Nintendo Switch", "10/05/2018", "nintendo.com"));
+        listOfGames.add(new Game("Call of Duty: Black Ops 4", "PC, Xbox One, Playstation 4", "10/12/2018", "callofduty.com"));
+        listOfGames.add(new Game("Red Dead Redemption 2", "Xbox One, Playstation 4", "10/26/2018", "rockstargames.com"));
         return listOfGames;
     }
 
-    private String title;
+    private String gameTitle;
     private String releaseConsoles;
-    private String releaseDate;
+    private String gameReleaseDate;
     private String gameImageUrl;
 
-    public Game(String title, String releaseConsoles, String releaseDate, String gameImageUrl) {
-        this.title = title;
+    public Game(String gameTitle, String releaseConsoles, String gameReleaseDate, String gameImageUrl) {
+        this.gameTitle = gameTitle;
         this.releaseConsoles = releaseConsoles;
-        this.releaseDate = releaseDate;
+        this.gameReleaseDate = gameReleaseDate;
         this.gameImageUrl = gameImageUrl;
     }
 
     public String getTitle() {
-        return title;
+        return gameTitle;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.gameTitle = title;
     }
 
     public String getReleaseConsoles() {
@@ -43,12 +43,12 @@ public class Game {
         this.releaseConsoles = releaseConsoles;
     }
 
-    public String getReleaseDate() {
-        return releaseDate;
+    public String getGameReleaseDate() {
+        return gameReleaseDate;
     }
 
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
+    public void setGameReleaseDate(String gameReleaseDate) {
+        this.gameReleaseDate = gameReleaseDate;
     }
 
     public String getGameImageUrl() {

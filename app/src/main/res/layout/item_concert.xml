@@ -29,7 +29,7 @@
             tools:src="@drawable/ic_action_name"/>
 
         <TextView
-            android:id="@+id/band_name"
+            android:id="@+id/band_names"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -49,7 +49,7 @@
             android:text="TextView"
             tools:text="Gas Monkey Bar &amp; Grill, Dallas Texas"
             app:layout_constraintLeft_toRightOf="@id/concert_picture"
-            app:layout_constraintTop_toBottomOf="@id/band_name" />
+            app:layout_constraintTop_toBottomOf="@id/band_names" />
 
         <TextView
             android:id="@+id/concert_date"

@@ -31,8 +31,8 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
     public void onBindViewHolder(@NonNull ConcertViewHolder viewHolder, int position) {
         Concert currentConcert = concerts.get(position);
         viewHolder.bandsTextView.setText(currentConcert.getBandsDisplayName());
-        viewHolder.concertLocationTextView.setText(currentConcert.getLocation());
-        viewHolder.concertDateTextView.setText(currentConcert.date);
+        viewHolder.concertLocationTextView.setText(currentConcert.getConcertLocation());
+        viewHolder.concertDateTextView.setText(currentConcert.getDate());
 //
 //      Update to actual image later
         viewHolder.concertPictureImageView.setImageResource(R.drawable.ic_concerts_blue);
@@ -52,7 +52,7 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
         ConcertViewHolder(@NonNull View itemView) {
             super(itemView);
             concertPictureImageView = itemView.findViewById(R.id.concert_picture);
-            bandsTextView = itemView.findViewById(R.id.band_name);
+            bandsTextView = itemView.findViewById(R.id.band_names);
             concertLocationTextView = itemView.findViewById(R.id.concert_location);
             concertDateTextView = itemView.findViewById(R.id.concert_date);
         }

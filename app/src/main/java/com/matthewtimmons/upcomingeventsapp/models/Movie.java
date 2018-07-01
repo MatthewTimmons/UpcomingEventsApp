@@ -7,19 +7,19 @@ public class Movie {
 
     public static List<Movie> getPlaceholderMovies() {
         List<Movie> movies = new ArrayList<>();
+        movies.add(new Movie("The Predator", "R", "Horror, action", "9/14/2018", "thepredatorfilm.com"));
+        movies.add(new Movie("Venom", "PG-13", "Action", "10/05/2018", "marvel.com"));
         movies.add(new Movie("How the Grinch Stole Christmas", "PG", "Family", "11/09/2018", "grinchimage.com"));
-        movies.add(new Movie("How the Grinch Stole Christmas", "PG", "Family", "11/09/2018", "grinchimage.com"));
-        movies.add(new Movie("How the Grinch Stole Christmas", "PG", "Family", "11/09/2018", "grinchimage.com"));
-        movies.add(new Movie("How the Grinch Stole Christmas", "PG", "Family", "11/09/2018", "grinchimage.com"));
-        movies.add(new Movie("How the Grinch Stole Christmas", "PG", "Family", "11/09/2018", "grinchimage.com"));
+        movies.add(new Movie("Fantastic Beasts: The Crimes of Grindelwald", "PG-13", "Adventure", "11/16/2018", "harrypotter.com"));
+        movies.add(new Movie("Aquaman", "PG-13", "Action", "12/21/2018", "dccomics.com"));
         return movies;
     }
 
-    String movieTitle;
-    String movieRating;
-    String movieGenre;
-    String movieReleaseDate;
-    String movieImageUrl;
+    private String movieTitle;
+    private String movieRating;
+    private String movieGenre;
+    private String movieReleaseDate;
+    private String movieImageUrl;
 
     public Movie(String movieTitle, String movieRating, String movieGenre, String movieReleaseDate, String movieImageUrl) {
         this.movieTitle = movieTitle;

@@ -32,7 +32,7 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
         Game currentGame = games.get(position);
         gameViewHolder.titleTextView.setText(currentGame.getTitle());
         gameViewHolder.releaseConsolesTextView.setText(currentGame.getReleaseConsoles());
-        gameViewHolder.releaseDateTextView.setText(currentGame.getReleaseDate());
+        gameViewHolder.releaseDateTextView.setText(currentGame.getGameReleaseDate());
 //
 //      Update to actual image later
         gameViewHolder.gameArtImageView.setImageResource(R.drawable.ic_games_blue);

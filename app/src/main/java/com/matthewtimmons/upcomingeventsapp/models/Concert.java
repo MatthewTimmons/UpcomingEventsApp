@@ -13,43 +13,39 @@ public class Concert {
 
     public static List<Concert> getPlaceholderConcerts() {
         List<Concert> listOfConcerts = new ArrayList<>();
-        listOfConcerts.add(new Concert(Arrays.asList("Band 1", "Band 2", "Band 3"),
-                "Gas Monkey Bar and Grill, Dallas Texas",
-                "01/01/2018",
+        listOfConcerts.add(new Concert(Arrays.asList("Journey", "Def Leppard"),
+                "American Airlines Center, Dallas TX",
+                "07/29/2018",
+                "americanairlinescenter.com"));
+        listOfConcerts.add(new Concert(Arrays.asList("Avenged Sevenfold", "Prophets of Rage"),
+                "Dos Equis Pavilion, Dallas Texas",
+                "09/01/2018",
+                "paviliondallas.com"));
+        listOfConcerts.add(new Concert(Arrays.asList("Owl City", "Matthew Thiessen", "The Earthquakes"),
+                "House of Blues, Dallas Texas",
+                "09/28/2018",
+                "houseofblues.com/dallas"));
+        listOfConcerts.add(new Concert(Arrays.asList("Blue Oyster Cult", "Mothership", "NovaKain"),
+                "Gas Monkey Live, Dallas Texas",
+                "10/19/2018",
                 "https://imageservicestoreag.blob.core.windows.net/imagecatalog/d572abbe68a743c4854fde4deae5e440v1.jpeg"));
-        listOfConcerts.add(new Concert(Arrays.asList("Band 1", "Band 2", "Band 3"),
-                "Gas Monkey Bar and Grill, Dallas Texas",
-                "01/01/2018",
-                "https://imageservicestoreag.blob.core.windows.net/imagecatalog/d572abbe68a743c4854fde4deae5e440v1.jpeg"));
-        listOfConcerts.add(new Concert(Arrays.asList("Band 1", "Band 2", "Band 3"),
-                "Gas Monkey Bar and Grill, Dallas Texas",
-                "01/01/2018",
-                "https://imageservicestoreag.blob.core.windows.net/imagecatalog/d572abbe68a743c4854fde4deae5e440v1.jpeg"));
-        listOfConcerts.add(new Concert(Arrays.asList("Band 1", "Band 2", "Band 3"),
-                "Gas Monkey Bar and Grill, Dallas Texas",
-                "01/01/2018",
-                "https://imageservicestoreag.blob.core.windows.net/imagecatalog/d572abbe68a743c4854fde4deae5e440v1.jpeg"));
-        listOfConcerts.add(new Concert(Arrays.asList("Band 1", "Band 2", "Band 3"),
-                "Gas Monkey Bar and Grill, Dallas Texas",
-                "01/01/2018",
-                "https://imageservicestoreag.blob.core.windows.net/imagecatalog/d572abbe68a743c4854fde4deae5e440v1.jpeg"));
-        listOfConcerts.add(new Concert(Arrays.asList("Band 1", "Band 2", "Band 3"),
-                "Gas Monkey Bar and Grill, Dallas Texas",
-                "01/01/2018",
-                "https://imageservicestoreag.blob.core.windows.net/imagecatalog/d572abbe68a743c4854fde4deae5e440v1.jpeg"));
+        listOfConcerts.add(new Concert(Arrays.asList("Josh Groban"),
+                "American Airlines Center, Dallas TX",
+                "10/24/2018",
+                "americanairlinescenter.com"));
         return listOfConcerts;
     }
 
     private List<String> bands;
-    private String location;
-    public String date;
-    private String imageUrl;
+    private String concertLocation;
+    private String concertDate;
+    private String concertImageUrl;
 
-    public Concert(List<String> bands, String location, String date, String imageUrl) {
+    public Concert(List<String> bands, String concertLocation, String concertDate, String concertImageUrl) {
         this.bands = bands;
-        this.location = location;
-        this.date = date;
-        this.imageUrl = imageUrl;
+        this.concertLocation = concertLocation;
+        this.concertDate = concertDate;
+        this.concertImageUrl = concertImageUrl;
     }
 
     public String getBandsDisplayName() {
@@ -75,27 +71,23 @@ public class Concert {
         this.bands = bands;
     }
 
-    public String getLocation() {
-        return location;
-    }
+    public String getConcertLocation() { return concertLocation; }
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
+    public void setConcertLocation(String concertLocation) { this.concertLocation = concertLocation; }
 
     public String getDate() {
-        return date;
+        return concertDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDate(String concertDate) {
+        this.concertDate = concertDate;
     }
 
     public String getImageUrl() {
-        return imageUrl;
+        return concertImageUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImageUrl(String concertImageUrl) {
+        this.concertImageUrl = concertImageUrl;
     }
 }
