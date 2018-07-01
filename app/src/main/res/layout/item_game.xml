@@ -30,7 +30,7 @@
             tools:background="@color/colorPrimaryDark"/>
 
         <TextView
-            android:id="@+id/game_name"
+            android:id="@+id/game_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
@@ -43,7 +43,7 @@
             tools:text="Videogame Title" />
 
         <TextView
-            android:id="@+id/game_consoles"
+            android:id="@+id/release_consoles"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -51,10 +51,10 @@
             tools:text="PC, Xbox One, Playstation 4"
             android:lines="1"
             app:layout_constraintLeft_toRightOf="@id/game_picture"
-            app:layout_constraintTop_toBottomOf="@id/game_name" />
+            app:layout_constraintTop_toBottomOf="@id/game_title" />
 
         <TextView
-            android:id="@+id/concert_date"
+            android:id="@+id/release_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -62,7 +62,7 @@
             tools:text="Januray 1st, 2018"
             android:lines="1"
             app:layout_constraintLeft_toRightOf="@id/game_picture"
-            app:layout_constraintTop_toBottomOf="@id/game_consoles" />
+            app:layout_constraintTop_toBottomOf="@id/release_consoles" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

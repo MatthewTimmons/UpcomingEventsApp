@@ -22,7 +22,7 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
 
     @NonNull
     @Override
-    public ConcertViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public ConcertViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_concert, viewGroup, false);
         return new ConcertViewHolder(view);
     }
@@ -47,7 +47,7 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
         private TextView concertLocationTextView;
         private TextView concertDateTextView;
 
-        public ConcertViewHolder(@NonNull View itemView) {
+        ConcertViewHolder(@NonNull View itemView) {
             super(itemView);
             concertPictureImageView = itemView.findViewById(R.id.concert_picture);
             bandsTextView = itemView.findViewById(R.id.band_name);
