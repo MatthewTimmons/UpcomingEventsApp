@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="160dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginTop="8dp">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp">
+
+        <ImageView
+            android:id="@+id/concert_picture"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:src="@drawable/ic_action_name"/>
+
+        <TextView
+            android:id="@+id/band_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="32dp"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/concert_picture"
+            app:layout_constraintTop_toTopOf="parent"
+            android:lines="1"
+            tools:text="Band name, Band name 2, Band name 3 " />
+
+        <TextView
+            android:id="@+id/concert_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:text="TextView"
+            tools:text="Gas Monkey Bar &amp; Grill, Dallas Texas"
+            app:layout_constraintLeft_toRightOf="@id/concert_picture"
+            app:layout_constraintTop_toBottomOf="@id/band_name" />
+
+        <TextView
+            android:id="@+id/concert_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:text="TextView"
+            tools:text="Januray 1st, 2018"
+            app:layout_constraintLeft_toRightOf="@id/concert_picture"
+            app:layout_constraintTop_toBottomOf="@id/concert_location" />
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>

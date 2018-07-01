@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.matthewtimmons.upcomingeventsapp.R;
+import com.matthewtimmons.upcomingeventsapp.R;
 
 public class MoviesFragment extends Fragment {
     @Override
