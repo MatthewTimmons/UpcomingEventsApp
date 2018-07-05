@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.matthewtimmons.upcomingeventsapp.models.Game;
-import com.matthewtimmons.upcomingeventsapp.views.GameListAdapter;
+import com.matthewtimmons.upcomingeventsapp.adapters.GameListAdapter;
 
 public class GamesFragment extends Fragment {
     RecyclerView recyclerView;

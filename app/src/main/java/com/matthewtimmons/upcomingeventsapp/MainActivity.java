@@ -8,10 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.matthewtimmons.upcomingeventsapp.R;
-import com.matthewtimmons.upcomingeventsapp.models.Concert;
-import com.matthewtimmons.upcomingeventsapp.views.ConcertListAdapter;
-
 public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     FragmentPagerAdapter pagerAdapter;
@@ -26,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
         pagerAdapter = new EventPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
 
+//        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) bottomNavigationView.getLayoutParams();
+//        layoutParams.setBehavior(new BottomNavigationViewBehavior());
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

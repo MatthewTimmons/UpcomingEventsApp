@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
+    android:layout_height="200dp"
     android:layout_marginBottom="8dp"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
@@ -13,53 +13,93 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraint_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp">
+        android:layout_height="match_parent">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/leftGutter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/rightGutter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
 
         <ImageView
             android:id="@+id/concert_picture"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:src="@drawable/ic_action_name"/>
+            app:layout_constraintStart_toStartOf="@+id/leftGutter"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_action_name" />
 
-        <TextView
-            android:id="@+id/band_names"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/bands_constraint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:layout_marginBottom="32dp"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/concert_picture"
+            app:layout_constraintBottom_toTopOf="@+id/concert_location"
+            app:layout_constraintStart_toEndOf="@+id/concert_picture"
             app:layout_constraintTop_toTopOf="parent"
-            android:lines="1"
-            tools:text="Band name, Band name 2, Band name 3 " />
+            app:layout_constraintVertical_chainStyle="packed">
+
+
+            <TextView
+                android:id="@+id/first_band_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:lines="1"
+                android:textSize="24sp"
+                tools:text="First Band Name" />
+
+            <TextView
+                android:id="@+id/second_band_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:lines="1"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/first_band_name"
+                tools:text="Second Band Name" />
+
+            <TextView
+                android:id="@+id/and_more"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="and more"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="14sp"
+                app:layout_constraintTop_toBottomOf="@+id/second_band_name" />
+
+        </android.support.constraint.ConstraintLayout>
 
         <TextView
             android:id="@+id/concert_location"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
             android:text="TextView"
-            tools:text="Gas Monkey Bar &amp; Grill, Dallas Texas"
-            app:layout_constraintLeft_toRightOf="@id/concert_picture"
-            app:layout_constraintTop_toBottomOf="@id/band_names" />
+            app:layout_constraintBottom_toTopOf="@+id/concert_date"
+            app:layout_constraintTop_toBottomOf="@+id/bands_constraint"
+            app:layout_constraintStart_toEndOf="@+id/concert_picture"
+            android:layout_marginLeft="16dp"
+            tools:text="Gas Monkey Bar &amp; Grill, Dallas Texas" />
 
         <TextView
             android:id="@+id/concert_date"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
             android:text="TextView"
-            tools:text="Januray 1st, 2018"
-            app:layout_constraintLeft_toRightOf="@id/concert_picture"
-            app:layout_constraintTop_toBottomOf="@id/concert_location" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/concert_location"
+            app:layout_constraintStart_toEndOf="@+id/concert_picture"
+            android:layout_marginLeft="16dp"
+            tools:text="Januray 1st, 2018" />
+
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

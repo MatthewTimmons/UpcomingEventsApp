@@ -52,6 +52,12 @@ public class Concert {
         return TextUtils.join(",", bands);
     }
 
+    public String getBandName(int position) {
+        return bands != null &&
+                position >= 0 &&
+                position < bands.size() ? bands.get(position) : null;
+    }
+
     public Date getDateFormattedDate(String input) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd//MM/yyyy");
         Date d = null;

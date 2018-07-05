@@ -1,5 +1,6 @@
 package com.matthewtimmons.upcomingeventsapp;
 
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -36,4 +37,6 @@ public class EventPagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return COUNT_PAGES;
     }
+
+//    BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 }

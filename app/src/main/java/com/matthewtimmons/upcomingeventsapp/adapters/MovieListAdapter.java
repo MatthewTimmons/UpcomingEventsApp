@@ -1,4 +1,4 @@
-package com.matthewtimmons.upcomingeventsapp.views;
+package com.matthewtimmons.upcomingeventsapp.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -11,8 +11,6 @@ import android.widget.TextView;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.models.Movie;
 
-import android.net.Uri;
-import java.net.URI;
 import java.util.List;
 
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>{

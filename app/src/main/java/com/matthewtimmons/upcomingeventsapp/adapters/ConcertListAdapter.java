@@ -1,4 +1,4 @@
-package com.matthewtimmons.upcomingeventsapp.views;
+package com.matthewtimmons.upcomingeventsapp.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -30,9 +30,15 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
     @Override
     public void onBindViewHolder(@NonNull ConcertViewHolder viewHolder, int position) {
         Concert currentConcert = concerts.get(position);
-        viewHolder.bandsTextView.setText(currentConcert.getBandsDisplayName());
+        viewHolder.firstBandNameTextView.setText(currentConcert.getBandName(0));
+        viewHolder.secondBandNameTextView.setText(currentConcert.getBandName(1));
         viewHolder.concertLocationTextView.setText(currentConcert.getConcertLocation());
         viewHolder.concertDateTextView.setText(currentConcert.getDate());
+
+        // Rules for second text view
+        if (concerts.get(position).getBands().size() < 2) {
+            viewHolder.secondBandNameTextView.setVisibility(View.GONE);
+        }
 //
 //      Update to actual image later
         viewHolder.concertPictureImageView.setImageResource(R.drawable.ic_concerts_blue);
@@ -45,14 +51,16 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
 
     class ConcertViewHolder extends RecyclerView.ViewHolder {
         private ImageView concertPictureImageView;
-        private TextView bandsTextView;
+        private TextView firstBandNameTextView;
+        private TextView secondBandNameTextView;
         private TextView concertLocationTextView;
         private TextView concertDateTextView;
 
         ConcertViewHolder(@NonNull View itemView) {
             super(itemView);
             concertPictureImageView = itemView.findViewById(R.id.concert_picture);
-            bandsTextView = itemView.findViewById(R.id.band_names);
+            firstBandNameTextView = itemView.findViewById(R.id.first_band_name);
+            secondBandNameTextView = itemView.findViewById(R.id.second_band_name);
             concertLocationTextView = itemView.findViewById(R.id.concert_location);
             concertDateTextView = itemView.findViewById(R.id.concert_date);
         }

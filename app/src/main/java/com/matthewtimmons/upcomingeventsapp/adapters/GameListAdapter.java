@@ -1,4 +1,4 @@
-package com.matthewtimmons.upcomingeventsapp.views;
+package com.matthewtimmons.upcomingeventsapp.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;

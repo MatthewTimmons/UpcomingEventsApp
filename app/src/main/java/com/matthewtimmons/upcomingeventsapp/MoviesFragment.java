@@ -8,9 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.models.Movie;
-import com.matthewtimmons.upcomingeventsapp.views.MovieListAdapter;
+import com.matthewtimmons.upcomingeventsapp.adapters.MovieListAdapter;
 
 public class MoviesFragment extends Fragment {
     RecyclerView recyclerView;
