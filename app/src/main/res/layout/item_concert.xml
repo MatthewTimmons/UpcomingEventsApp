@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="160dp"
     android:layout_marginBottom="8dp"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
@@ -40,13 +40,14 @@
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/bands_constraint"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             app:layout_constraintBottom_toTopOf="@+id/concert_location"
+            app:layout_constraintEnd_toStartOf="@+id/rightGutter"
             app:layout_constraintStart_toEndOf="@+id/concert_picture"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed">
+            app:layout_constraintVertical_chainStyle="spread">
 
 
             <TextView
