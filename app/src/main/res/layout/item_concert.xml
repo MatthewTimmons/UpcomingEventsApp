@@ -36,7 +36,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/leftGutter"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_action_name" />
+            tools:src="@drawable/ic_action_name"/>
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/bands_constraint"

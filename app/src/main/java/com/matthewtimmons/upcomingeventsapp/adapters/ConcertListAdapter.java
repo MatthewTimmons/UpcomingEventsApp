@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.models.Concert;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
     @Override
     public void onBindViewHolder(@NonNull ConcertViewHolder viewHolder, int position) {
         Concert currentConcert = concerts.get(position);
+        Picasso.get().load(currentConcert.getImageUrl()).error(R.drawable.ic_concerts_blue).into(viewHolder.concertPictureImageView);
         viewHolder.firstBandNameTextView.setText(currentConcert.getBandName(0));
         viewHolder.secondBandNameTextView.setText(currentConcert.getBandName(1));
         viewHolder.concertLocationTextView.setText(currentConcert.getConcertLocation());
@@ -39,9 +41,6 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
         if (concerts.get(position).getBands().size() < 2) {
             viewHolder.secondBandNameTextView.setVisibility(View.GONE);
         }
-//
-//      Update to actual image later
-        viewHolder.concertPictureImageView.setImageResource(R.drawable.ic_concerts_blue);
     }
 
     @Override

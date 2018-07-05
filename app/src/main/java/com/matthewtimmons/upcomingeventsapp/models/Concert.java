@@ -16,23 +16,23 @@ public class Concert {
         listOfConcerts.add(new Concert(Arrays.asList("Journey", "Def Leppard"),
                 "American Airlines Center, Dallas TX",
                 "07/29/2018",
-                "americanairlinescenter.com"));
+                "http://ultimateclassicrock.com/files/2018/05/Logos.jpg?w=980&q=75"));
         listOfConcerts.add(new Concert(Arrays.asList("Avenged Sevenfold", "Prophets of Rage"),
                 "Dos Equis Pavilion, Dallas Texas",
                 "09/01/2018",
-                "paviliondallas.com"));
+                "https://www.altitudetickets.com/assets/img/Avenged-Sevenfold-Event-2018-7f0d260668.jpg"));
         listOfConcerts.add(new Concert(Arrays.asList("Owl City", "Matthew Thiessen", "The Earthquakes"),
                 "House of Blues, Dallas Texas",
                 "09/28/2018",
-                "houseofblues.com/dallas"));
+                "https://i.ticketweb.com/i/00/07/81/67/09_Edp.jpg?v=10"));
         listOfConcerts.add(new Concert(Arrays.asList("Blue Oyster Cult", "Mothership", "NovaKain"),
                 "Gas Monkey Live, Dallas Texas",
                 "10/19/2018",
-                "https://imageservicestoreag.blob.core.windows.net/imagecatalog/d572abbe68a743c4854fde4deae5e440v1.jpeg"));
+                "https://image-ticketfly.imgix.net/00/02/91/14/64-og.jpg?w=500&h=334&fit=crop&crop=top"));
         listOfConcerts.add(new Concert(Arrays.asList("Josh Groban"),
                 "American Airlines Center, Dallas TX",
                 "10/24/2018",
-                "americanairlinescenter.com"));
+                "https://images-na.ssl-images-amazon.com/images/I/81mo7OmSa9L._SX355_.jpg"));
         return listOfConcerts;
     }
 
@@ -46,10 +46,6 @@ public class Concert {
         this.concertLocation = concertLocation;
         this.concertDate = concertDate;
         this.concertImageUrl = concertImageUrl;
-    }
-
-    public String getBandsDisplayName() {
-        return TextUtils.join(",", bands);
     }
 
     public String getBandName(int position) {
