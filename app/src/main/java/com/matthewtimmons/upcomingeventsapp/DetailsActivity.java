@@ -4,13 +4,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Adapter;
 import android.widget.TextView;
 
 import com.matthewtimmons.upcomingeventsapp.models.Concert;
 
-public class DetailsActivity extends Activity {
+public class DetailsActivity extends AppCompatActivity {
     ViewPager detailsViewPager;
+    FragmentPagerAdapter detailsPagerAdapter;
     TextView first_band_name;
     TextView second_band_name;
     TextView location;
@@ -20,6 +24,11 @@ public class DetailsActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+        detailsViewPager = findViewById(R.id.details_view_pager);
+        detailsPagerAdapter = new EventDetailsPagerAdapter(getSupportFragmentManager());
+        detailsViewPager.setAdapter(detailsPagerAdapter);
+
+
 
 //        detailsViewPager = findViewById(R.id.details_view_pager);
 //        first_band_name = findViewById(R.id.first_band_name);

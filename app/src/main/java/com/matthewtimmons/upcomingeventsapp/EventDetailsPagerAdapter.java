@@ -4,16 +4,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-public class EventDetailsAdapter extends FragmentPagerAdapter {
+public class EventDetailsPagerAdapter extends FragmentPagerAdapter {
 
+    public static final int INDEX_CONCERTS = 0;
+    public static final int INDEX_GAMES = 1;
+    public static final int INDEX_MOVIES = 2;
 
-    public EventDetailsAdapter(FragmentManager fm) {
+    public EventDetailsPagerAdapter (FragmentManager fm) {
         super(fm);
     }
 
     @Override
     public Fragment getItem(int i) {
-        Fragment fragment = null;
+        Fragment fragment = new ConcertDetailsFragment();
         return fragment;
     }
 
@@ -21,5 +24,4 @@ public class EventDetailsAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return 1;
     }
-
 }

@@ -9,7 +9,7 @@
     <ImageView
         android:id="@+id/wide_image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         app:layout_constraintTop_toTopOf="parent"
         android:src="@drawable/ic_concerts_blue"/>
 
