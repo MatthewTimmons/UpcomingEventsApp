@@ -1,10 +1,13 @@
 package com.matthewtimmons.upcomingeventsapp.adapters;
 
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,6 +16,9 @@ import com.matthewtimmons.upcomingeventsapp.models.Concert;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.OnClick;
 
 public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.ConcertViewHolder>{
     List<Concert> concerts;
@@ -41,6 +47,9 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
         if (concerts.get(position).getBands().size() < 2) {
             viewHolder.secondBandNameTextView.setVisibility(View.GONE);
         }
+
+
+
     }
 
     @Override
@@ -48,7 +57,10 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
         return concerts != null ? concerts.size() : 0;
     }
 
-    class ConcertViewHolder extends RecyclerView.ViewHolder {
+
+
+    public class ConcertViewHolder extends RecyclerView.ViewHolder {
+        private CardView cardView;
         private ImageView concertPictureImageView;
         private TextView firstBandNameTextView;
         private TextView secondBandNameTextView;
@@ -57,6 +69,7 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
 
         ConcertViewHolder(@NonNull View itemView) {
             super(itemView);
+            cardView = itemView.findViewById(R.id.card_view);
             concertPictureImageView = itemView.findViewById(R.id.concert_picture);
             firstBandNameTextView = itemView.findViewById(R.id.first_band_name);
             secondBandNameTextView = itemView.findViewById(R.id.second_band_name);
