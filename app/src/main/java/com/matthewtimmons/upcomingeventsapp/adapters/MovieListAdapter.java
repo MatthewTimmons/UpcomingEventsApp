@@ -1,6 +1,9 @@
 package com.matthewtimmons.upcomingeventsapp.adapters;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,8 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.matthewtimmons.upcomingeventsapp.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.models.Movie;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -29,21 +34,30 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder movieViewHolder, int position) {
-        Movie currentMovie = movies.get(position);
+        final Movie currentMovie = movies.get(position);
+        Picasso.get().load(currentMovie.getMovieImageUrl()).error(R.drawable.ic_movies_blue).into(movieViewHolder.moviePictureImageView);
         movieViewHolder.movieTitleTextView.setText(currentMovie.getMovieTitle());
         movieViewHolder.movieRatingTextView.setText(currentMovie.getMovieRating());
         movieViewHolder.movieGenreTextView.setText(currentMovie.getMovieGenre());
         movieViewHolder.movieReleaseDateTextView.setText(currentMovie.getMovieReleaseDate());
-//
-//      Update to actual image later
-//      movieViewHolder.moviePictureImageView.setImageURI(Uri.parse("https://www.bleedingcool.com/wp-content/uploads/2017/12/the-grinch-poster-600x750.jpg?x70969"));
-        movieViewHolder.moviePictureImageView.setImageResource(R.drawable.ic_movies_blue);
+
+        movieViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), DetailsActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("thisMovie", currentMovie);
+                intent.putExtras(bundle);
+                view.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override
     public int getItemCount() { return movies != null ? movies.size() : 0; }
 
     public class MovieViewHolder extends RecyclerView.ViewHolder {
+        CardView cardView;
         TextView movieTitleTextView;
         TextView movieRatingTextView;
         TextView movieGenreTextView;
@@ -52,6 +66,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
         MovieViewHolder(@NonNull View itemView) {
             super(itemView);
+            cardView = itemView.findViewById(R.id.movie_card_view);
             movieTitleTextView = itemView.findViewById(R.id.movie_title);
             movieRatingTextView = itemView.findViewById(R.id.movie_rating);
             movieGenreTextView = itemView.findViewById(R.id.movie_genre);

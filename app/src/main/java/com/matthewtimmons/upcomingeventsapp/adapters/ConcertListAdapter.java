@@ -1,17 +1,13 @@
 package com.matthewtimmons.upcomingeventsapp.adapters;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -79,7 +75,7 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
 
         ConcertViewHolder(@NonNull final View itemView) {
             super(itemView);
-            cardView = itemView.findViewById(R.id.card_view);
+            cardView = itemView.findViewById(R.id.concert_card_view);
             concertPictureImageView = itemView.findViewById(R.id.concert_picture);
             firstBandNameTextView = itemView.findViewById(R.id.first_band_name);
             secondBandNameTextView = itemView.findViewById(R.id.second_band_name);

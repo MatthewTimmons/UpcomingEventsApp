@@ -21,14 +21,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
-                <TextView
-                    android:id="@+id/first_band_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/second_band_name"
-                    app:layout_constraintVertical_chainStyle="spread"
-                    tools:text="First Band Name"/>
+            <TextView
+                android:id="@+id/first_band_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="@id/second_band_name"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="spread"
+                tools:text="First Band Name" />
 
                 <TextView
                     android:id="@+id/second_band_name"
@@ -36,7 +36,6 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintBottom_toTopOf="@id/concert_location"
                     app:layout_constraintTop_toBottomOf="@+id/first_band_name"
-                    app:layout_constraintVertical_chainStyle="packed"
                     tools:text="Second Band Name" />
 
                 <TextView

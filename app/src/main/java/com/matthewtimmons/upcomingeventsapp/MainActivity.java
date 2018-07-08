@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.matthewtimmons.upcomingeventsapp.adapters.ConcertListAdapter;
 import com.matthewtimmons.upcomingeventsapp.models.Concert;
+import com.matthewtimmons.upcomingeventsapp.models.Game;
 
 
 public class MainActivity extends AppCompatActivity {
