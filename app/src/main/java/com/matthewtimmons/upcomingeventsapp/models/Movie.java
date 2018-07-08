@@ -21,6 +21,7 @@ public class Movie implements Serializable {
     private String movieGenre;
     private String movieReleaseDate;
     private String movieImageUrl;
+    private Boolean movieHasBeenSeen;
 
     public Movie(String movieTitle, String movieRating, String movieGenre, String movieReleaseDate, String movieImageUrl) {
         this.movieTitle = movieTitle;
@@ -28,6 +29,7 @@ public class Movie implements Serializable {
         this.movieGenre = movieGenre;
         this.movieReleaseDate = movieReleaseDate;
         this.movieImageUrl = movieImageUrl;
+        this.movieHasBeenSeen = false;
     }
 
     public String getMovieTitle() {
@@ -68,5 +70,13 @@ public class Movie implements Serializable {
 
     public void setMovieImageUrl(String movieImageUrl) {
         this.movieImageUrl = movieImageUrl;
+    }
+
+    public Boolean getMovieHasBeenSeen() {
+        return movieHasBeenSeen;
+    }
+
+    public void setMovieHasBeenSeen(Boolean movieHasBeenSeen) {
+        this.movieHasBeenSeen = movieHasBeenSeen;
     }
 }

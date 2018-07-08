@@ -2,6 +2,7 @@ package com.matthewtimmons.upcomingeventsapp;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,7 +10,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Adapter;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,15 +23,12 @@ import com.matthewtimmons.upcomingeventsapp.models.Concert;
 import com.matthewtimmons.upcomingeventsapp.models.Game;
 import com.matthewtimmons.upcomingeventsapp.models.Movie;
 
+import java.util.concurrent.TimeUnit;
+
 public class DetailsActivity extends AppCompatActivity {
     Fragment fragment;
-    ViewPager detailsViewPager;
-    FragmentPagerAdapter detailsPagerAdapter;
-    TextView first_band_name;
-    TextView second_band_name;
-    TextView location;
-    TextView date;
-    int currentPage;
+    SeekBar seekBar;
+    TextView interestLevel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,6 +46,30 @@ public class DetailsActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.replacable, fragment).commit();
+
+        seekBar = findViewById(R.id.slider_bar);
+        interestLevel = findViewById(R.id.interest_level);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                updateText(i);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                interestLevel.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                interestLevel.setVisibility(View.GONE);
+            }
+        });
 
 //        detailsViewPager = findViewById(R.id.details_view_pager);
 //        detailsPagerAdapter = new EventDetailsPagerAdapter(getSupportFragmentManager());
@@ -89,5 +113,22 @@ public class DetailsActivity extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
         Movie thisMovie = (Movie) bundle.getSerializable("thisMovie");
         return thisMovie;
+    }
+
+    public void updateText(int i) {
+        switch(i) {
+            case 0:
+                interestLevel.setText("Not interested");
+                interestLevel.setBackgroundColor(Color.parseColor("#f44242"));
+                break;
+            case 1:
+                interestLevel.setText("Somewhat Interested");
+                interestLevel.setBackgroundColor(Color.parseColor("#f4f142"));
+                break;
+            case 2:
+                interestLevel.setText("Very interested");
+                interestLevel.setBackgroundColor(Color.parseColor("#6ef442"));
+                break;
+        }
     }
 }

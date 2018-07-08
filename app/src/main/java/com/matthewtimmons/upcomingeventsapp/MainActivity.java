@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         pagerAdapter = new EventPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
 
-
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -50,6 +49,38 @@ public class MainActivity extends AppCompatActivity {
                             break;
                     }
                     return true;
+            }
+        });
+
+        // Selects the current menu icon when swiping left or right
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                View view;
+                switch(i) {
+                    case 0:
+                        view = bottomNavigationView.findViewById(R.id.action_concerts);
+                        view.performClick();
+                        break;
+                    case 1:
+                        view = bottomNavigationView.findViewById(R.id.action_games);
+                        view.performClick();
+                        break;
+                    case 2:
+                        view = bottomNavigationView.findViewById(R.id.action_movies);
+                        view.performClick();
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
             }
         });
     }
