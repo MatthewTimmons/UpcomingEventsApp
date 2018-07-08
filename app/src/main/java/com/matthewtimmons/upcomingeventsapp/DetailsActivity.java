@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Adapter;
 import android.widget.TextView;
 
+import com.matthewtimmons.upcomingeventsapp.fragments.ConcertDetailsFragment;
 import com.matthewtimmons.upcomingeventsapp.models.Concert;
 
 public class DetailsActivity extends AppCompatActivity {
@@ -30,6 +31,7 @@ public class DetailsActivity extends AppCompatActivity {
 
 
 
+
 //        detailsViewPager = findViewById(R.id.details_view_pager);
 //        first_band_name = findViewById(R.id.first_band_name);
 //        second_band_name = findViewById(R.id.second_band_name);
@@ -44,5 +46,12 @@ public class DetailsActivity extends AppCompatActivity {
 
 
 
+    }
+
+    public Concert getCurrentConcert() {
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        Concert thisConcert = (Concert) bundle.getSerializable("thisConcert");
+        return thisConcert;
     }
 }

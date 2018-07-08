@@ -6,38 +6,55 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/first_band_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/second_band_name"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread"
-            tools:text="First Band Name" />
+        <ImageView
+            android:id="@+id/wide_image"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_concerts_blue"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/second_band_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/concert_location"
-            app:layout_constraintTop_toBottomOf="@+id/first_band_name"
-            app:layout_constraintVertical_chainStyle="packed"
-            tools:text="Second Band Name" />
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/wide_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/concert_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/second_band_name"
-            app:layout_constraintBottom_toTopOf="@id/concert_date"
-            tools:text="Location" />
+                <TextView
+                    android:id="@+id/first_band_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/second_band_name"
+                    app:layout_constraintVertical_chainStyle="spread"
+                    tools:text="First Band Name"/>
 
-        <TextView
-            android:id="@+id/concert_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/concert_location"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="Date" />
+                <TextView
+                    android:id="@+id/second_band_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toTopOf="@id/concert_location"
+                    app:layout_constraintTop_toBottomOf="@+id/first_band_name"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    tools:text="Second Band Name" />
+
+                <TextView
+                    android:id="@+id/concert_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toTopOf="@id/concert_date"
+                    app:layout_constraintTop_toBottomOf="@+id/second_band_name"
+                    tools:text="Location" />
+
+                <TextView
+                    android:id="@+id/concert_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/concert_location"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:text="Date" />
+
+        </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

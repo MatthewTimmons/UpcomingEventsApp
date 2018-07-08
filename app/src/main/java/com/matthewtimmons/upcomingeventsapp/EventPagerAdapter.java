@@ -1,9 +1,12 @@
 package com.matthewtimmons.upcomingeventsapp;
 
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import com.matthewtimmons.upcomingeventsapp.fragments.ConcertsFragment;
+import com.matthewtimmons.upcomingeventsapp.fragments.GamesFragment;
+import com.matthewtimmons.upcomingeventsapp.fragments.MoviesFragment;
 
 public class EventPagerAdapter extends FragmentPagerAdapter {
 

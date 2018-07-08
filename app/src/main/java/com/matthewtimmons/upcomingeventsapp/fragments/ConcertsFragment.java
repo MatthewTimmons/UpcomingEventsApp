@@ -1,4 +1,4 @@
-package com.matthewtimmons.upcomingeventsapp;
+package com.matthewtimmons.upcomingeventsapp.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,14 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.models.Concert;
 import com.matthewtimmons.upcomingeventsapp.adapters.ConcertListAdapter;
 
 public class ConcertsFragment extends Fragment {
     RecyclerView recyclerView;
-    RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager layoutManager;
-    ConcertListAdapter concertAdapter;
+    ConcertListAdapter concertListAdapter;
 
 
     @Override
@@ -27,8 +27,8 @@ public class ConcertsFragment extends Fragment {
         recyclerView = v.findViewById(R.id.concerts_recycler_view);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        concertAdapter = new ConcertListAdapter(Concert.getPlaceholderConcerts());
-        recyclerView.setAdapter(concertAdapter);
+        concertListAdapter = new ConcertListAdapter(Concert.getPlaceholderConcerts());
+        recyclerView.setAdapter(concertListAdapter);
 
         return v;
     }

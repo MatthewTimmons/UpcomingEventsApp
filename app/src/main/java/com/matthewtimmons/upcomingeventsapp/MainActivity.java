@@ -18,8 +18,6 @@ import android.widget.Toast;
 import com.matthewtimmons.upcomingeventsapp.adapters.ConcertListAdapter;
 import com.matthewtimmons.upcomingeventsapp.models.Concert;
 
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
@@ -30,16 +28,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         viewPager = findViewById(R.id.pager);
         pagerAdapter = new EventPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
 
-
-
-//        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) bottomNavigationView.getLayoutParams();
-//        layoutParams.setBehavior(new BottomNavigationViewBehavior());
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -60,32 +53,36 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void writeToast(View v) {
-        CardView cardView = v.findViewById(R.id.card_view);
-        Bundle bundle = new Bundle();
+//    public void writeToast(View v) {
+//        CardView cardView = v.findViewById(R.id.card_view);
+//        Bundle bundle = new Bundle();
+//
+//        ImageView concertPictureImageView = v.findViewById(R.id.concert_picture);
+//        TextView firstBandNameTextView = v.findViewById(R.id.first_band_name);
+//        TextView secondBandNameTextView = v.findViewById(R.id.second_band_name);
+//        TextView concertLocationTextView = v.findViewById(R.id.concert_location);
+//        TextView concertDateTextView = v.findViewById(R.id.concert_date);
+//
+//
+//
+//
+//        Intent intent = new Intent(this, DetailsActivity.class);
+////        intent.putExtra("CARD_VIEW", view);
+//        intent.putExtra("FIRST_BAND_NAME", firstBandNameTextView.getText().toString());
+//        intent.putExtra("SECOND_BAND_NAME", secondBandNameTextView.getText().toString());
+//        intent.putExtra("LOCATION", concertLocationTextView.getText().toString());
+//        intent.putExtra("DATE", concertDateTextView.getText().toString());
+//
+//
+//        startActivity(intent);
+//    }
 
-        ImageView concertPictureImageView = v.findViewById(R.id.concert_picture);
-        TextView firstBandNameTextView = v.findViewById(R.id.first_band_name);
-        TextView secondBandNameTextView = v.findViewById(R.id.second_band_name);
-        TextView concertLocationTextView = v.findViewById(R.id.concert_location);
-        TextView concertDateTextView = v.findViewById(R.id.concert_date);
-
-
-
-
-        Intent intent = new Intent(this, DetailsActivity.class);
-//        intent.putExtra("CARD_VIEW", view);
-        intent.putExtra("FIRST_BAND_NAME", firstBandNameTextView.getText().toString());
-        intent.putExtra("SECOND_BAND_NAME", secondBandNameTextView.getText().toString());
-        intent.putExtra("LOCATION", concertLocationTextView.getText().toString());
-        intent.putExtra("DATE", concertDateTextView.getText().toString());
-
-
-        startActivity(intent);
-    }
-
-    public void showDetailsActivity(View v) {
-        Intent intent = new Intent(this, DetailsActivity.class);
-        startActivity(intent);
-    }
+//    public void showDetailsActivity(View v) {
+//        Concert thisConcert = Concert.getPlaceholderConcerts().get(0);
+//        Intent intent = new Intent(this, DetailsActivity.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable("thisConcert", thisConcert);
+//        intent.putExtras(bundle);
+//        startActivity(intent);
+//    }
 }

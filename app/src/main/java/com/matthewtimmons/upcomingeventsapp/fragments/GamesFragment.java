@@ -1,4 +1,4 @@
-package com.matthewtimmons.upcomingeventsapp;
+package com.matthewtimmons.upcomingeventsapp.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.models.Game;
 import com.matthewtimmons.upcomingeventsapp.adapters.GameListAdapter;
 

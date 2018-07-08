@@ -2,6 +2,7 @@ package com.matthewtimmons.upcomingeventsapp.models;
 
 import android.text.TextUtils;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class Concert {
+public class Concert implements Serializable {
 
     public static List<Concert> getPlaceholderConcerts() {
         List<Concert> listOfConcerts = new ArrayList<>();
