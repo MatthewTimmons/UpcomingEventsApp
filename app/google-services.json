@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1092002135121",
+    "firebase_url": "https://upcoming-events-app.firebaseio.com",
+    "project_id": "upcoming-events-app",
+    "storage_bucket": "upcoming-events-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092002135121:android:baa55f7f92713223",
+        "android_client_info": {
+          "package_name": "com.matthewtimmons.upcomingeventsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1092002135121-16dsv7luedrtneeqo0vdotb7j50fn6ei.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAet4m7FCyJn2YeE3dmc_adQRKCyYqt1EA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

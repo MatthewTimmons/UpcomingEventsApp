@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.matthewtimmons.upcomingeventsapp.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.models.Movie;
@@ -19,9 +20,9 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>{
-    List<Movie> movies;
+    List<DocumentSnapshot> movies;
 
-    public MovieListAdapter(List<Movie> movies) {
+    public MovieListAdapter(List<DocumentSnapshot> movies) {
         this.movies = movies;
     }
 
@@ -34,19 +35,28 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder movieViewHolder, int position) {
-        final Movie currentMovie = movies.get(position);
-        Picasso.get().load(currentMovie.getMovieImageUrl()).error(R.drawable.ic_movies_blue).into(movieViewHolder.moviePictureImageView);
-        movieViewHolder.movieTitleTextView.setText(currentMovie.getMovieTitle());
-        movieViewHolder.movieRatingTextView.setText(currentMovie.getMovieRating());
-        movieViewHolder.movieGenreTextView.setText(currentMovie.getMovieGenre());
-        movieViewHolder.movieReleaseDateTextView.setText(currentMovie.getMovieReleaseDate());
+        // Replace setting viewholders from instance of Movie to setting them with data from Firestore
+//        final Movie currentMovie = movies.get(position);
+//        Picasso.get().load(currentMovie.getMovieImageUrl()).error(R.drawable.ic_movies_blue).into(movieViewHolder.moviePictureImageView);
+//        movieViewHolder.movieTitleTextView.setText(currentMovie.getMovieTitle());
+//        movieViewHolder.movieRatingTextView.setText(currentMovie.getMovieRating());
+//        movieViewHolder.movieGenreTextView.setText(currentMovie.getMovieGenre());
+//        movieViewHolder.movieReleaseDateTextView.setText(currentMovie.getMovieReleaseDate());
+
+        final DocumentSnapshot currentMovieDocumentSnapshot = movies.get(position);
+        Picasso.get().load(currentMovieDocumentSnapshot.getString("movieImageUrl")).error(R.drawable.ic_movies_blue).into(movieViewHolder.moviePictureImageView);
+        movieViewHolder.movieTitleTextView.setText(currentMovieDocumentSnapshot.getString("movieTitle"));
+        movieViewHolder.movieRatingTextView.setText(currentMovieDocumentSnapshot.getString("movieRating"));
+        movieViewHolder.movieGenreTextView.setText(currentMovieDocumentSnapshot.getString("movieGenre"));
+        movieViewHolder.movieReleaseDateTextView.setText(currentMovieDocumentSnapshot.getString("movieReleaseDate"));
 
         movieViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), DetailsActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("thisMovie", currentMovie);
+//                bundle.putSerializable("thisMovie", currentMovie);
+                bundle.putString("movieId", currentMovieDocumentSnapshot.getString("movieId"));
                 intent.putExtras(bundle);
                 view.getContext().startActivity(intent);
             }

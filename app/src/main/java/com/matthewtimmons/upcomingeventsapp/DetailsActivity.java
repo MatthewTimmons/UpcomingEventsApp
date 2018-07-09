@@ -16,6 +16,14 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.fragments.ConcertDetailsFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.GameDetailsFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.MovieDetailsFragment;
@@ -108,11 +116,12 @@ public class DetailsActivity extends AppCompatActivity {
         return thisGame;
     }
 
-    public Movie getCurrentMovie() {
+    public String getCurrentMovie() {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        Movie thisMovie = (Movie) bundle.getSerializable("thisMovie");
-        return thisMovie;
+//        Movie thisMovie = (Movie) bundle.getSerializable("thisMovie");
+        String movieId = bundle.getString("movieId");
+        return movieId;
     }
 
     public void updateText(int i) {
