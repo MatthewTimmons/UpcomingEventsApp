@@ -121,11 +121,12 @@ public class DetailsActivity extends AppCompatActivity {
         return thisConcert;
     }
 
-    public Game getCurrentGame() {
+    public String getCurrentGame() {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        Game thisGame = (Game) bundle.getSerializable("thisGame");
-        return thisGame;
+//        Game thisGame = (Game) bundle.getSerializable("thisGame");
+        String gameId = bundle.getString("gameId");
+        return gameId;
     }
 
     public String getCurrentMovie() {
