@@ -32,7 +32,7 @@ public class MoviesFragment extends Fragment {
         // Get list of movies
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         CollectionReference collectionReference = firebaseFirestore.collection("movies");
-        final Task<QuerySnapshot> querySnapshotTask = collectionReference.get();
+        final Task<QuerySnapshot> querySnapshotTask = collectionReference.orderBy("movieReleaseDate").get();
         querySnapshotTask.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {

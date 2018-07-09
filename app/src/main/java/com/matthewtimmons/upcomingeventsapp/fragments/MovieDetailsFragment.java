@@ -17,23 +17,17 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.R;
-import com.matthewtimmons.upcomingeventsapp.models.Movie;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 public class MovieDetailsFragment extends Fragment {
     ImageView wideMovieImageView;
@@ -49,12 +43,12 @@ public class MovieDetailsFragment extends Fragment {
         final View v = inflater.inflate(R.layout.details_movie, container, false);
 
         // Get current Movie from activity
-        DetailsActivity activity = (DetailsActivity) getActivity();
+        final DetailsActivity activity = (DetailsActivity) getActivity();
 //        Movie thisMovie = activity.getCurrentMovie();
-        String thisMovieId = activity.getCurrentMovie();
+        final String thisMovieId = activity.getCurrentMovie();
 
 
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         CollectionReference collectionReference = firebaseFirestore.collection("movies");
 
         Task<QuerySnapshot> task = collectionReference.whereEqualTo("movieId", thisMovieId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -96,7 +90,7 @@ public class MovieDetailsFragment extends Fragment {
                 String movieRating = thisMovie.getString("movieRating");
                 String movieGenre = thisMovie.getString("movieGenre");
                 String movieReleaseDate = thisMovie.getString("movieReleaseDate");
-                Boolean movieHasBeenSeen = thisMovie.getBoolean("hasBeenSeen");
+//                boolean movieHasBeenSeen = thisMovie.getBoolean("hasBeenSeen");
 
                 // Assign values to each view
                 Picasso.get().load(movieImageUrl).error(R.drawable.ic_movies_blue).into(wideMovieImageView);
@@ -104,17 +98,30 @@ public class MovieDetailsFragment extends Fragment {
                 movieRatingTextView.setText(movieRating);
                 movieGenreTextView.setText(movieGenre);
                 movieReleaseDateTextView.setText(movieReleaseDate);
-                if (movieHasBeenSeen != null && movieHasBeenSeen) {
-                    movieHasBeenSeenCheckbox.performClick();
-                }
 
-
-                movieHasBeenSeenCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                // See if movie is listed under current user's moviesSeen Collection
+                final Task<DocumentSnapshot> moviesSeen = firebaseFirestore.collection("users").document("Matt").get();
+                moviesSeen.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean seen) {
-                        toggleButton(seen, thisMovie);
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        final DocumentSnapshot userSnapshot = task.getResult();
+                        final ArrayList<String> arrayOfMoviesSeen = (ArrayList<String>) userSnapshot.get("moviesSeenByMovieId");
+//                        Toast.makeText(getContext(), "arrayOfMoviesSeen =" + arrayOfMoviesSeen, Toast.LENGTH_SHORT).show();
+                        final boolean movieHasBeenSeen = arrayOfMoviesSeen.contains(thisMovieId);
+//                        Toast.makeText(getContext(), "movieHasBeenSeen =" + movieHasBeenSeen, Toast.LENGTH_SHORT).show();
+                        if (movieHasBeenSeen) {movieHasBeenSeenCheckbox.performClick();
+                        toggleButton(movieHasBeenSeen, userSnapshot, thisMovie);}
+
+
+                        movieHasBeenSeenCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton compoundButton, boolean isNowChecked) {
+                                toggleButton(isNowChecked, userSnapshot, thisMovie);
+                            }
+                        });
                     }
                 });
+
             }
         });
 
@@ -135,14 +142,49 @@ public class MovieDetailsFragment extends Fragment {
         return v;
     }
 
-    public void toggleButton(Boolean seen, DocumentSnapshot thisMovie) {
+    public void toggleButton(Boolean isNowChecked, DocumentSnapshot userSnapshot, DocumentSnapshot thisMovie) {
+        ArrayList<String> listOfMoviesSeenByMovieId;
+        try {
+            listOfMoviesSeenByMovieId = (ArrayList<String>) userSnapshot.get("moviesSeenByMovieId");
+        } catch (IllegalArgumentException e) {
+            listOfMoviesSeenByMovieId = new ArrayList<String>();
+        }
 
-        if (seen) {
+        if (isNowChecked) {
             movieHasBeenSeenCheckbox.setBackgroundColor(Color.parseColor("#6ef442"));
-            thisMovie.getReference().update("hasBeenSeen", true);
+            if (!listOfMoviesSeenByMovieId.contains(thisMovie.get("movieId"))) {
+                listOfMoviesSeenByMovieId.add(0, (String) thisMovie.get("movieId"));
+                userSnapshot.getReference().update("moviesSeenByMovieId", listOfMoviesSeenByMovieId);
+            }
+            Toast.makeText(getContext(), (CharSequence) thisMovie.get("movieId"), Toast.LENGTH_SHORT).show();
+//            moviesSeen.document((String) thisMovie.get("movieTitle")).set(thisMovie);
+//            thisMovie.getReference().update("hasBeenSeen", true);
         } else {
             movieHasBeenSeenCheckbox.setBackgroundColor(Color.WHITE);
-            thisMovie.getReference().update("hasBeenSeen", false);
+            int index = 0;
+            for(String value : listOfMoviesSeenByMovieId) {
+                if (value.equals(thisMovie.get("movieId").toString())) {
+                    listOfMoviesSeenByMovieId.remove(index);
+                }
+                index++;
+            }
+//            int index = listOfMoviesSeenByMovieId.indexOf(thisMovie.get("movieId").toString());
+//            listOfMoviesSeenByMovieId.remove(index);
+            if (listOfMoviesSeenByMovieId.equals(null)) {
+                listOfMoviesSeenByMovieId = new ArrayList<String>();
+            }
+            userSnapshot.getReference().update("moviesSeenByMovieId", listOfMoviesSeenByMovieId);
+//            userSnapshot.getReference().update("moviesSeenByMovieId", listOfMoviesSeenByMovieId);
+//            Toast.makeText(getContext(), (CharSequence) thisMovie.get("movieId"), Toast.LENGTH_SHORT).show();
+//            movieHasBeenSeenCheckbox.setBackgroundColor(Color.WHITE);
+//            ArrayList<String> listOfMoviesSeenByMovieId = (ArrayList<String>) userSnapshot.get("moviesSeenByMovieId");
+//            int index = listOfMoviesSeenByMovieId.indexOf(thisMovie.get("movieId"));
+//            listOfMoviesSeenByMovieId.remove(index);
+//            userSnapshot.getReference().update("moviesSeenByMovieId", listOfMoviesSeenByMovieId);
+//            Toast.makeText(getContext(), index, Toast.LENGTH_SHORT).show();
+//            moviesSeen.document((String) thisMovie.get("movieTitle")).delete();
+//            thisMovie.getReference().update("hasBeenSeen", false);
+
         }
     }
 }
