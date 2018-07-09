@@ -69,13 +69,25 @@ public class DetailsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void onStopTrackingTouch(final SeekBar seekBar) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 interestLevel.setVisibility(View.GONE);
+                if (getCurrentMovie() != null) {
+                    String thisMovieId = getCurrentMovie();
+                    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+                    CollectionReference collectionReference = firebaseFirestore.collection("movies");
+                    Task<QuerySnapshot> task = collectionReference.whereEqualTo("movieId", thisMovieId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            final DocumentSnapshot thisMovie = queryDocumentSnapshots.getDocuments().get(0);
+                            thisMovie.getReference().update("interestLevel", seekBar.getProgress());
+                        }
+                    });
+                }
             }
         });
 

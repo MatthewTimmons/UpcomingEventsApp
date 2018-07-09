@@ -60,7 +60,7 @@ public class MovieDetailsFragment extends Fragment {
         Task<QuerySnapshot> task = collectionReference.whereEqualTo("movieId", thisMovieId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                DocumentSnapshot thisMovie = queryDocumentSnapshots.getDocuments().get(0);
+                final DocumentSnapshot thisMovie = queryDocumentSnapshots.getDocuments().get(0);
 
 
 //        FirebaseApp.initializeApp(getContext());
@@ -104,7 +104,7 @@ public class MovieDetailsFragment extends Fragment {
                 movieRatingTextView.setText(movieRating);
                 movieGenreTextView.setText(movieGenre);
                 movieReleaseDateTextView.setText(movieReleaseDate);
-                if (movieHasBeenSeen) {
+                if (movieHasBeenSeen != null && movieHasBeenSeen) {
                     movieHasBeenSeenCheckbox.performClick();
                 }
 
@@ -112,7 +112,7 @@ public class MovieDetailsFragment extends Fragment {
                 movieHasBeenSeenCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean seen) {
-                        toggleButton(seen);
+                        toggleButton(seen, thisMovie);
                     }
                 });
             }
@@ -135,12 +135,14 @@ public class MovieDetailsFragment extends Fragment {
         return v;
     }
 
-    public void toggleButton(Boolean seen) {
+    public void toggleButton(Boolean seen, DocumentSnapshot thisMovie) {
 
         if (seen) {
             movieHasBeenSeenCheckbox.setBackgroundColor(Color.parseColor("#6ef442"));
+            thisMovie.getReference().update("hasBeenSeen", true);
         } else {
             movieHasBeenSeenCheckbox.setBackgroundColor(Color.WHITE);
+            thisMovie.getReference().update("hasBeenSeen", false);
         }
     }
 }
