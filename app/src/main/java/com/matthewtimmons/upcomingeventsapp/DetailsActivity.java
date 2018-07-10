@@ -1,9 +1,11 @@
 package com.matthewtimmons.upcomingeventsapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +18,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
@@ -31,6 +34,7 @@ import com.matthewtimmons.upcomingeventsapp.models.Concert;
 import com.matthewtimmons.upcomingeventsapp.models.Game;
 import com.matthewtimmons.upcomingeventsapp.models.Movie;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class DetailsActivity extends AppCompatActivity {
@@ -152,5 +156,25 @@ public class DetailsActivity extends AppCompatActivity {
                 interestLevel.setBackgroundColor(Color.parseColor("#6ef442"));
                 break;
         }
+    }
+
+    public void setSeekbarToCurrentInterestLevel(final Context context, final String eventType, final String eventTitle) {
+            FirebaseFirestore.getInstance().collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    try {
+                        DocumentSnapshot MattDocumentSnapshot = task.getResult().getDocuments().get(0);
+                        Map<String, Object> interestLevels = (Map<String, Object>) MattDocumentSnapshot.get("interestLevels");
+                        Map<String, Object> events = (Map<String, Object>) interestLevels.get(eventType);
+                        Number interestLevelValue = (Number) events.get(eventTitle);
+                        String interestLevelStringValue = interestLevelValue.toString();
+                        Integer interestLevelIntValue = interestLevelValue.intValue();
+                        seekBar.setProgress(interestLevelIntValue);
+                        Toast.makeText(context, interestLevelStringValue, Toast.LENGTH_SHORT).show();
+                    } catch(NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

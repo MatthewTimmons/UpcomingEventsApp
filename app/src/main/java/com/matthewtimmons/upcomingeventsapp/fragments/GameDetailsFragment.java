@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +45,7 @@ public class GameDetailsFragment extends Fragment {
         final View v = inflater.inflate(R.layout.details_game, container, false);
 
         // Get current Game from activity
-        DetailsActivity activity = (DetailsActivity) getActivity();
+        final DetailsActivity activity = (DetailsActivity) getActivity();
         final String thisGameId = activity.getCurrentGame();
 
         CollectionReference gamesCollectionReference = FirebaseFirestore.getInstance().collection("games");
@@ -58,6 +59,7 @@ public class GameDetailsFragment extends Fragment {
                 gameTitleTextView = v.findViewById(R.id.game_title);
                 gameReleaseConsolesTextView = v.findViewById(R.id.game_release_consoles);
                 gameReleaseDateTextView = v.findViewById(R.id.game_release_date);
+                final SeekBar seekBar = (SeekBar) activity.findViewById(R.id.slider_bar);
 
                 // Get all values for this Game
                 String imageURL = thisGameDocumentSnapshot.getString("gameImageUrl");
@@ -71,36 +73,7 @@ public class GameDetailsFragment extends Fragment {
                 gameReleaseConsolesTextView.setText(gameReleaseConsoles);
                 gameReleaseDateTextView.setText(gameReleaseDate);
 
-                FirebaseFirestore.getInstance().collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        DocumentSnapshot MattDocumentSnapshot = task.getResult().getDocuments().get(0);
-//                        if (MattDocumentSnapshot.get("games") != null) {
-//                            Map<String, Object> games = (Map<String, Object>) MattDocumentSnapshot.get("games");
-//                            if (games.get(gameTitle) != null) {
-//                                Number interest = (Number) games.get("Super Mario Party");
-//                                Toast.makeText(getContext(), "Matt's Interest Level = " + interest, Toast.LENGTH_LONG).show();
-//                                if (games.get("TestHeader") != null) {
-//                                    Object testHeader = games.get("TestHeader");
-//                                    Toast.makeText(getContext(), "No way!!" + testHeader, Toast.LENGTH_LONG).show();
-//                                }
-//                            }
-//                        }
-
-                        try {
-                            Map<String, Object> interestLevels = (Map<String, Object>) MattDocumentSnapshot.get("interestLevels");
-                            Map<String, Object> games = (Map<String, Object>) interestLevels.get("games");
-                            Number interestLevelValue = (Number) games.get(gameTitle);
-                            String interestLevelIntValue = interestLevelValue.toString();
-                            Toast.makeText(getContext(), interestLevelIntValue, Toast.LENGTH_SHORT).show();
-                        } catch (NullPointerException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-
-
+                activity.setSeekbarToCurrentInterestLevel(getContext(), "games", gameTitle);
             }
         });
 

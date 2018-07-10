@@ -86,7 +86,7 @@ public class MovieDetailsFragment extends Fragment {
 
                 // Get all values for this Movie
                 String movieImageUrl = thisMovie.getString("movieImageUrl");
-                String movieTitle = thisMovie.getString("movieTitle");
+                final String movieTitle = thisMovie.getString("movieTitle");
                 String movieRating = thisMovie.getString("movieRating");
                 String movieGenre = thisMovie.getString("movieGenre");
                 String movieReleaseDate = thisMovie.getString("movieReleaseDate");
@@ -119,6 +119,8 @@ public class MovieDetailsFragment extends Fragment {
                                 toggleButton(isNowChecked, userSnapshot, thisMovie);
                             }
                         });
+
+                        activity.setSeekbarToCurrentInterestLevel(getContext(), "movies", movieTitle);
                     }
                 });
 
