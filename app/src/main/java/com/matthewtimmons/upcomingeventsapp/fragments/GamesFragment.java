@@ -43,7 +43,6 @@ public class GamesFragment extends Fragment {
             }
         });
 
-
         return v;
     }
 }
