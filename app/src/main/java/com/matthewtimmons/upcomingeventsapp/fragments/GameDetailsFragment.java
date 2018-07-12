@@ -23,6 +23,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.matthewtimmons.upcomingeventsapp.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.R;
+import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.models.Game;
 import com.squareup.picasso.Picasso;
 
@@ -34,38 +35,51 @@ import java.util.List;
 import java.util.Map;
 
 public class GameDetailsFragment extends Fragment {
+    private static final String ARG_GAME_ID = "gameId";
+    String gameId;
     ImageView wideGameImageView;
     TextView gameTitleTextView;
     TextView gameReleaseConsolesTextView;
     TextView gameReleaseDateTextView;
+
+    public static GameDetailsFragment newInstance(String gameId) {
+        GameDetailsFragment instance = new GameDetailsFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_GAME_ID, gameId);
+        instance.setArguments(args);
+        return instance;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.details_game, container, false);
 
-        // Get current Game from activity
-        final DetailsActivity activity = (DetailsActivity) getActivity();
-        final String thisGameId = activity.getCurrentGame();
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            gameId = bundle.getString(ARG_GAME_ID);
+        }
 
-        CollectionReference gamesCollectionReference = FirebaseFirestore.getInstance().collection("games");
-        gamesCollectionReference.whereEqualTo("gameId", thisGameId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+        // Get current Game from activity
+        //TODO: Change this to be like movie detail fragment
+        CollectionReference gamesCollectionReference = FirebaseFirestore.getInstance().collection(FirebaseConstants.KEY_GAMES);
+        gamesCollectionReference.document(gameId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                final DocumentSnapshot thisGameDocumentSnapshot = task.getResult().getDocuments().get(0);
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                final DocumentSnapshot gameDocumentSnapshot = task.getResult();
 
                 // Assign all views to variables
                 wideGameImageView = v.findViewById(R.id.wide_image);
                 gameTitleTextView = v.findViewById(R.id.game_title);
                 gameReleaseConsolesTextView = v.findViewById(R.id.game_release_consoles);
                 gameReleaseDateTextView = v.findViewById(R.id.game_release_date);
-                final SeekBar seekBar = (SeekBar) activity.findViewById(R.id.slider_bar);
 
                 // Get all values for this Game
-                String imageURL = thisGameDocumentSnapshot.getString("gameImageUrl");
-                final String gameTitle = thisGameDocumentSnapshot.getString("gameTitle");
-                String gameReleaseConsoles = thisGameDocumentSnapshot.getString("gameReleaseConsoles");
-                String gameReleaseDate = thisGameDocumentSnapshot.getString("gameReleaseDate");
+                String imageURL = gameDocumentSnapshot.getString("gameImageUrl");
+                final String gameTitle = gameDocumentSnapshot.getString("gameTitle");
+                String gameReleaseConsoles = gameDocumentSnapshot.getString("gameReleaseConsoles");
+                String gameReleaseDate = gameDocumentSnapshot.getString("gameReleaseDate");
 
                 // Assign values to each view
                 Picasso.get().load(imageURL).error(R.drawable.ic_games_blue).into(wideGameImageView);
@@ -73,7 +87,8 @@ public class GameDetailsFragment extends Fragment {
                 gameReleaseConsolesTextView.setText(gameReleaseConsoles);
                 gameReleaseDateTextView.setText(gameReleaseDate);
 
-                activity.setSeekbarToCurrentInterestLevel(getContext(), "games", gameTitle);
+                // TODO: Set seekbar in Events Fragment
+//                activity.setSeekbarToCurrentInterestLevel(getContext(), "games", thisGameId);
             }
         });
 

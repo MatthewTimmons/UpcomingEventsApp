@@ -11,18 +11,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.matthewtimmons.upcomingeventsapp.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.R;
+import com.matthewtimmons.upcomingeventsapp.constants.EventConstants;
 import com.matthewtimmons.upcomingeventsapp.models.Concert;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.ConcertViewHolder>{
-    List<Concert> concerts;
+    List<DocumentSnapshot> concerts;
 
-    public ConcertListAdapter(List<Concert> concerts) {
+    public ConcertListAdapter(List<DocumentSnapshot> concerts) {
         this.concerts = concerts;
     }
 
@@ -35,25 +38,24 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ConcertViewHolder viewHolder, int position) {
-        final Concert currentConcert = concerts.get(position);
-        Picasso.get().load(currentConcert.getImageUrl()).error(R.drawable.ic_concerts_blue).into(viewHolder.concertPictureImageView);
-        viewHolder.firstBandNameTextView.setText(currentConcert.getBandName(0));
-        viewHolder.secondBandNameTextView.setText(currentConcert.getBandName(1));
-        viewHolder.concertLocationTextView.setText(currentConcert.getConcertLocation());
-        viewHolder.concertDateTextView.setText(currentConcert.getDate());
+        final DocumentSnapshot concertDocumentSnapshot = concerts.get(position);
+        ArrayList<String> listOfBandsAtConcert = (ArrayList<String>) concertDocumentSnapshot.get("concertBandsArray");
+
+        Picasso.get().load(concertDocumentSnapshot.getString("concertImageUrl")).error(R.drawable.ic_concerts_blue).into(viewHolder.concertPictureImageView);
+        viewHolder.firstBandNameTextView.setText(listOfBandsAtConcert.get(0));
+        viewHolder.secondBandNameTextView.setText(listOfBandsAtConcert.get(1));
+        viewHolder.concertLocationTextView.setText(concertDocumentSnapshot.getString("concertLocation"));
+        viewHolder.concertDateTextView.setText(concertDocumentSnapshot.getString("concertDate"));
 
         // Rules for second text view
-        if (concerts.get(position).getBands().size() < 2) {
+        if (listOfBandsAtConcert.size() < 2) {
             viewHolder.secondBandNameTextView.setVisibility(View.GONE);
         }
 
         viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), DetailsActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("thisConcert", currentConcert);
-                intent.putExtras(bundle);
+                Intent intent = DetailsActivity.newIntent(view.getContext(), concertDocumentSnapshot.getId(), EventConstants.EVENT_TYPE_CONCERT);
                 view.getContext().startActivity(intent);
             }
         });

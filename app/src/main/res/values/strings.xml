@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">upcomingeventsapp</string>
+    <string name="interest_level_display_name_low">Not interested</string>
+    <string name="interest_level_display_name_medium">Somewhat Interested</string>
+    <string name="interest_level_display_name_high">Very interested</string>
+    <string name="error_event_id_not_found">Event ID not found</string>
 </resources>

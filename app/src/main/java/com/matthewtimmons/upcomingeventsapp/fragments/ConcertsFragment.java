@@ -10,9 +10,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
+import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.models.Concert;
 import com.matthewtimmons.upcomingeventsapp.adapters.ConcertListAdapter;
+
+import java.util.List;
 
 public class ConcertsFragment extends Fragment {
     RecyclerView recyclerView;
@@ -22,14 +32,21 @@ public class ConcertsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_concerts, container, false);
+        final View v = inflater.inflate(R.layout.fragment_concerts, container, false);
 
-        recyclerView = v.findViewById(R.id.concerts_recycler_view);
-        layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-        concertListAdapter = new ConcertListAdapter(Concert.getPlaceholderConcerts());
-        recyclerView.setAdapter(concertListAdapter);
+        Query concertQuery = FirebaseFirestore.getInstance().collection(FirebaseConstants.KEY_CONCERTS).orderBy("concertDate");
 
+        concertQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                List<DocumentSnapshot> concertDocumentSnapshots = task.getResult().getDocuments();
+                recyclerView = v.findViewById(R.id.concerts_recycler_view);
+                layoutManager = new LinearLayoutManager(getActivity());
+                recyclerView.setLayoutManager(layoutManager);
+                concertListAdapter = new ConcertListAdapter(concertDocumentSnapshots);
+                recyclerView.setAdapter(concertListAdapter);
+            }
+        });
         return v;
     }
 

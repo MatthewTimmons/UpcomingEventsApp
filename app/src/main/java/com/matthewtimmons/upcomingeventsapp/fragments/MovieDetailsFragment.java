@@ -30,51 +30,43 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 public class MovieDetailsFragment extends Fragment {
-    ImageView wideMovieImageView;
-    TextView movieTitleTextView;
-    TextView movieRatingTextView;
-    TextView movieGenreTextView;
-    TextView movieReleaseDateTextView;
-    CheckBox movieHasBeenSeenCheckbox;
+    public static final String ARG_MOVIE_ID = "argMovieId";
+    private String movieId;
+    private ImageView wideMovieImageView;
+    private TextView movieTitleTextView;
+    private TextView movieRatingTextView;
+    private TextView movieGenreTextView;
+    private TextView movieReleaseDateTextView;
+    private CheckBox movieHasBeenSeenCheckbox;
+
+    //TODO: Change to current user
+    public static final String CURRENT_USER_ID = "Matt";
+
+    public static MovieDetailsFragment newInstance(String movieId) {
+        MovieDetailsFragment instance = new MovieDetailsFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_MOVIE_ID, movieId);
+        instance.setArguments(args);
+        return instance;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.details_movie, container, false);
 
-        // Get current Movie from activity
-        final DetailsActivity activity = (DetailsActivity) getActivity();
-//        Movie thisMovie = activity.getCurrentMovie();
-        final String thisMovieId = activity.getCurrentMovie();
+        // Get current MovieId from activity
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            movieId = bundle.getString(ARG_MOVIE_ID);
+        }
 
+        CollectionReference collectionReference = FirebaseFirestore.getInstance().collection("movies");
 
-        final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        CollectionReference collectionReference = firebaseFirestore.collection("movies");
-
-        Task<QuerySnapshot> task = collectionReference.whereEqualTo("movieId", thisMovieId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        Task<DocumentSnapshot> value = collectionReference.document(movieId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                final DocumentSnapshot thisMovie = queryDocumentSnapshots.getDocuments().get(0);
-
-
-//        FirebaseApp.initializeApp(getContext());
-
-//        database = FirebaseDatabase.getInstance();
-
-
-//        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                Movie thePredator = (Movie) dataSnapshot.getValue();
-//                movieTitleTextView.setText(thePredator.);
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+              final DocumentSnapshot movie = documentSnapshot;
 
                 // Assign all views to variables
                 wideMovieImageView = v.findViewById(R.id.wide_image);
@@ -85,12 +77,11 @@ public class MovieDetailsFragment extends Fragment {
                 movieHasBeenSeenCheckbox = v.findViewById(R.id.movie_has_been_seen_checkbox);
 
                 // Get all values for this Movie
-                String movieImageUrl = thisMovie.getString("movieImageUrl");
-                final String movieTitle = thisMovie.getString("movieTitle");
-                String movieRating = thisMovie.getString("movieRating");
-                String movieGenre = thisMovie.getString("movieGenre");
-                String movieReleaseDate = thisMovie.getString("movieReleaseDate");
-//                boolean movieHasBeenSeen = thisMovie.getBoolean("hasBeenSeen");
+                String movieImageUrl = movie.getString("movieImageUrl");
+                final String movieTitle = movie.getString("movieTitle");
+                String movieRating = movie.getString("movieRating");
+                String movieGenre = movie.getString("movieGenre");
+                String movieReleaseDate = movie.getString("movieReleaseDate");
 
                 // Assign values to each view
                 Picasso.get().load(movieImageUrl).error(R.drawable.ic_movies_blue).into(wideMovieImageView);
@@ -100,93 +91,70 @@ public class MovieDetailsFragment extends Fragment {
                 movieReleaseDateTextView.setText(movieReleaseDate);
 
                 // See if movie is listed under current user's moviesSeen Collection
-                final Task<DocumentSnapshot> moviesSeen = firebaseFirestore.collection("users").document("Matt").get();
-                moviesSeen.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                final Task<DocumentSnapshot> currentUser = FirebaseFirestore.getInstance().collection("users")
+                        .document(CURRENT_USER_ID)
+                        .get();
+                currentUser.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         final DocumentSnapshot userSnapshot = task.getResult();
                         final ArrayList<String> arrayOfMoviesSeen = (ArrayList<String>) userSnapshot.get("moviesSeenByMovieId");
 //                        Toast.makeText(getContext(), "arrayOfMoviesSeen =" + arrayOfMoviesSeen, Toast.LENGTH_SHORT).show();
-                        final boolean movieHasBeenSeen = arrayOfMoviesSeen.contains(thisMovieId);
+                        final boolean movieHasBeenSeen = arrayOfMoviesSeen.contains(movieId);
 //                        Toast.makeText(getContext(), "movieHasBeenSeen =" + movieHasBeenSeen, Toast.LENGTH_SHORT).show();
-                        if (movieHasBeenSeen) {movieHasBeenSeenCheckbox.performClick();
-                        toggleButton(movieHasBeenSeen, userSnapshot, thisMovie);}
+                        if (movieHasBeenSeen) {movieHasBeenSeenCheckbox.setChecked(true);
+                        toggleButton(movieHasBeenSeen, userSnapshot, movie);}
 
 
                         movieHasBeenSeenCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                             @Override
                             public void onCheckedChanged(CompoundButton compoundButton, boolean isNowChecked) {
-                                toggleButton(isNowChecked, userSnapshot, thisMovie);
+                                toggleButton(isNowChecked, userSnapshot, movie);
                             }
                         });
 
-                        activity.setSeekbarToCurrentInterestLevel(getContext(), "movies", movieTitle);
+                        // TODO: Will move Seekbar into fragment
+//                        ((DetailsActivity) getActivity()).setSeekbarToCurrentInterestLevel(getContext(), "movies", movieId);
                     }
                 });
-
             }
         });
-
-
-//        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-//        CollectionReference collectionReference = firebaseFirestore.collection("movies");
-//        collectionReference.whereEqualTo()
-//        firebaseFirestore.collection("movies").document("ThePredator").addSnapshotListener(new EventListener<DocumentSnapshot>() {
-//            @Override
-//            public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
-//                String title = documentSnapshot.getString("title");
-//                movieTitleTextView.setText("Completed");
-//                Toast.makeText(getContext(), title, Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-
         return v;
     }
 
-    public void toggleButton(Boolean isNowChecked, DocumentSnapshot userSnapshot, DocumentSnapshot thisMovie) {
+    public void toggleButton(Boolean movieHasBeenSeen, DocumentSnapshot userSnapshot, DocumentSnapshot currentMovieDocumentSnapshot) {
         ArrayList<String> listOfMoviesSeenByMovieId;
+        ArrayList<String> listOfUsersWhoHaveSeen;
         try {
             listOfMoviesSeenByMovieId = (ArrayList<String>) userSnapshot.get("moviesSeenByMovieId");
+            listOfUsersWhoHaveSeen = (ArrayList<String>) currentMovieDocumentSnapshot.get("usersWhoHaveSeen");
         } catch (IllegalArgumentException e) {
             listOfMoviesSeenByMovieId = new ArrayList<String>();
+            listOfUsersWhoHaveSeen = new ArrayList<String>();
         }
 
-        if (isNowChecked) {
+        if (movieHasBeenSeen) {
             movieHasBeenSeenCheckbox.setBackgroundColor(Color.parseColor("#6ef442"));
-            if (!listOfMoviesSeenByMovieId.contains(thisMovie.get("movieId"))) {
-                listOfMoviesSeenByMovieId.add(0, (String) thisMovie.get("movieId"));
+            if (!listOfMoviesSeenByMovieId.contains(currentMovieDocumentSnapshot.getId())) {
+                listOfMoviesSeenByMovieId.add(currentMovieDocumentSnapshot.getId());
                 userSnapshot.getReference().update("moviesSeenByMovieId", listOfMoviesSeenByMovieId);
             }
-            Toast.makeText(getContext(), (CharSequence) thisMovie.get("movieId"), Toast.LENGTH_SHORT).show();
-//            moviesSeen.document((String) thisMovie.get("movieTitle")).set(thisMovie);
-//            thisMovie.getReference().update("hasBeenSeen", true);
+
+            if (!listOfUsersWhoHaveSeen.contains(CURRENT_USER_ID)) {
+                listOfUsersWhoHaveSeen.add(CURRENT_USER_ID);
+                currentMovieDocumentSnapshot.getReference().update("usersWhoHaveSeen", listOfUsersWhoHaveSeen);
+            }
         } else {
             movieHasBeenSeenCheckbox.setBackgroundColor(Color.WHITE);
-            int index = 0;
-            for(String value : listOfMoviesSeenByMovieId) {
-                if (value.equals(thisMovie.get("movieId").toString())) {
-                    listOfMoviesSeenByMovieId.remove(index);
-                }
-                index++;
-            }
-//            int index = listOfMoviesSeenByMovieId.indexOf(thisMovie.get("movieId").toString());
-//            listOfMoviesSeenByMovieId.remove(index);
-            if (listOfMoviesSeenByMovieId.equals(null)) {
-                listOfMoviesSeenByMovieId = new ArrayList<String>();
-            }
-            userSnapshot.getReference().update("moviesSeenByMovieId", listOfMoviesSeenByMovieId);
-//            userSnapshot.getReference().update("moviesSeenByMovieId", listOfMoviesSeenByMovieId);
-//            Toast.makeText(getContext(), (CharSequence) thisMovie.get("movieId"), Toast.LENGTH_SHORT).show();
-//            movieHasBeenSeenCheckbox.setBackgroundColor(Color.WHITE);
-//            ArrayList<String> listOfMoviesSeenByMovieId = (ArrayList<String>) userSnapshot.get("moviesSeenByMovieId");
-//            int index = listOfMoviesSeenByMovieId.indexOf(thisMovie.get("movieId"));
-//            listOfMoviesSeenByMovieId.remove(index);
-//            userSnapshot.getReference().update("moviesSeenByMovieId", listOfMoviesSeenByMovieId);
-//            Toast.makeText(getContext(), index, Toast.LENGTH_SHORT).show();
-//            moviesSeen.document((String) thisMovie.get("movieTitle")).delete();
-//            thisMovie.getReference().update("hasBeenSeen", false);
+            try {
+                listOfMoviesSeenByMovieId.remove(movieId);
+                userSnapshot.getReference().update("moviesSeenByMovieId", listOfMoviesSeenByMovieId);
+                listOfUsersWhoHaveSeen.remove(CURRENT_USER_ID);
+                currentMovieDocumentSnapshot.getReference().update("usersWhoHaveSeen", listOfUsersWhoHaveSeen);
 
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

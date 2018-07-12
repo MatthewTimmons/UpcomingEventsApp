@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.matthewtimmons.upcomingeventsapp.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.R;
+import com.matthewtimmons.upcomingeventsapp.constants.EventConstants;
+import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.models.Game;
 import com.squareup.picasso.Picasso;
 
@@ -52,11 +54,7 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
         gameViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), DetailsActivity.class);
-                Bundle bundle = new Bundle();
-//                bundle.putSerializable("thisGame", currentGame);
-                bundle.putString("gameId", currentGameDocumentSnapshot.getString("gameId"));
-                intent.putExtras(bundle);
+                Intent intent = DetailsActivity.newIntent(view.getContext(), currentGameDocumentSnapshot.getId(), EventConstants.EVENT_TYPE_GAME);
                 view.getContext().startActivity(intent);
             }
         });

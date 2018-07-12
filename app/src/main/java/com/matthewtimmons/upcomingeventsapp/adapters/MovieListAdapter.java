@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.matthewtimmons.upcomingeventsapp.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.R;
+import com.matthewtimmons.upcomingeventsapp.constants.EventConstants;
 import com.matthewtimmons.upcomingeventsapp.models.Movie;
 import com.squareup.picasso.Picasso;
 
@@ -53,11 +54,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         movieViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), DetailsActivity.class);
-                Bundle bundle = new Bundle();
-//                bundle.putSerializable("thisMovie", currentMovie);
-                bundle.putString("movieId", currentMovieDocumentSnapshot.getString("movieId"));
-                intent.putExtras(bundle);
+                Intent intent = DetailsActivity.newIntent(view.getContext(), currentMovieDocumentSnapshot.getId(),
+                        EventConstants.EVENT_TYPE_MOVIE);
                 view.getContext().startActivity(intent);
             }
         });
