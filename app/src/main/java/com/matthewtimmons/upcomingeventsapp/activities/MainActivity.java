@@ -1,4 +1,4 @@
-package com.matthewtimmons.upcomingeventsapp;
+package com.matthewtimmons.upcomingeventsapp.activities;
 
 import android.content.Intent;
 import android.os.Parcelable;
@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.matthewtimmons.upcomingeventsapp.EventPagerAdapter;
+import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.adapters.ConcertListAdapter;
 import com.matthewtimmons.upcomingeventsapp.models.Concert;
 import com.matthewtimmons.upcomingeventsapp.models.Game;
