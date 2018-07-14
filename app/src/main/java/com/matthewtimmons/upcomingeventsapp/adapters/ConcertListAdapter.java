@@ -19,7 +19,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.ConcertViewHolder>{
     List<DocumentSnapshot> concerts;
 
@@ -30,7 +29,7 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
     @NonNull
     @Override
     public ConcertViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.viewholder_concert, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.viewholder_event, viewGroup, false);
         return new ConcertViewHolder(view);
     }
 
@@ -82,8 +81,8 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
 
         ConcertViewHolder(@NonNull final View itemView) {
             super(itemView);
-            cardView = itemView.findViewById(R.id.concert_card_view);
-            concertPictureImageView = itemView.findViewById(R.id.concert_picture);
+            cardView = itemView.findViewById(R.id.event_card_view);
+            concertPictureImageView = itemView.findViewById(R.id.event_picture);
             titleTextView = itemView.findViewById(R.id.title);
             subtitleTextView = itemView.findViewById(R.id.subtitle);
             andMoreTextView = itemView.findViewById(R.id.and_more);

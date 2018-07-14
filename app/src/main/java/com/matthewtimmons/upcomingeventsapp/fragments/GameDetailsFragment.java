@@ -38,7 +38,7 @@ public class GameDetailsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View v = inflater.inflate(R.layout.fragment_details_game, container, false);
+        final View v = inflater.inflate(R.layout.fragment_details_event, container, false);
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -47,7 +47,6 @@ public class GameDetailsFragment extends Fragment {
 
 
         // Get current Game from activity
-        //TODO: Change this to be like movie detail fragment
         CollectionReference gamesCollectionReference = FirebaseFirestore.getInstance().collection(FirebaseConstants.KEY_GAMES);
         gamesCollectionReference.document(gameId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -56,9 +55,9 @@ public class GameDetailsFragment extends Fragment {
 
                 // Assign all views to variables
                 wideGameImageView = v.findViewById(R.id.wide_image);
-                gameTitleTextView = v.findViewById(R.id.game_title);
-                gameReleaseConsolesTextView = v.findViewById(R.id.game_release_consoles);
-                gameReleaseDateTextView = v.findViewById(R.id.game_release_date);
+                gameTitleTextView = v.findViewById(R.id.title);
+                gameReleaseConsolesTextView = v.findViewById(R.id.third_info_field);
+                gameReleaseDateTextView = v.findViewById(R.id.fourth_info_field);
 
                 // Get all values for this Game
                 String imageURL = gameDocumentSnapshot.getString("gameImageUrl");

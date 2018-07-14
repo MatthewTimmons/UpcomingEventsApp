@@ -28,20 +28,13 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
     @NonNull
     @Override
     public GameViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.viewholder_game, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.viewholder_event, viewGroup, false);
         return new GameViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull GameViewHolder gameViewHolder, int position) {
-
         final DocumentSnapshot currentGameDocumentSnapshot = games.get(position);
-
-//        final Game currentGame = games.get(position);
-//        Picasso.get().load(currentGame.getGameImageUrl()).error(R.drawable.ic_games_blue).into(gameViewHolder.gameArtImageView);
-//        gameViewHolder.titleTextView.setText(currentGame.getTitle());
-//        gameViewHolder.releaseConsolesTextView.setText(currentGame.getReleaseConsoles());
-//        gameViewHolder.releaseDateTextView.setText(currentGame.getGameReleaseDate());
 
         Picasso.get().load(currentGameDocumentSnapshot.getString("gameImageUrl")).error(R.drawable.ic_games_blue).into(gameViewHolder.gameArtImageView);
         gameViewHolder.titleTextView.setText(currentGameDocumentSnapshot.getString("gameTitle"));
@@ -69,11 +62,11 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
 
         GameViewHolder(@NonNull View itemView) {
             super(itemView);
-            cardView = itemView.findViewById(R.id.game_card_view);
-            titleTextView = itemView.findViewById(R.id.game_title);
-            releaseConsolesTextView = itemView.findViewById(R.id.release_consoles);
-            releaseDateTextView = itemView.findViewById(R.id.game_release_date);
-            gameArtImageView = itemView.findViewById(R.id.game_picture);
+            cardView = itemView.findViewById(R.id.event_card_view);
+            titleTextView = itemView.findViewById(R.id.title);
+            releaseConsolesTextView = itemView.findViewById(R.id.third_info_field);
+            releaseDateTextView = itemView.findViewById(R.id.fourth_info_field);
+            gameArtImageView = itemView.findViewById(R.id.event_picture);
         }
     }
 }

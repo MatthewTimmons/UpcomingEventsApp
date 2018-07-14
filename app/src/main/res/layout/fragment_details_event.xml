@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:layout_editor_absoluteY="25dp">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/wide_image"
@@ -50,10 +49,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textSize="30sp"
-            app:layout_constraintBottom_toTopOf="@+id/subtitle"
-            app:layout_constraintEnd_toStartOf="@+id/right_gutter"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toTopOf="@id/subtitle"
             app:layout_constraintStart_toStartOf="@id/left_gutter"
+            app:layout_constraintEnd_toStartOf="@id/right_gutter"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="First Band Name" />
 
@@ -63,11 +61,10 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@+id/second_info_field"
+            app:layout_constraintBottom_toTopOf="@id/second_info_field"
             app:layout_constraintEnd_toStartOf="@id/right_gutter"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@id/left_gutter"
-            app:layout_constraintTop_toBottomOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@id/title"
             tools:text="Second Band Name" />
 
         <TextView
@@ -76,22 +73,20 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/third_info_field"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toTopOf="@id/third_info_field"
             app:layout_constraintLeft_toRightOf="@id/left_gutter"
             app:layout_constraintRight_toLeftOf="@id/right_gutter"
-            app:layout_constraintTop_toBottomOf="@+id/subtitle"
+            app:layout_constraintTop_toBottomOf="@id/subtitle"
             tools:text="Third Band Name if Applicable" />
 
         <TextView
-            android:id="@id/third_info_field"
+            android:id="@+id/third_info_field"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/fourth_info_field"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toTopOf="@id/fourth_info_field"
             app:layout_constraintLeft_toRightOf="@id/left_gutter"
             app:layout_constraintRight_toLeftOf="@id/right_gutter"
-            app:layout_constraintTop_toBottomOf="@+id/second_info_field"
+            app:layout_constraintTop_toBottomOf="@id/second_info_field"
             tools:text="Location" />
 
         <TextView
@@ -99,13 +94,25 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintLeft_toRightOf="@id/left_gutter"
             app:layout_constraintRight_toLeftOf="@id/right_gutter"
-            app:layout_constraintTop_toBottomOf="@+id/third_info_field"
+            app:layout_constraintTop_toBottomOf="@id/third_info_field"
             tools:text="Date" />
 
 
     </android.support.constraint.ConstraintLayout>
+
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:textSize="30sp"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible"
+        tools:text="Seen"/>
 
 </android.support.constraint.ConstraintLayout>

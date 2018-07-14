@@ -48,7 +48,7 @@ public class MovieDetailsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View v = inflater.inflate(R.layout.fragment_details_movie, container, false);
+        final View v = inflater.inflate(R.layout.fragment_details_event, container, false);
 
         // Get current MovieId from activity
         Bundle bundle = getArguments();
@@ -65,11 +65,11 @@ public class MovieDetailsFragment extends Fragment {
 
                 // Assign all views to variables
                 wideMovieImageView = v.findViewById(R.id.wide_image);
-                movieTitleTextView = v.findViewById(R.id.movie_title);
-                movieRatingTextView = v.findViewById(R.id.movie_rating);
-                movieGenreTextView = v.findViewById(R.id.movie_genre);
-                movieReleaseDateTextView = v.findViewById(R.id.movie_release_date);
-                movieHasBeenSeenCheckbox = v.findViewById(R.id.movie_has_been_seen_checkbox);
+                movieTitleTextView = v.findViewById(R.id.title);
+                movieRatingTextView = v.findViewById(R.id.second_info_field);
+                movieGenreTextView = v.findViewById(R.id.third_info_field);
+                movieReleaseDateTextView = v.findViewById(R.id.fourth_info_field);
+                movieHasBeenSeenCheckbox = v.findViewById(R.id.checkbox);
 
                 // Get all values for this Movie
                 String movieImageUrl = movie.getString("movieImageUrl");
@@ -84,6 +84,8 @@ public class MovieDetailsFragment extends Fragment {
                 movieRatingTextView.setText(movieRating);
                 movieGenreTextView.setText(movieGenre);
                 movieReleaseDateTextView.setText(movieReleaseDate);
+                movieHasBeenSeenCheckbox.setVisibility(View.VISIBLE);
+                movieHasBeenSeenCheckbox.setText("Seen");
 
                 // See if movie is listed under current user's moviesSeen Collection
                 final Task<DocumentSnapshot> currentUser = FirebaseFirestore.getInstance().collection("users")
