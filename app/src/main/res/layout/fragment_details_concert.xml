@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/wide_image"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_concerts_blue"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/top_gutter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="96dp"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/bottom_gutter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintGuide_end="220dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="horizontal"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_gutter"
+        app:layout_constraintTop_toTopOf="@id/top_gutter">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/left_gutter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/right_gutter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+        <TextView
+            android:id="@+id/first_band_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/second_band_name"
+            app:layout_constraintEnd_toStartOf="@+id/right_gutter"
+            app:layout_constraintStart_toStartOf="@id/left_gutter"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread"
+            tools:text="First Band Name" />
+
+        <TextView
+            android:id="@+id/second_band_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/concert_location"
+            app:layout_constraintEnd_toStartOf="@id/right_gutter"
+            app:layout_constraintStart_toStartOf="@id/left_gutter"
+            app:layout_constraintTop_toBottomOf="@+id/first_band_name"
+            tools:text="Second Band Name" />
+
+        <TextView
+            android:id="@+id/concert_location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/concert_date"
+            app:layout_constraintLeft_toRightOf="@id/left_gutter"
+            app:layout_constraintRight_toLeftOf="@id/right_gutter"
+            app:layout_constraintTop_toBottomOf="@+id/second_band_name"
+            tools:text="Location" />
+
+        <TextView
+            android:id="@+id/concert_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/left_gutter"
+            app:layout_constraintRight_toLeftOf="@id/right_gutter"
+            app:layout_constraintTop_toBottomOf="@+id/concert_location"
+            tools:text="Date" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -4,4 +4,7 @@
     <string name="interest_level_display_name_medium">Somewhat Interested</string>
     <string name="interest_level_display_name_high">Very interested</string>
     <string name="error_event_id_not_found">Event ID not found</string>
+    <string name="concerts">"Concerts"</string>
+    <string name="games">"Games"</string>
+    <string name="movies">"Movies"</string>
 </resources>

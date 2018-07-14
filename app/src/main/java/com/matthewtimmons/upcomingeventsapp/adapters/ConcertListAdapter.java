@@ -1,7 +1,6 @@
 package com.matthewtimmons.upcomingeventsapp.adapters;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -12,10 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.matthewtimmons.upcomingeventsapp.DetailsActivity;
+import com.matthewtimmons.upcomingeventsapp.activities.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.EventConstants;
-import com.matthewtimmons.upcomingeventsapp.models.Concert;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -32,7 +30,7 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
     @NonNull
     @Override
     public ConcertViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_concert, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.viewholder_concert, viewGroup, false);
         return new ConcertViewHolder(view);
     }
 

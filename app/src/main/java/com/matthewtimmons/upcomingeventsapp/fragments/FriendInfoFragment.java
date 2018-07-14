@@ -35,7 +35,7 @@ public class FriendInfoFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.friend_event_information, container, false);
+        View v = inflater.inflate(R.layout.viewholder_friend_event_information, container, false);
 
         Task<QuerySnapshot> querySnapshotTask = FirebaseFirestore.getInstance().collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override

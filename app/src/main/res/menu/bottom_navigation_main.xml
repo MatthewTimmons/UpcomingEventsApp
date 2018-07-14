@@ -7,18 +7,18 @@
         android:id="@+id/action_concerts"
         android:enabled="true"
         android:icon="@drawable/ic_concerts"
-        android:title="Concerts"
+        android:title="@string/concerts"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_games"
         android:enabled="true"
         android:icon="@drawable/ic_games"
-        android:title="Games"
+        android:title="@string/games"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_movies"
         android:enabled="true"
         android:icon="@drawable/ic_movies"
-        android:title="Movies"
+        android:title="@string/movies"
         app:showAsAction="ifRoom"/>
 </menu>
