@@ -106,7 +106,7 @@ public class DetailsActivity extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                interestLevelMessage.setVisibility(View.GONE);
+                interestLevelMessage.setVisibility(View.INVISIBLE);
                 if (eventId != null) {
                     String eventTypeFirebaseKey = null;
                     switch (eventType) {

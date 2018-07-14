@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,6 +30,7 @@ public class ConcertDetailsFragment extends Fragment {
     ImageView wideConcertImageView;
     TextView firstBandNameTextView;
     TextView secondBandNameTextView;
+    TextView remainingBandsTextView;
     TextView concertLocationTextView;
     TextView concertDateTextView;
 
@@ -61,29 +63,58 @@ public class ConcertDetailsFragment extends Fragment {
 
                 // Assign all views to variables
                 wideConcertImageView = v.findViewById(R.id.wide_image);
-                firstBandNameTextView = v.findViewById(R.id.first_band_name);
-                secondBandNameTextView = v.findViewById(R.id.second_band_name);
-                concertLocationTextView = v.findViewById(R.id.concert_location);
-                concertDateTextView = v.findViewById(R.id.concert_date);
+                firstBandNameTextView = v.findViewById(R.id.title);
+                secondBandNameTextView = v.findViewById(R.id.subtitle);
+                remainingBandsTextView = v.findViewById(R.id.second_info_field);
+                concertLocationTextView = v.findViewById(R.id.third_info_field);
+                concertDateTextView = v.findViewById(R.id.fourth_info_field);
 
                 // Get all values for this Concert
                 String imageURL = concertDocumentSnapshot.getString("concertImageUrl");
                 String firstBandName = listOfBandsAtConcert.get(0);
-                String secondBandName = listOfBandsAtConcert.get(1);
                 String concertLocation = concertDocumentSnapshot.getString("concertLocation");
                 String concertDate = concertDocumentSnapshot.getString("concertDate");
 
                 // Assign values to each view
                 Picasso.get().load(imageURL).error(R.drawable.ic_concerts_blue).into(wideConcertImageView);
                 firstBandNameTextView.setText(firstBandName);
-                secondBandNameTextView.setText(secondBandName);
                 concertLocationTextView.setText(concertLocation);
                 concertDateTextView.setText(concertDate);
 
+                setConditionalBandTextViews(listOfBandsAtConcert, v);
             }
         });
 
         return v;
+    }
+
+    public void setConditionalBandTextViews(ArrayList<String> listOfBandsAtConcert, View v) {
+        if (listOfBandsAtConcert.size() > 1) {
+            String secondBandName = listOfBandsAtConcert.get(1);
+            secondBandNameTextView.setVisibility(View.VISIBLE);
+            secondBandNameTextView.setText(secondBandName);
+            if (listOfBandsAtConcert.size() > 2) {
+                listOfBandsAtConcert.remove(0);
+                listOfBandsAtConcert.remove(0);
+                String remainingBands = "";
+//                for (String band : listOfBandsAtConcert) {
+//                    remainingBands = remainingBands.concat(band + ", ");
+//                }
+//                Toast.makeText(getContext(), remainingBands, Toast.LENGTH_SHORT).show();
+                // New Method
+                for (int i = 0; i < listOfBandsAtConcert.size(); i++) {
+                    if (i == listOfBandsAtConcert.size() - 2) {
+                        remainingBands = remainingBands.concat(listOfBandsAtConcert.get(i) + ", and ");
+                    } else if (i == listOfBandsAtConcert.size() - 1) {
+                        remainingBands = remainingBands.concat(listOfBandsAtConcert.get(i));
+                    } else if (i < listOfBandsAtConcert.size()) {
+                        remainingBands = remainingBands.concat(listOfBandsAtConcert.get(i) + ", ");
+                    }
+                }
+                remainingBandsTextView.setVisibility(View.VISIBLE);
+                remainingBandsTextView.setText(remainingBands);
+            }
+        }
     }
 
     @Override

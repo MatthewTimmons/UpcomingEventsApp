@@ -40,15 +40,10 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
         ArrayList<String> listOfBandsAtConcert = (ArrayList<String>) concertDocumentSnapshot.get("concertBandsArray");
 
         Picasso.get().load(concertDocumentSnapshot.getString("concertImageUrl")).error(R.drawable.ic_concerts_blue).into(viewHolder.concertPictureImageView);
-        viewHolder.firstBandNameTextView.setText(listOfBandsAtConcert.get(0));
-        viewHolder.secondBandNameTextView.setText(listOfBandsAtConcert.get(1));
+        viewHolder.titleTextView.setText(listOfBandsAtConcert.get(0));
+        setConditionalTextViews(listOfBandsAtConcert, viewHolder);
         viewHolder.concertLocationTextView.setText(concertDocumentSnapshot.getString("concertLocation"));
         viewHolder.concertDateTextView.setText(concertDocumentSnapshot.getString("concertDate"));
-
-        // Rules for second text view
-        if (listOfBandsAtConcert.size() < 2) {
-            viewHolder.secondBandNameTextView.setVisibility(View.GONE);
-        }
 
         viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +52,17 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
                 view.getContext().startActivity(intent);
             }
         });
+    }
+
+    // Rules for second and third bands at concert
+    private void setConditionalTextViews(ArrayList<String> listOfBandsAtConcert, ConcertViewHolder viewHolder) {
+        if (listOfBandsAtConcert.size() > 1) {
+            viewHolder.subtitleTextView.setVisibility(View.VISIBLE);
+            viewHolder.subtitleTextView.setText(listOfBandsAtConcert.get(1));
+            if (listOfBandsAtConcert.size() > 2) {
+                viewHolder.andMoreTextView.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override
@@ -68,8 +74,9 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
     public class ConcertViewHolder extends RecyclerView.ViewHolder {
         private CardView cardView;
         private ImageView concertPictureImageView;
-        private TextView firstBandNameTextView;
-        private TextView secondBandNameTextView;
+        private TextView titleTextView;
+        private TextView subtitleTextView;
+        private TextView andMoreTextView;
         private TextView concertLocationTextView;
         private TextView concertDateTextView;
 
@@ -77,10 +84,11 @@ public class ConcertListAdapter extends RecyclerView.Adapter<ConcertListAdapter.
             super(itemView);
             cardView = itemView.findViewById(R.id.concert_card_view);
             concertPictureImageView = itemView.findViewById(R.id.concert_picture);
-            firstBandNameTextView = itemView.findViewById(R.id.first_band_name);
-            secondBandNameTextView = itemView.findViewById(R.id.second_band_name);
-            concertLocationTextView = itemView.findViewById(R.id.concert_location);
-            concertDateTextView = itemView.findViewById(R.id.concert_date);
+            titleTextView = itemView.findViewById(R.id.title);
+            subtitleTextView = itemView.findViewById(R.id.subtitle);
+            andMoreTextView = itemView.findViewById(R.id.and_more);
+            concertLocationTextView = itemView.findViewById(R.id.third_info_field);
+            concertDateTextView = itemView.findViewById(R.id.fourth_info_field);
         }
     }
 }

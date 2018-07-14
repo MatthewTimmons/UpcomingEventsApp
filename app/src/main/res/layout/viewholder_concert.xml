@@ -36,24 +36,24 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/leftGutter"
+            app:layout_constraintStart_toStartOf="@id/leftGutter"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_action_name"/>
+            tools:src="@drawable/ic_action_name" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/bands_constraint"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/concert_location"
-            app:layout_constraintEnd_toStartOf="@+id/rightGutter"
-            app:layout_constraintStart_toEndOf="@+id/concert_picture"
+            app:layout_constraintBottom_toTopOf="@+id/third_info_field"
+            app:layout_constraintEnd_toStartOf="@id/rightGutter"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/concert_picture"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="spread">
 
-
             <TextView
-                android:id="@+id/first_band_name"
+                android:id="@+id/title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:lines="1"
@@ -61,13 +61,14 @@
                 tools:text="First Band Name" />
 
             <TextView
-                android:id="@+id/second_band_name"
+                android:id="@+id/subtitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:lines="1"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="18sp"
-                app:layout_constraintTop_toBottomOf="@+id/first_band_name"
+                app:layout_constraintTop_toBottomOf="@id/title"
                 tools:text="Second Band Name" />
 
             <TextView
@@ -75,32 +76,31 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="and more"
+                android:visibility="gone"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="14sp"
-                app:layout_constraintTop_toBottomOf="@+id/second_band_name" />
+                app:layout_constraintTop_toBottomOf="@id/subtitle" />
 
         </android.support.constraint.ConstraintLayout>
 
         <TextView
-            android:id="@+id/concert_location"
+            android:id="@+id/third_info_field"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            app:layout_constraintBottom_toTopOf="@+id/concert_date"
-            app:layout_constraintTop_toBottomOf="@+id/bands_constraint"
-            app:layout_constraintStart_toEndOf="@+id/concert_picture"
             android:layout_marginLeft="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/fourth_info_field"
+            app:layout_constraintStart_toEndOf="@id/concert_picture"
+            app:layout_constraintTop_toBottomOf="@+id/bands_constraint"
             tools:text="Gas Monkey Bar &amp; Grill, Dallas Texas" />
 
         <TextView
-            android:id="@+id/concert_date"
+            android:id="@+id/fourth_info_field"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/concert_location"
-            app:layout_constraintStart_toEndOf="@+id/concert_picture"
             android:layout_marginLeft="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/concert_picture"
+            app:layout_constraintTop_toBottomOf="@+id/third_info_field"
             tools:text="Januray 1st, 2018" />
 
 

@@ -1,38 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:layout_editor_absoluteY="25dp">
 
-        <ImageView
-            android:id="@+id/wide_image"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:src="@drawable/ic_concerts_blue"
-            app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@+id/wide_image"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_concerts_blue" />
 
     <android.support.constraint.Guideline
         android:id="@+id/top_gutter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="96dp"/>
+        app:layout_constraintGuide_begin="96dp" />
 
     <android.support.constraint.Guideline
         android:id="@+id/bottom_gutter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintGuide_end="220dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="220dp" />
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/bottom_gutter"
-        app:layout_constraintTop_toTopOf="@id/top_gutter">
+        android:layout_height="220dp"
+        app:layout_constraintTop_toBottomOf="@id/wide_image">
 
         <android.support.constraint.Guideline
             android:id="@+id/left_gutter"
@@ -49,45 +46,65 @@
             app:layout_constraintGuide_end="16dp" />
 
         <TextView
-            android:id="@+id/first_band_name"
+            android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/second_band_name"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toTopOf="@+id/subtitle"
             app:layout_constraintEnd_toStartOf="@+id/right_gutter"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@id/left_gutter"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread"
             tools:text="First Band Name" />
 
         <TextView
-            android:id="@+id/second_band_name"
+            android:id="@id/subtitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/concert_location"
+            android:visibility="gone"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/second_info_field"
             app:layout_constraintEnd_toStartOf="@id/right_gutter"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@id/left_gutter"
-            app:layout_constraintTop_toBottomOf="@+id/first_band_name"
+            app:layout_constraintTop_toBottomOf="@+id/title"
             tools:text="Second Band Name" />
 
         <TextView
-            android:id="@+id/concert_location"
+            android:id="@+id/second_info_field"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/concert_date"
+            android:visibility="gone"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/third_info_field"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintLeft_toRightOf="@id/left_gutter"
             app:layout_constraintRight_toLeftOf="@id/right_gutter"
-            app:layout_constraintTop_toBottomOf="@+id/second_band_name"
+            app:layout_constraintTop_toBottomOf="@+id/subtitle"
+            tools:text="Third Band Name if Applicable" />
+
+        <TextView
+            android:id="@id/third_info_field"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/fourth_info_field"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintLeft_toRightOf="@id/left_gutter"
+            app:layout_constraintRight_toLeftOf="@id/right_gutter"
+            app:layout_constraintTop_toBottomOf="@+id/second_info_field"
             tools:text="Location" />
 
         <TextView
-            android:id="@+id/concert_date"
+            android:id="@+id/fourth_info_field"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintLeft_toRightOf="@id/left_gutter"
             app:layout_constraintRight_toLeftOf="@id/right_gutter"
-            app:layout_constraintTop_toBottomOf="@+id/concert_location"
+            app:layout_constraintTop_toBottomOf="@+id/third_info_field"
             tools:text="Date" />
+
 
     </android.support.constraint.ConstraintLayout>
 
