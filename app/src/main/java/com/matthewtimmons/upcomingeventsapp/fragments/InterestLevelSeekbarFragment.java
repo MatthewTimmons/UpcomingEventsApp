@@ -39,7 +39,7 @@ public class InterestLevelSeekbarFragment extends Fragment {
     public static final int INTEREST_LEVEL_MEDIUM = 1;
     public static final int INTEREST_LEVEL_HIGH = 2;
 
-    public static InterestLevelSeekbarFragment newInstance(String eventId, String eventType) {
+    public static InterestLevelSeekbarFragment newInstance(String eventType, String eventId) {
         InterestLevelSeekbarFragment interestLevelSeekbarFragment = new InterestLevelSeekbarFragment();
         Bundle bundle = new Bundle();
         bundle.putString(EVENT_ID, eventId);

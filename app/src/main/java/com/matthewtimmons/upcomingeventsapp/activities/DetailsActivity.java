@@ -3,15 +3,28 @@ package com.matthewtimmons.upcomingeventsapp.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.matthewtimmons.upcomingeventsapp.adapters.FriendInfoListAdapter;
+import com.matthewtimmons.upcomingeventsapp.fragments.FriendInfoFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.InterestLevelSeekbarFragment;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.EventConstants;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.fragments.EventDetailsFragment;
+
+import java.util.List;
 
 public class DetailsActivity extends AppCompatActivity {
     private static final String EXTRA_EVENT_ID = "extraEventId";
@@ -19,6 +32,8 @@ public class DetailsActivity extends AppCompatActivity {
 
     String eventId;
     String eventType;
+    FriendInfoListAdapter friendsListAdapter;
+    RecyclerView recyclerView;
 
     //TODO: Fix later
     public static final String MY_NAME = "Matt";
@@ -40,26 +55,35 @@ public class DetailsActivity extends AppCompatActivity {
            eventType = getIntent().getStringExtra(EXTRA_EVENT_TYPE);
         }
 
-        Fragment fragment = null;
+        Fragment eventDetailsFragment = null;
         if (eventType.equals(EventConstants.EVENT_TYPE_CONCERT)) {
-            fragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.KEY_CONCERTS);
+            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.KEY_CONCERTS);
         } else if (eventType.equals(EventConstants.EVENT_TYPE_GAME)) {
-            fragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.KEY_GAMES);
+            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.KEY_GAMES);
         } else if (eventType.equals(EventConstants.EVENT_TYPE_MOVIE)) {
-            fragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.KEY_MOVIES);
+            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.KEY_MOVIES);
         }
 
         // TODO: pull in the Recycler view that contains freind's information
-//        RecyclerView recyclerView = findViewById(R.id.friends_event_information);
-//        pagerAdatper =
-//        recyclerView.setAdapter();
-//        viewPager = findViewById(R.id.pager);
-//        pagerAdapter = new EventPagerAdapter(getSupportFragmentManager());
-//        viewPager.setAdapter(pagerAdapter);
+        Query query = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                List<DocumentSnapshot> friends = task.getResult().getDocuments();
+                recyclerView = findViewById(R.id.friends_recycler_view);
+                recyclerView.setLayoutManager(new LinearLayoutManager(DetailsActivity.this));
+                friendsListAdapter = new FriendInfoListAdapter(friends, eventType, eventId);
+                recyclerView.setAdapter(friendsListAdapter);
+            }
+        });
 
-        Fragment fragment1 = InterestLevelSeekbarFragment.newInstance(eventId, eventType);
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
-        getSupportFragmentManager().beginTransaction().add(R.id.interest_level_container, fragment1).commit();
+        Fragment interestLevelSeekbarFragment = InterestLevelSeekbarFragment.newInstance(eventType, eventId);
+        Fragment friendRecyclerViewFragment = FriendInfoFragment.newInstance(eventType, eventId);
+
+        getSupportFragmentManager().beginTransaction().add(R.id.interest_level_container, interestLevelSeekbarFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_friend_recycler_view, friendRecyclerViewFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, eventDetailsFragment).commit();
+
     }
 }

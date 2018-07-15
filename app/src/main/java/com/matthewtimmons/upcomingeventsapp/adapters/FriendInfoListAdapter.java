@@ -16,14 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAdapter.FriendInfoViewHolder> {
-
-    List<DocumentSnapshot> filteredResults;
+    List<DocumentSnapshot> friends;
     DocumentSnapshot thisEvent;
     String eventType;
     String eventId;
 
-    public FriendInfoListAdapter(List<DocumentSnapshot> filteredResults, String eventType, String eventId) {
-        this.filteredResults = filteredResults;
+    public FriendInfoListAdapter(List<DocumentSnapshot> friends, String eventType, String eventId) {
+        this.friends = friends;
         this.eventType = eventType;
         this.eventId = eventId;
     }
@@ -32,29 +31,37 @@ public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAd
     @Override
     public FriendInfoViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.viewholder_friend_event_information, viewGroup, false);
-
-
-        return new FriendInfoViewHolder(viewGroup);
+        return new FriendInfoViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull FriendInfoViewHolder friendInfoViewHolder, int i) {
-        DocumentSnapshot userDocumentSnapshot = filteredResults.get(i);
-        friendInfoViewHolder.friendUsername.setText(userDocumentSnapshot.getString("username"));
-        friendInfoViewHolder.friendInterestLevel.setText((Integer) userDocumentSnapshot.get(FieldPath.of("interestLevels", eventType, eventId)));
+        DocumentSnapshot userDocumentSnapshot = friends.get(i);
+
+        String friendsInterestLevel = "0";
+        try {
+            friendsInterestLevel = (userDocumentSnapshot.get(FieldPath.of("interestLevels", eventType, eventId))).toString();
+        } catch (NullPointerException e) {
+            friendsInterestLevel = "nothing";
+        }
+        friendInfoViewHolder.friendUsername.setText(userDocumentSnapshot.getId());
+        if (friendsInterestLevel != null) { friendInfoViewHolder.friendInterestLevel.setText(friendsInterestLevel); }
 
         // Check checkbox if movie has been seen
         if (eventType.equals("movies")) {
             ArrayList<String> moviesSeen = (ArrayList<String>) userDocumentSnapshot.get("moviesSeenByMovieId");
             if (moviesSeen.contains(eventId)) {
-                friendInfoViewHolder.friendCheckbox.setImageResource(R.drawable.ic_movies_blue);
+                friendInfoViewHolder.friendCheckbox.setVisibility(View.VISIBLE);
+                friendInfoViewHolder.friendCheckbox.setImageResource(R.drawable.ic_checked_checkbox);
+            } else {
+                friendInfoViewHolder.friendCheckbox.setVisibility(View.VISIBLE);
             }
         }
     }
 
     @Override
     public int getItemCount() {
-        return filteredResults.size();
+        return friends.size();
     }
 
     public class FriendInfoViewHolder extends RecyclerView.ViewHolder {

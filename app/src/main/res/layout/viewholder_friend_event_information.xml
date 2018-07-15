@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/friend_row_data"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="60dp">
 
     <TextView
         android:id="@+id/friend_user_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,10 +35,12 @@
         android:layout_height="0dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/checkbox_off_background"
-        tools:src="@android:drawable/checkbox_off_background" />
+        app:srcCompat="@drawable/ic_unchecked_checkbox"
+        tools:src="@drawable/ic_unchecked_checkbox"
+        tools:visibility="visible" />
 
 </android.support.constraint.ConstraintLayout>
