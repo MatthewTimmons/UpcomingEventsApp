@@ -115,11 +115,11 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             cardView = itemView.findViewById(R.id.event_card_view);
             eventPictureImageView = itemView.findViewById(R.id.event_picture);
             titleTextView = itemView.findViewById(R.id.title);
-            subtitleTextView = itemView.findViewById(R.id.subtitle);
+            subtitleTextView = itemView.findViewById(R.id.optional_subtitle);
             andMoreTextView = itemView.findViewById(R.id.and_more);
-            secondEventInfoTextView = itemView.findViewById(R.id.second_info_field);
-            thirdEventInfoTextView = itemView.findViewById(R.id.third_info_field);
-            optionalFourthEventInfoTextView = itemView.findViewById(R.id.optional_fourth_info_field);
+            secondEventInfoTextView = itemView.findViewById(R.id.optional_second_subtitle_field);
+            thirdEventInfoTextView = itemView.findViewById(R.id.second_info_field);
+            optionalFourthEventInfoTextView = itemView.findViewById(R.id.third_info_field);
         }
     }
 }
