@@ -1,4 +1,4 @@
-package com.matthewtimmons.upcomingeventsapp;
+package com.matthewtimmons.upcomingeventsapp.fragments;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -20,13 +20,13 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.matthewtimmons.upcomingeventsapp.activities.DetailsActivity;
+import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.EventConstants;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 
 import java.util.Map;
 
-public class InterestLevelSeekbar extends Fragment {
+public class InterestLevelSeekbarFragment extends Fragment {
     SeekBar interestLevelSeekbar;
     TextView interestLevelTextView;
     String eventId;
@@ -39,13 +39,13 @@ public class InterestLevelSeekbar extends Fragment {
     public static final int INTEREST_LEVEL_MEDIUM = 1;
     public static final int INTEREST_LEVEL_HIGH = 2;
 
-    public static InterestLevelSeekbar newInstance(String eventId, String eventType) {
-        InterestLevelSeekbar interestLevelSeekbar = new InterestLevelSeekbar();
+    public static InterestLevelSeekbarFragment newInstance(String eventId, String eventType) {
+        InterestLevelSeekbarFragment interestLevelSeekbarFragment = new InterestLevelSeekbarFragment();
         Bundle bundle = new Bundle();
         bundle.putString(EVENT_ID, eventId);
         bundle.putString(EVENT_TYPE, eventType);
-        interestLevelSeekbar.setArguments(bundle);
-        return interestLevelSeekbar;
+        interestLevelSeekbarFragment.setArguments(bundle);
+        return interestLevelSeekbarFragment;
     }
 
     @Override

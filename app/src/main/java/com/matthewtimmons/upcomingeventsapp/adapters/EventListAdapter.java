@@ -43,18 +43,18 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
         // Set the text and image for all views
         switch (eventType) {
-            case EventConstants.EVENT_TYPE_CONCERT:
+            case FirebaseConstants.KEY_CONCERTS:
                 backupImage = R.drawable.ic_concerts_blue;
                 setAllSharedFields(eventDocumentSnapshot, viewHolder, FirebaseConstants.KEY_CONCERT_IMAGE_URL, "NA",
                         FirebaseConstants.KEY_CONCERT_LOCATION, FirebaseConstants.KEY_CONCERT_DATE);
                 setBandNameValues(eventDocumentSnapshot, viewHolder);
                 break;
-            case EventConstants.EVENT_TYPE_GAME:
+            case FirebaseConstants.KEY_GAMES:
                 backupImage = R.drawable.ic_games_blue;
                 setAllSharedFields(eventDocumentSnapshot, viewHolder, FirebaseConstants.KEY_GAME_IMAGE_URL,
                         FirebaseConstants.KEY_GAME_TITLE, FirebaseConstants.KEY_GAME_LOCATION, FirebaseConstants.KEY_GAME_DATE);
                 break;
-            case EventConstants.EVENT_TYPE_MOVIE:
+            case FirebaseConstants.KEY_MOVIES:
                 backupImage = R.drawable.ic_movies_blue;
                 setAllSharedFields(eventDocumentSnapshot, viewHolder, FirebaseConstants.KEY_MOVIE_IMAGE_URL,
                         FirebaseConstants.KEY_MOVIE_TITLE, FirebaseConstants.KEY_MOVIE_RATING, FirebaseConstants.KEY_MOVIE_GENRE);

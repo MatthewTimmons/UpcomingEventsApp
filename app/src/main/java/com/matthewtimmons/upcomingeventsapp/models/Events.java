@@ -1,4 +1,4 @@
-package com.matthewtimmons.upcomingeventsapp;
+package com.matthewtimmons.upcomingeventsapp.models;
 
 import java.io.Serializable;
 

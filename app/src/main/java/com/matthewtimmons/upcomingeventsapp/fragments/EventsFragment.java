@@ -23,23 +23,37 @@ import com.matthewtimmons.upcomingeventsapp.adapters.EventListAdapter;
 
 import java.util.List;
 
-public class GamesFragment extends Fragment {
+public class EventsFragment extends Fragment {
+    private static final String KEY_EVENT_TYPE = "keyEventType";
+    private static final String KEY_EVENT_DATE = "keyEventDate";
+    private String eventType;
+    private String eventDate;
     RecyclerView recyclerView;
     EventListAdapter eventListAdapter;
+
+    public static EventsFragment newInstance(String eventType, String keyEventDate) {
+        EventsFragment fragment = new EventsFragment();
+        Bundle args = new Bundle();
+        args.putString(KEY_EVENT_TYPE, eventType);
+        args.putString(KEY_EVENT_DATE, keyEventDate);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_events, container, false);
+        eventType = getArguments().getString(KEY_EVENT_TYPE);
+        eventDate = getArguments().getString(KEY_EVENT_DATE);
 
-        Query gamesQuery = FirebaseFirestore.getInstance().collection(FirebaseConstants.KEY_GAMES).orderBy("gameReleaseDate");
-
-        gamesQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        Query eventQuery = FirebaseFirestore.getInstance().collection(eventType).orderBy(eventDate);
+        eventQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<DocumentSnapshot> gameDocumentSnapshots = task.getResult().getDocuments();
+                List<DocumentSnapshot> eventDocumentSnapshots = task.getResult().getDocuments();
                 recyclerView = v.findViewById(R.id.events_recycler_view);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                eventListAdapter = new EventListAdapter(gameDocumentSnapshots, EventConstants.EVENT_TYPE_GAME);
+                eventListAdapter = new EventListAdapter(eventDocumentSnapshots, eventType);
                 recyclerView.setAdapter(eventListAdapter);
             }
         });

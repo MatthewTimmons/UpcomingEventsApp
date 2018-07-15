@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
-import com.matthewtimmons.upcomingeventsapp.InterestLevelSeekbar;
+import com.matthewtimmons.upcomingeventsapp.fragments.InterestLevelSeekbarFragment;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.EventConstants;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
@@ -57,7 +57,7 @@ public class DetailsActivity extends AppCompatActivity {
 //        pagerAdapter = new EventPagerAdapter(getSupportFragmentManager());
 //        viewPager.setAdapter(pagerAdapter);
 
-        Fragment fragment1 = InterestLevelSeekbar.newInstance(eventId, eventType);
+        Fragment fragment1 = InterestLevelSeekbarFragment.newInstance(eventId, eventType);
 
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.interest_level_container, fragment1).commit();

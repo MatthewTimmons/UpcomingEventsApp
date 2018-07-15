@@ -4,9 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.matthewtimmons.upcomingeventsapp.fragments.ConcertsFragment;
-import com.matthewtimmons.upcomingeventsapp.fragments.GamesFragment;
-import com.matthewtimmons.upcomingeventsapp.fragments.MoviesFragment;
+import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
+import com.matthewtimmons.upcomingeventsapp.fragments.EventsFragment;
 
 public class EventPagerAdapter extends FragmentPagerAdapter {
 
@@ -24,13 +23,13 @@ public class EventPagerAdapter extends FragmentPagerAdapter {
         Fragment fragment = null;
         switch (i) {
             case INDEX_CONCERTS:
-                fragment = new ConcertsFragment();
+                fragment = EventsFragment.newInstance(FirebaseConstants.KEY_CONCERTS, FirebaseConstants.KEY_CONCERT_DATE);
                 break;
             case INDEX_GAMES:
-                fragment = new GamesFragment();
+                fragment = EventsFragment.newInstance(FirebaseConstants.KEY_GAMES, FirebaseConstants.KEY_GAME_DATE);
                 break;
             case INDEX_MOVIES:
-                fragment = new MoviesFragment();
+                fragment = EventsFragment.newInstance(FirebaseConstants.KEY_MOVIES, FirebaseConstants.KEY_MOVIE_DATE);
                 break;
         }
         return fragment;
