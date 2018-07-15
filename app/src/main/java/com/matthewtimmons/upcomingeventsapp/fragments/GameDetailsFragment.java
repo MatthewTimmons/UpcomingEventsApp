@@ -57,7 +57,7 @@ public class GameDetailsFragment extends Fragment {
                 wideGameImageView = v.findViewById(R.id.wide_image);
                 gameTitleTextView = v.findViewById(R.id.title);
                 gameReleaseConsolesTextView = v.findViewById(R.id.third_info_field);
-                gameReleaseDateTextView = v.findViewById(R.id.fourth_info_field);
+                gameReleaseDateTextView = v.findViewById(R.id.optional_fourth_info_field);
 
                 // Get all values for this Game
                 String imageURL = gameDocumentSnapshot.getString("gameImageUrl");

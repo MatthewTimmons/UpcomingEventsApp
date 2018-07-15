@@ -26,9 +26,11 @@
         app:layout_constraintGuide_end="220dp" />
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/details_constraint_layout"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
-        app:layout_constraintTop_toBottomOf="@id/wide_image">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_gutter"
+        app:layout_constraintTop_toBottomOf="@id/top_gutter">
 
         <android.support.constraint.Guideline
             android:id="@+id/left_gutter"
@@ -50,54 +52,57 @@
             android:layout_height="wrap_content"
             android:textSize="30sp"
             app:layout_constraintBottom_toTopOf="@id/subtitle"
-            app:layout_constraintStart_toStartOf="@id/left_gutter"
             app:layout_constraintEnd_toStartOf="@id/right_gutter"
+            app:layout_constraintStart_toStartOf="@id/left_gutter"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread"
             tools:text="First Band Name" />
 
         <TextView
             android:id="@id/subtitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:textSize="24sp"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/second_info_field"
             app:layout_constraintEnd_toStartOf="@id/right_gutter"
             app:layout_constraintStart_toStartOf="@id/left_gutter"
             app:layout_constraintTop_toBottomOf="@id/title"
-            tools:text="Second Band Name" />
+            tools:text="Optional Subtitle"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/second_info_field"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:textSize="18sp"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/third_info_field"
             app:layout_constraintLeft_toRightOf="@id/left_gutter"
             app:layout_constraintRight_toLeftOf="@id/right_gutter"
             app:layout_constraintTop_toBottomOf="@id/subtitle"
-            tools:text="Third Band Name if Applicable" />
+            tools:text="Optional Third Info Field"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/third_info_field"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/fourth_info_field"
+            app:layout_constraintBottom_toTopOf="@id/optional_fourth_info_field"
             app:layout_constraintLeft_toRightOf="@id/left_gutter"
             app:layout_constraintRight_toLeftOf="@id/right_gutter"
             app:layout_constraintTop_toBottomOf="@id/second_info_field"
-            tools:text="Location" />
+            tools:text="Fourth Info Field" />
 
         <TextView
-            android:id="@+id/fourth_info_field"
+            android:id="@+id/optional_fourth_info_field"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/left_gutter"
             app:layout_constraintRight_toLeftOf="@id/right_gutter"
             app:layout_constraintTop_toBottomOf="@id/third_info_field"
-            tools:text="Date" />
+            tools:text="Fifth Info Field" />
 
 
     </android.support.constraint.ConstraintLayout>
@@ -110,9 +115,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:visibility="visible"
-        tools:text="Seen"/>
+        tools:text="Optional Checkbox"/>
 
 </android.support.constraint.ConstraintLayout>

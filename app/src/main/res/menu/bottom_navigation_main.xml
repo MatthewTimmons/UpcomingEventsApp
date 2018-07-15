@@ -7,7 +7,7 @@
         android:id="@+id/action_concerts"
         android:enabled="true"
         android:icon="@drawable/ic_concerts"
-        android:title="@string/concerts"
+        android:title="@string/events"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_games"

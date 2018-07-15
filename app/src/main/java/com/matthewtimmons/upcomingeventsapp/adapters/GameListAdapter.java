@@ -65,7 +65,7 @@ public class GameListAdapter extends RecyclerView.Adapter<GameListAdapter.GameVi
             cardView = itemView.findViewById(R.id.event_card_view);
             titleTextView = itemView.findViewById(R.id.title);
             releaseConsolesTextView = itemView.findViewById(R.id.third_info_field);
-            releaseDateTextView = itemView.findViewById(R.id.fourth_info_field);
+            releaseDateTextView = itemView.findViewById(R.id.optional_fourth_info_field);
             gameArtImageView = itemView.findViewById(R.id.event_picture);
         }
     }

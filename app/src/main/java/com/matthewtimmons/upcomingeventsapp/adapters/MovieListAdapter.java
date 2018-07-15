@@ -68,7 +68,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
             movieTitleTextView = itemView.findViewById(R.id.title);
             movieRatingTextView = itemView.findViewById(R.id.second_info_field);
             movieGenreTextView = itemView.findViewById(R.id.third_info_field);
-            movieReleaseDateTextView = itemView.findViewById(R.id.fourth_info_field);
+            movieReleaseDateTextView = itemView.findViewById(R.id.optional_fourth_info_field);
             moviePictureImageView = itemView.findViewById(R.id.event_picture);
         }
     }

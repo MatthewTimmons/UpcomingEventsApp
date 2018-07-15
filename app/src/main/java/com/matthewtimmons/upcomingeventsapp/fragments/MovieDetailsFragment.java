@@ -68,7 +68,7 @@ public class MovieDetailsFragment extends Fragment {
                 movieTitleTextView = v.findViewById(R.id.title);
                 movieRatingTextView = v.findViewById(R.id.second_info_field);
                 movieGenreTextView = v.findViewById(R.id.third_info_field);
-                movieReleaseDateTextView = v.findViewById(R.id.fourth_info_field);
+                movieReleaseDateTextView = v.findViewById(R.id.optional_fourth_info_field);
                 movieHasBeenSeenCheckbox = v.findViewById(R.id.checkbox);
 
                 // Get all values for this Movie
@@ -81,7 +81,11 @@ public class MovieDetailsFragment extends Fragment {
                 // Assign values to each view
                 Picasso.get().load(movieImageUrl).error(R.drawable.ic_movies_blue).into(wideMovieImageView);
                 movieTitleTextView.setText(movieTitle);
-                movieRatingTextView.setText(movieRating);
+                String rating = "Rated ";
+                rating = rating.concat(movieRating);
+                movieRatingTextView.setVisibility(View.VISIBLE);
+                movieRatingTextView.setTextSize(14);
+                movieRatingTextView.setText(rating);
                 movieGenreTextView.setText(movieGenre);
                 movieReleaseDateTextView.setText(movieReleaseDate);
                 movieHasBeenSeenCheckbox.setVisibility(View.VISIBLE);

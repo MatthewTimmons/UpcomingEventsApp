@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -15,7 +16,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.matthewtimmons.upcomingeventsapp.InterestLevelSeekbar;
 import com.matthewtimmons.upcomingeventsapp.R;
+import com.matthewtimmons.upcomingeventsapp.constants.EventConstants;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.squareup.picasso.Picasso;
 
@@ -32,6 +35,7 @@ public class ConcertDetailsFragment extends Fragment {
     TextView remainingBandsTextView;
     TextView concertLocationTextView;
     TextView concertDateTextView;
+
 
     public static ConcertDetailsFragment newInstance(String concertId) {
         ConcertDetailsFragment instance = new ConcertDetailsFragment();
@@ -66,7 +70,7 @@ public class ConcertDetailsFragment extends Fragment {
                 secondBandNameTextView = v.findViewById(R.id.subtitle);
                 remainingBandsTextView = v.findViewById(R.id.second_info_field);
                 concertLocationTextView = v.findViewById(R.id.third_info_field);
-                concertDateTextView = v.findViewById(R.id.fourth_info_field);
+                concertDateTextView = v.findViewById(R.id.optional_fourth_info_field);
 
                 // Get all values for this Concert
                 String imageURL = concertDocumentSnapshot.getString("concertImageUrl");
