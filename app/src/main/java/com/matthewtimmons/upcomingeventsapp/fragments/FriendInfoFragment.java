@@ -47,6 +47,10 @@ public class FriendInfoFragment extends Fragment {
         eventId = getArguments().getString(KEY_EVENT_ID);
         eventType = getArguments().getString(KEY_EVENT_TYPE);
 
+        if (eventType.equals(FirebaseConstants.KEY_MOVIES)) {
+            v.findViewById(R.id.friend_checkbox_column).setVisibility(View.VISIBLE);
+        }
+
 //        Query query = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS);
 //        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
 //            @Override

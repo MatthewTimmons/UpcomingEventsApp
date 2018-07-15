@@ -128,7 +128,7 @@ public class InterestLevelSeekbarFragment extends Fragment {
                     break;
                 case INTEREST_LEVEL_MEDIUM:
                     interestLevelTextView.setText(R.string.interest_level_display_name_medium);
-                    interestLevelTextView.setBackgroundColor(Color.parseColor("#f4f142"));
+                    interestLevelTextView.setBackgroundColor(Color.parseColor("#ffcc00"));
                     break;
                 case INTEREST_LEVEL_HIGH:
                     interestLevelTextView.setText(R.string.interest_level_display_name_high);

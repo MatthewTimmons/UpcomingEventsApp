@@ -17,7 +17,6 @@ import java.util.List;
 
 public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAdapter.FriendInfoViewHolder> {
     List<DocumentSnapshot> friends;
-    DocumentSnapshot thisEvent;
     String eventType;
     String eventId;
 
@@ -41,11 +40,13 @@ public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAd
         String friendsInterestLevel = "0";
         try {
             friendsInterestLevel = (userDocumentSnapshot.get(FieldPath.of("interestLevels", eventType, eventId))).toString();
+            friendInfoViewHolder.friendInterestLevel.setText(friendsInterestLevel);
         } catch (NullPointerException e) {
-            friendsInterestLevel = "nothing";
+            friendsInterestLevel = "N/A";
+            friendInfoViewHolder.friendInterestLevel.setTextSize(24);
+            friendInfoViewHolder.friendInterestLevel.setText(friendsInterestLevel);
         }
         friendInfoViewHolder.friendUsername.setText(userDocumentSnapshot.getId());
-        if (friendsInterestLevel != null) { friendInfoViewHolder.friendInterestLevel.setText(friendsInterestLevel); }
 
         // Check checkbox if movie has been seen
         if (eventType.equals("movies")) {
