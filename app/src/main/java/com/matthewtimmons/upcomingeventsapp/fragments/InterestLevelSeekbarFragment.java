@@ -3,6 +3,9 @@ package com.matthewtimmons.upcomingeventsapp.fragments;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -66,6 +69,8 @@ public class InterestLevelSeekbarFragment extends Fragment {
         setSeekbarToCurrentInterestLevel(getContext(), eventType, eventId);
 
         interestLevelSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 updateText(i);
@@ -78,44 +83,10 @@ public class InterestLevelSeekbarFragment extends Fragment {
 
             @Override
             public void onStopTrackingTouch(final SeekBar seekBar) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                interestLevelTextView.setVisibility(View.INVISIBLE);
-                if (eventId != null) {
-                    String eventTypeFirebaseKey = null;
-                    switch (eventType) {
-                        case EventConstants.EVENT_TYPE_CONCERT:
-                            eventTypeFirebaseKey = FirebaseConstants.KEY_CONCERTS;
-                            break;
-                        case EventConstants.EVENT_TYPE_GAME:
-                            eventTypeFirebaseKey = FirebaseConstants.KEY_GAMES;
-                            break;
-                        case EventConstants.EVENT_TYPE_MOVIE:
-                            eventTypeFirebaseKey = FirebaseConstants.KEY_MOVIES;
-                            break;
-                    }
-                    CollectionReference userCollectionReference = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS);
-                    updateEventInterestLevelForUser(eventId, seekBar.getProgress(), eventTypeFirebaseKey, userCollectionReference);
-                } else {
-                    Toast.makeText(getContext(), R.string.error_event_id_not_found, Toast.LENGTH_SHORT).show();
-                }
+                sendDataAndResetView(seekBar);
             }
 
-            private void updateEventInterestLevelForUser(final String eventId,
-                                                         final Number newInterestLevel,
-                                                         final String eventTypeKey,
-                                                         CollectionReference userCollectionReference) {
 
-                userCollectionReference.document(MY_NAME).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        task.getResult().getReference().update(FieldPath.of(FirebaseConstants.KEY_INTEREST_LEVELS_USER, eventTypeKey, eventId), newInterestLevel);
-                    }
-                });
-            }
         });
         return v;
     }
@@ -136,6 +107,49 @@ public class InterestLevelSeekbarFragment extends Fragment {
                     break;
             }
         }
+
+        public void sendDataAndResetView(final SeekBar seekBar) {
+
+            final Handler handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (eventId != null) {
+                        String eventTypeFirebaseKey = null;
+                        switch (eventType) {
+                            case EventConstants.EVENT_TYPE_CONCERT:
+                                eventTypeFirebaseKey = FirebaseConstants.KEY_CONCERTS;
+                                break;
+                            case EventConstants.EVENT_TYPE_GAME:
+                                eventTypeFirebaseKey = FirebaseConstants.KEY_GAMES;
+                                break;
+                            case EventConstants.EVENT_TYPE_MOVIE:
+                                eventTypeFirebaseKey = FirebaseConstants.KEY_MOVIES;
+                                break;
+                        }
+                        CollectionReference userCollectionReference = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS);
+                        updateEventInterestLevelForUser(eventId, seekBar.getProgress(), eventTypeFirebaseKey, userCollectionReference);
+                    } else {
+                        Toast.makeText(getContext(), R.string.error_event_id_not_found, Toast.LENGTH_SHORT).show();
+                    }
+                    handler.postDelayed(this, 10000);
+                    interestLevelTextView.setVisibility(View.INVISIBLE);
+                }
+            }, 1000);
+        }
+
+    private void updateEventInterestLevelForUser(final String eventId,
+                                                 final Number newInterestLevel,
+                                                 final String eventTypeKey,
+                                                 CollectionReference userCollectionReference) {
+
+        userCollectionReference.document(MY_NAME).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                task.getResult().getReference().update(FieldPath.of(FirebaseConstants.KEY_INTEREST_LEVELS_USER, eventTypeKey, eventId), newInterestLevel);
+            }
+        });
+    }
 
         public void setSeekbarToCurrentInterestLevel(final Context context, final String eventType, final String eventId) {
             FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

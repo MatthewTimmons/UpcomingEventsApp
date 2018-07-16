@@ -54,7 +54,7 @@ public class EventsFragment extends Fragment {
                 v.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.vaporwave);
                 break;
             case FirebaseConstants.KEY_MOVIES:
-                v.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.popcorn);
+                v.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.popcorn_background);
                 break;
         }
 

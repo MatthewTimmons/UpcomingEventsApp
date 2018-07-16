@@ -3,121 +3,100 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    tools:layout_editor_absoluteY="25dp">
 
     <ImageView
         android:id="@+id/wide_image"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="200dp"
+        android:background="@color/pastel_blue"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_concerts_blue" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/top_gutter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="96dp" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/bottom_gutter"
+        android:id="@+id/left_gutter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="220dp" />
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/details_constraint_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/optional_checkbox"
-        app:layout_constraintTop_toBottomOf="@id/top_gutter">
+    <android.support.constraint.Guideline
+        android:id="@+id/right_gutter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp" />
 
-        <android.support.constraint.Guideline
-            android:id="@+id/left_gutter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="16dp" />
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="@id/right_gutter"
+        app:layout_constraintStart_toStartOf="@id/left_gutter"
+        app:layout_constraintTop_toBottomOf="@id/wide_image"
+        tools:text="First Band Name" />
 
-        <android.support.constraint.Guideline
-            android:id="@+id/right_gutter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_end="16dp" />
+    <TextView
+        android:id="@id/optional_subtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="24sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/right_gutter"
+        app:layout_constraintStart_toStartOf="@+id/left_gutter"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_goneMarginTop="0dp"
+        tools:text="Optional Subtitle"
+        tools:visibility="visible" />
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="30sp"
-            app:layout_constraintBottom_toTopOf="@id/optional_subtitle"
-            app:layout_constraintEnd_toStartOf="@id/right_gutter"
-            app:layout_constraintStart_toStartOf="@id/left_gutter"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread"
-            tools:text="First Band Name" />
+    <TextView
+        android:id="@+id/optional_second_subtitle_field"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/right_gutter"
+        app:layout_constraintStart_toStartOf="@id/left_gutter"
+        app:layout_constraintTop_toBottomOf="@id/optional_subtitle"
+        tools:text="Optional Third Info Field"
+        tools:visibility="visible" />
 
-        <TextView
-            android:id="@id/optional_subtitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/optional_second_subtitle_field"
-            app:layout_constraintEnd_toStartOf="@id/right_gutter"
-            app:layout_constraintStart_toStartOf="@id/left_gutter"
-            app:layout_constraintTop_toBottomOf="@id/title"
-            tools:text="Optional Subtitle"
-            tools:visibility="visible" />
+    <TextView
+        android:id="@+id/second_info_field"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@id/right_gutter"
+        app:layout_constraintStart_toStartOf="@id/left_gutter"
+        app:layout_constraintTop_toBottomOf="@id/optional_second_subtitle_field"
+        tools:text="Fourth Info Field" />
 
-        <TextView
-            android:id="@+id/optional_second_subtitle_field"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/second_info_field"
-            app:layout_constraintLeft_toRightOf="@id/left_gutter"
-            app:layout_constraintRight_toLeftOf="@id/right_gutter"
-            app:layout_constraintTop_toBottomOf="@id/optional_subtitle"
-            tools:text="Optional Third Info Field"
-            tools:visibility="visible" />
-
-        <TextView
-            android:id="@+id/second_info_field"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/third_info_field"
-            app:layout_constraintLeft_toRightOf="@id/left_gutter"
-            app:layout_constraintRight_toLeftOf="@id/right_gutter"
-            app:layout_constraintTop_toBottomOf="@id/optional_second_subtitle_field"
-            tools:text="Fourth Info Field" />
-
-        <TextView
-            android:id="@+id/third_info_field"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/left_gutter"
-            app:layout_constraintRight_toLeftOf="@id/right_gutter"
-            app:layout_constraintTop_toBottomOf="@id/second_info_field"
-            tools:text="Fifth Info Field" />
-
-
-    </android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/third_info_field"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@id/right_gutter"
+        app:layout_constraintStart_toStartOf="@id/left_gutter"
+        app:layout_constraintTop_toBottomOf="@id/second_info_field"
+        tools:text="Fifth Info Field" />
 
     <CheckBox
         android:id="@+id/optional_checkbox"
-        android:textSize="30sp"
-        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:visibility="visible"
-        tools:text="Optional Checkbox"/>
+        android:layout_marginTop="32dp"
+        android:textSize="30sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/right_gutter"
+        app:layout_constraintTop_toBottomOf="@id/third_info_field"
+        tools:text="Optional Checkbox"
+        tools:visibility="visible" />
 
 </android.support.constraint.ConstraintLayout>

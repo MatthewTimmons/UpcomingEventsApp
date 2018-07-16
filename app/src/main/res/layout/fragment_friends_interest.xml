@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:background="@color/colorPrimary">
+    tools:background="@color/colorPrimary"
+    tools:layout_editor_absoluteY="25dp">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/columns_constraint_layout"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:background="@color/colorPrimary"
-        app:layout_constraintBottom_toTopOf="@id/friends_recycler_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -31,7 +30,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/friend_interest_level_column"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/friend_interest_level_column"
@@ -39,7 +38,6 @@
             android:layout_height="0dp"
             android:layout_marginEnd="32dp"
             android:layout_marginRight="32dp"
-            android:textColor="@android:color/white"
             android:autoSizeTextType="uniform"
             android:gravity="center"
             android:shadowColor="@android:color/black"
@@ -47,6 +45,7 @@
             android:shadowDy="1"
             android:shadowRadius="2"
             android:text="Interest Level"
+            android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/friend_checkbox_column"
             app:layout_constraintTop_toTopOf="parent" />
@@ -57,7 +56,6 @@
             android:layout_height="0dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:textColor="@android:color/white"
             android:autoSizeTextType="uniform"
             android:gravity="center"
             android:shadowColor="@android:color/black"
@@ -65,6 +63,7 @@
             android:shadowDy="1"
             android:shadowRadius="2"
             android:text="Seen"
+            android:textColor="@android:color/white"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -78,8 +77,8 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/friends_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@color/colorPrimaryLight"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/columns_constraint_layout" />
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/columns_constraint_layout"
+        android:background="@color/colorPrimaryLight"/>
+
 </android.support.constraint.ConstraintLayout>
