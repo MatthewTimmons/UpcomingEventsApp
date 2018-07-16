@@ -32,8 +32,6 @@ public class DetailsActivity extends AppCompatActivity {
 
     String eventId;
     String eventType;
-    FriendInfoListAdapter friendsListAdapter;
-    RecyclerView recyclerView;
 
     //TODO: Fix later
     public static final String MY_NAME = "Matt";
@@ -64,26 +62,11 @@ public class DetailsActivity extends AppCompatActivity {
             eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.KEY_MOVIES);
         }
 
-        // TODO: pull in the Recycler view that contains freind's information
-        Query query = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS);
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<DocumentSnapshot> friends = task.getResult().getDocuments();
-                recyclerView = findViewById(R.id.friends_recycler_view);
-                recyclerView.setLayoutManager(new LinearLayoutManager(DetailsActivity.this));
-                friendsListAdapter = new FriendInfoListAdapter(friends, eventType, eventId);
-                recyclerView.setAdapter(friendsListAdapter);
-            }
-        });
-
-
         Fragment interestLevelSeekbarFragment = InterestLevelSeekbarFragment.newInstance(eventType, eventId);
         Fragment friendRecyclerViewFragment = FriendInfoFragment.newInstance(eventType, eventId);
 
         getSupportFragmentManager().beginTransaction().add(R.id.interest_level_container, interestLevelSeekbarFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_friend_recycler_view, friendRecyclerViewFragment).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, eventDetailsFragment).commit();
-
     }
 }

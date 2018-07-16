@@ -15,14 +15,15 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/card_contents"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/pastel_blue">
 
         <android.support.constraint.Guideline
             android:id="@+id/left_gutter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="16dp" />
+            app:layout_constraintGuide_begin="16dp"/>
 
         <android.support.constraint.Guideline
             android:id="@+id/right_gutter"

@@ -42,7 +42,7 @@ public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAd
             friendsInterestLevel = (userDocumentSnapshot.get(FieldPath.of("interestLevels", eventType, eventId))).toString();
             friendInfoViewHolder.friendInterestLevel.setText(friendsInterestLevel);
         } catch (NullPointerException e) {
-            friendsInterestLevel = "N/A";
+            friendsInterestLevel = "-";
             friendInfoViewHolder.friendInterestLevel.setTextSize(24);
             friendInfoViewHolder.friendInterestLevel.setText(friendsInterestLevel);
         }

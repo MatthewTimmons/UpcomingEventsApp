@@ -17,14 +17,19 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
+import com.matthewtimmons.upcomingeventsapp.activities.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.adapters.FriendInfoListAdapter;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 
+import org.w3c.dom.Document;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class FriendInfoFragment extends Fragment {
     private static final String KEY_EVENT_TYPE = "keyEventType";
     private static final String KEY_EVENT_ID = "keyEventId";
+    private static final String CURRENT_USER = "Matt";
     FriendInfoListAdapter friendsListAdapter;
     RecyclerView recyclerView;
     String eventId;
@@ -43,31 +48,41 @@ public class FriendInfoFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_friends_interest, container, false);
-
         eventId = getArguments().getString(KEY_EVENT_ID);
         eventType = getArguments().getString(KEY_EVENT_TYPE);
-
-        if (eventType.equals(FirebaseConstants.KEY_MOVIES)) {
-            v.findViewById(R.id.friend_checkbox_column).setVisibility(View.VISIBLE);
-        }
-
-//        Query query = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS);
-//        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                List<DocumentSnapshot> friends = task.getResult().getDocuments();
-////                for (DocumentSnapshot user : friends) {
-////                    if (user.getId().equals("Matt")) {
-////                        friends.remove(user);
-////                    }
-////                }
-//            }
-//        });
         return v;
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        recyclerView = view.findViewById(R.id.friends_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        Query query = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                List<DocumentSnapshot> allUsers = task.getResult().getDocuments();
+                List<DocumentSnapshot> friends = getFilteredUsersList(allUsers);
+                friendsListAdapter = new FriendInfoListAdapter(friends, eventType, eventId);
+                recyclerView.setAdapter(friendsListAdapter);
+            }
+        });
+
+        if (eventType.equals(FirebaseConstants.KEY_MOVIES)) {
+            view.findViewById(R.id.friend_checkbox_column).setVisibility(View.VISIBLE);
+        }
+    }
+
+    private List<DocumentSnapshot> getFilteredUsersList(List<DocumentSnapshot> allUsers) {
+        List<DocumentSnapshot> friends = new ArrayList<>();
+        for (DocumentSnapshot user : allUsers) {
+            if (!user.getId().equals(CURRENT_USER)) {
+                friends.add(user);
+            }
+        }
+        return friends;
     }
 }

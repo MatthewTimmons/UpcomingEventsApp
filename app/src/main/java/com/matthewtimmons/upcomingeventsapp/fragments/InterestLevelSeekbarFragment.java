@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,6 +28,8 @@ import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import java.util.Map;
 
 public class InterestLevelSeekbarFragment extends Fragment {
+    private static final long DELAY_SEEKBAR_HINT_MS = 1000L;
+    Handler seekbarHandler = new Handler();
     SeekBar interestLevelSeekbar;
     TextView interestLevelTextView;
     String eventId;
@@ -79,6 +79,7 @@ public class InterestLevelSeekbarFragment extends Fragment {
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 interestLevelTextView.setVisibility(View.VISIBLE);
+                seekbarHandler.removeCallbacksAndMessages(null);
             }
 
             @Override
@@ -109,9 +110,7 @@ public class InterestLevelSeekbarFragment extends Fragment {
         }
 
         public void sendDataAndResetView(final SeekBar seekBar) {
-
-            final Handler handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(new Runnable() {
+            seekbarHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     if (eventId != null) {
@@ -132,10 +131,9 @@ public class InterestLevelSeekbarFragment extends Fragment {
                     } else {
                         Toast.makeText(getContext(), R.string.error_event_id_not_found, Toast.LENGTH_SHORT).show();
                     }
-                    handler.postDelayed(this, 10000);
                     interestLevelTextView.setVisibility(View.INVISIBLE);
                 }
-            }, 1000);
+            }, DELAY_SEEKBAR_HINT_MS);
         }
 
     private void updateEventInterestLevelForUser(final String eventId,
@@ -156,6 +154,7 @@ public class InterestLevelSeekbarFragment extends Fragment {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     try {
+                        // TODO: Change this get(1) to get the current user
                         DocumentSnapshot userDocumentSnapshot = task.getResult().getDocuments().get(1);
                         Map<String, Object> interestLevels = (Map<String, Object>) userDocumentSnapshot.get(FirebaseConstants.KEY_INTEREST_LEVELS_USER);
                         Map<String, Object> events = (Map<String, Object>) interestLevels.get(eventType);

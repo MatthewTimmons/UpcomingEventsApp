@@ -21,4 +21,5 @@ public class FirebaseConstants {
     public static final String KEY_MOVIE_RATING = "movieRating";
     public static final String KEY_MOVIE_GENRE = "movieGenre";
     public static final String KEY_MOVIE_DATE = "movieReleaseDate";
+    public static final String KEY_MOVIES_SEEN = "moviesSeenByMovieId";
 }

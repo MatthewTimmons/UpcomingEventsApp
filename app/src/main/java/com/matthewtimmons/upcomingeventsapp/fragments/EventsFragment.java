@@ -1,5 +1,6 @@
 package com.matthewtimmons.upcomingeventsapp.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -49,12 +50,13 @@ public class EventsFragment extends Fragment {
         switch (eventType) {
             case FirebaseConstants.KEY_CONCERTS:
                 v.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.music_notes);
+
                 break;
             case FirebaseConstants.KEY_GAMES:
-                v.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.vaporwave);
+                v.findViewById(R.id.events_recycler_view).setBackgroundColor(Color.parseColor("#FDEEB7"));
                 break;
             case FirebaseConstants.KEY_MOVIES:
-                v.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.popcorn_background);
+                v.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.abstract_geometric_wallpaper);
                 break;
         }
 

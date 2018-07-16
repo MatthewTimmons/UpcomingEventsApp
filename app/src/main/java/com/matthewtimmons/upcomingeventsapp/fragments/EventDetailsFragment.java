@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +21,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
+import com.matthewtimmons.upcomingeventsapp.manager.UserManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class EventDetailsFragment extends Fragment {
@@ -59,21 +62,27 @@ public class EventDetailsFragment extends Fragment {
             eventKey = bundle.getString(ARGS_EVENT_TYPE);
         }
 
-        CollectionReference concertsCollectionReference = FirebaseFirestore.getInstance().collection(eventKey);
+        return v;
+    }
 
-        concertsCollectionReference.document(eventId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Assign all views to variables
+        eventPictureImageView = view.findViewById(R.id.wide_image);
+        titleTextView =view.findViewById(R.id.title);
+        subtitleTextView =view.findViewById(R.id.optional_subtitle);
+        optionalSecondSubtitleTextView = view.findViewById(R.id.optional_second_subtitle_field);
+        secondEventInfoTextView = view.findViewById(R.id.second_info_field);
+        thirdEventInfoTextView = view.findViewById(R.id.third_info_field);
+        optionalCheckbox = view.findViewById(R.id.optional_checkbox);
+
+        CollectionReference eventsCollectionReference = FirebaseFirestore.getInstance().collection(eventKey);
+        eventsCollectionReference.document(eventId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot eventDocumentSnapshot = task.getResult();
-
-                // Assign all views to variables
-                eventPictureImageView = v.findViewById(R.id.wide_image);
-                titleTextView = v.findViewById(R.id.title);
-                subtitleTextView = v.findViewById(R.id.optional_subtitle);
-                optionalSecondSubtitleTextView = v.findViewById(R.id.optional_second_subtitle_field);
-                secondEventInfoTextView = v.findViewById(R.id.second_info_field);
-                thirdEventInfoTextView = v.findViewById(R.id.third_info_field);
-                optionalCheckbox = v.findViewById(R.id.optional_checkbox);
 
                 // Assign values to each view
                 switch (eventKey) {
@@ -98,7 +107,6 @@ public class EventDetailsFragment extends Fragment {
                 }
             }
         });
-        return v;
     }
 
     public void setAllSharedFields(DocumentSnapshot eventDocumentSnapshot, String imageUrl,
@@ -110,57 +118,43 @@ public class EventDetailsFragment extends Fragment {
     }
 
     public void setConditionalBandTextViews(DocumentSnapshot eventDocumentSnapshot) {
-        ArrayList<String> listOfBandsAtConcert = (ArrayList<String>) eventDocumentSnapshot.get("concertBandsArray");
+        List<String> listOfBandsAtConcert = (List<String>) eventDocumentSnapshot.get("concertBandsArray");
         titleTextView.setText(listOfBandsAtConcert.get(0));
         if (listOfBandsAtConcert.size() > 1) {
             subtitleTextView.setVisibility(View.VISIBLE);
             subtitleTextView.setText(listOfBandsAtConcert.get(1));
             if (listOfBandsAtConcert.size() > 2) {
-                listOfBandsAtConcert.remove(0);
-                listOfBandsAtConcert.remove(0);
-                String remainingBands = "";
-                for (int i = 0; i < listOfBandsAtConcert.size(); i++) {
-                    if (i == listOfBandsAtConcert.size() - 2) {
-                        remainingBands = remainingBands.concat(listOfBandsAtConcert.get(i) + ", and ");
-                    } else if (i == listOfBandsAtConcert.size() - 1) {
-                        remainingBands = remainingBands.concat(listOfBandsAtConcert.get(i));
-                    } else if (i < listOfBandsAtConcert.size()) {
-                        remainingBands = remainingBands.concat(listOfBandsAtConcert.get(i) + ", ");
-                    }
-                }
+                List<String> remainingBandsList = listOfBandsAtConcert.subList(2, listOfBandsAtConcert.size());
+                String remainingBandsDisplayText = TextUtils.join(", ", remainingBandsList);
                 optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);
-                optionalSecondSubtitleTextView.setText(remainingBands);
+                optionalSecondSubtitleTextView.setText(remainingBandsDisplayText);
             }
         }
     }
 
     public void setCheckmarkFunctionality(final String movieId) {
-        Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document("Matt").get();
+        Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS)
+                .document(UserManager.CURRENT_USER).get();
         task.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                final DocumentReference userDoc = task.getResult().getReference();
-                final ArrayList<String> allMoviesSeen = (ArrayList<String>) task.getResult().get("moviesSeenByMovieId");
-                Boolean movieHasBeenSeen = allMoviesSeen.contains(movieId);
+                final DocumentReference currentUserDocument = task.getResult().getReference();
+                final List<String> allMoviesSeen = (List<String>) task.getResult().get(FirebaseConstants.KEY_MOVIES_SEEN);
+                boolean movieHasBeenSeen = allMoviesSeen.contains(movieId);
                 optionalCheckbox.setChecked(movieHasBeenSeen);
                 optionalCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                         if (checked) {
                             allMoviesSeen.add(movieId);
-                            userDoc.update("moviesSeenByMovieId", allMoviesSeen);
+                            currentUserDocument.update(FirebaseConstants.KEY_MOVIES_SEEN, allMoviesSeen);
                         } else {
                             allMoviesSeen.remove(movieId);
-                            userDoc.update("moviesSeenByMovieId", allMoviesSeen);
+                            currentUserDocument.update(FirebaseConstants.KEY_MOVIES_SEEN, allMoviesSeen);
                         }
                     }
                 });
             }
         });
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 }
