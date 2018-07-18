@@ -1,5 +1,6 @@
 package com.matthewtimmons.upcomingeventsapp.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,13 +19,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.manager.UserManager;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -69,6 +71,8 @@ public class EventDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+
         // Assign all views to variables
         eventPictureImageView = view.findViewById(R.id.wide_image);
         titleTextView =view.findViewById(R.id.title);
@@ -86,16 +90,16 @@ public class EventDetailsFragment extends Fragment {
 
                 // Assign values to each view
                 switch (eventKey) {
-                    case FirebaseConstants.KEY_CONCERTS:
+                    case FirebaseConstants.COLLECTION_CONCERTS:
                         setAllSharedFields(eventDocumentSnapshot,"concertImageUrl", "NA",
                                 "concertLocation", "concertDate");
                         setConditionalBandTextViews(eventDocumentSnapshot);
                         break;
-                    case FirebaseConstants.KEY_GAMES:
+                    case FirebaseConstants.COLLECTION_GAMES:
                         setAllSharedFields(eventDocumentSnapshot, "gameImageUrl", "gameTitle",
                                 "gameReleaseConsoles", "gameReleaseDate");
                         break;
-                    case FirebaseConstants.KEY_MOVIES:
+                    case FirebaseConstants.COLLECTION_MOVIES:
                         setAllSharedFields(eventDocumentSnapshot, "movieImageUrl", "movieTitle",
                                 "movieRating", "movieReleaseDate");
                         optionalSecondSubtitleTextView .setVisibility(View.VISIBLE);

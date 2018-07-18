@@ -117,13 +117,13 @@ public class InterestLevelSeekbarFragment extends Fragment {
                         String eventTypeFirebaseKey = null;
                         switch (eventType) {
                             case EventConstants.EVENT_TYPE_CONCERT:
-                                eventTypeFirebaseKey = FirebaseConstants.KEY_CONCERTS;
+                                eventTypeFirebaseKey = FirebaseConstants.COLLECTION_CONCERTS;
                                 break;
                             case EventConstants.EVENT_TYPE_GAME:
-                                eventTypeFirebaseKey = FirebaseConstants.KEY_GAMES;
+                                eventTypeFirebaseKey = FirebaseConstants.COLLECTION_GAMES;
                                 break;
                             case EventConstants.EVENT_TYPE_MOVIE:
-                                eventTypeFirebaseKey = FirebaseConstants.KEY_MOVIES;
+                                eventTypeFirebaseKey = FirebaseConstants.COLLECTION_MOVIES;
                                 break;
                         }
                         CollectionReference userCollectionReference = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS);

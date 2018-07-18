@@ -18,7 +18,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
-import com.matthewtimmons.upcomingeventsapp.constants.EventConstants;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventListAdapter;
 
@@ -48,14 +47,14 @@ public class EventsFragment extends Fragment {
         eventDate = getArguments().getString(KEY_EVENT_DATE);
 
         switch (eventType) {
-            case FirebaseConstants.KEY_CONCERTS:
-                v.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.music_notes);
+            case FirebaseConstants.COLLECTION_CONCERTS:
+                v.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.stripes);
 
                 break;
-            case FirebaseConstants.KEY_GAMES:
+            case FirebaseConstants.COLLECTION_GAMES:
                 v.findViewById(R.id.events_recycler_view).setBackgroundColor(Color.parseColor("#FDEEB7"));
                 break;
-            case FirebaseConstants.KEY_MOVIES:
+            case FirebaseConstants.COLLECTION_MOVIES:
                 v.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.abstract_geometric_wallpaper);
                 break;
         }

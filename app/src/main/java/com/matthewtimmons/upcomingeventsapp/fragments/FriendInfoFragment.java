@@ -17,11 +17,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
-import com.matthewtimmons.upcomingeventsapp.activities.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.adapters.FriendInfoListAdapter;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
-
-import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +68,7 @@ public class FriendInfoFragment extends Fragment {
             }
         });
 
-        if (eventType.equals(FirebaseConstants.KEY_MOVIES)) {
+        if (eventType.equals(FirebaseConstants.COLLECTION_MOVIES)) {
             view.findViewById(R.id.friend_checkbox_column).setVisibility(View.VISIBLE);
         }
     }

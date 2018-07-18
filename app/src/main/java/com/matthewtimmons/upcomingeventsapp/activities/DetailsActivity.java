@@ -3,28 +3,16 @@ package com.matthewtimmons.upcomingeventsapp.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.matthewtimmons.upcomingeventsapp.adapters.FriendInfoListAdapter;
 import com.matthewtimmons.upcomingeventsapp.fragments.FriendInfoFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.InterestLevelSeekbarFragment;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.EventConstants;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.fragments.EventDetailsFragment;
-
-import java.util.List;
 
 public class DetailsActivity extends AppCompatActivity {
     private static final String EXTRA_EVENT_ID = "extraEventId";
@@ -55,11 +43,11 @@ public class DetailsActivity extends AppCompatActivity {
 
         Fragment eventDetailsFragment = null;
         if (eventType.equals(EventConstants.EVENT_TYPE_CONCERT)) {
-            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.KEY_CONCERTS);
+            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.COLLECTION_CONCERTS);
         } else if (eventType.equals(EventConstants.EVENT_TYPE_GAME)) {
-            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.KEY_GAMES);
+            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.COLLECTION_GAMES);
         } else if (eventType.equals(EventConstants.EVENT_TYPE_MOVIE)) {
-            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.KEY_MOVIES);
+            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.COLLECTION_MOVIES);
         }
 
         Fragment interestLevelSeekbarFragment = InterestLevelSeekbarFragment.newInstance(eventType, eventId);
