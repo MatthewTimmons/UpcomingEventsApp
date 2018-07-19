@@ -116,9 +116,9 @@ public class EventDetailsFragment extends Fragment {
                         break;
                     case FirebaseConstants.COLLECTION_MOVIES:
                         setAllSharedFields(eventDocumentSnapshot, "movieImageUrl", "movieTitle",
-                                "movieRating", "movieReleaseDate");
+                                "movieGenre", "movieReleaseDate");
                         optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);
-                        optionalSecondSubtitleTextView.setText(eventDocumentSnapshot.getString("movieGenre"));
+                        optionalSecondSubtitleTextView.setText("Rated " + eventDocumentSnapshot.getString("movieRating"));
                         optionalCheckbox.setVisibility(View.VISIBLE);
                         optionalCheckbox.setText("Seen");
                         setCheckmarkFunctionality(eventDocumentSnapshot.getId(), FieldPath.of(FirebaseConstants.KEY_MOVIES_SEEN), optionalCheckbox, false);
@@ -176,6 +176,11 @@ public class EventDetailsFragment extends Fragment {
                         }
                     }
                 });
+                // TODO Clean this patch up in method 
+                if (toggleImage) {
+                    if (checkBox.isChecked()) { checkBox.setButtonDrawable(R.drawable.ic_star); }
+                    else { checkBox.setButtonDrawable(R.drawable.ic_hollow_star); }
+                }
             }
         });
     }

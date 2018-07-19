@@ -69,6 +69,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                         FirebaseConstants.KEY_MOVIE_TITLE, FirebaseConstants.KEY_MOVIE_RATING, FirebaseConstants.KEY_MOVIE_GENRE);
                 viewHolder.optionalFourthEventInfoTextView.setVisibility(View.VISIBLE);
                 viewHolder.optionalFourthEventInfoTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_MOVIE_DATE));
+                viewHolder.secondEventInfoTextView.setText("Rated " + viewHolder.secondEventInfoTextView.getText());
                 break;
         }
 
@@ -117,6 +118,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             viewHolder.subtitleTextView.setText(listOfBandsAtConcert.get(1));
             if (listOfBandsAtConcert.size() > 2) {
                 viewHolder.andMoreTextView.setVisibility(View.VISIBLE);
+                viewHolder.andMoreTextView.setTextSize(18);
             }
         }
     }
