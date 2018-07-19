@@ -22,17 +22,21 @@ import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.EventViewHolder>{
     List<DocumentSnapshot> events;
     String eventType;
     int backupImage;
 
-    public EventListAdapter(List<DocumentSnapshot> events, String eventType) {
+    public EventListAdapter(List<DocumentSnapshot> events) {
         this.events = events;
-        this.eventType = eventType;
     }
+
+
+
 
     @NonNull
     @Override
@@ -44,6 +48,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     @Override
     public void onBindViewHolder(@NonNull final EventViewHolder viewHolder, int position) {
         final DocumentSnapshot eventDocumentSnapshot = events.get(position);
+            eventType = eventDocumentSnapshot.getString("eventType");
 
         // Set the text and image for all views
         switch (eventType) {
@@ -70,19 +75,25 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = DetailsActivity.newIntent(view.getContext(), eventDocumentSnapshot.getId(), eventType);
+                    Intent intent = DetailsActivity.newIntent(view.getContext(), eventDocumentSnapshot.getId(), eventDocumentSnapshot.getString("eventType"));
                     view.getContext().startActivity(intent);
                 }
             });
 
 
+
         FirebaseFirestore.getInstance().collection("users").document("Matt").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-               ArrayList<String> favorites = (ArrayList<String>) task.getResult().get(FieldPath.of("myFavorites", "movies"));
-               if (favorites.contains(eventDocumentSnapshot.getId())) {
+                HashMap<String, Object> allData = (HashMap<String, Object>) task.getResult().get("myFavorites");
+                ArrayList<String> allFavorites = new ArrayList<>();
+                allFavorites.addAll((ArrayList<String>) allData.get("concerts"));
+                allFavorites.addAll((ArrayList<String>) allData.get("games"));
+                allFavorites.addAll((ArrayList<String>) allData.get("movies"));
+
+                if (allFavorites.contains(eventDocumentSnapshot.getId())) {
                    viewHolder.favoriteStarImageView.setVisibility(View.VISIBLE);
-               };
+                };
             }
         });
 

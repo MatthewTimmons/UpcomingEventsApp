@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventPagerAdapter;
 import com.matthewtimmons.upcomingeventsapp.R;
 
@@ -27,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     DrawerLayout drawerLayout;
     String currentUserDisplayname;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,20 +47,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-//        ActionBar actionBar = getSupportActionBar();
-//        actionBar.setDisplayHomeAsUpEnabled(true);
-//        actionBar.setHomeAsUpIndicator(R.drawable.ic_navbar_hamburger);
-
-//        ImageButton imageButton = findViewById(R.id.nav_drawer_button);
-//        imageButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                drawerLayout.openDrawer(GravityCompat.START);
-//            }
-//        });
-
-
         NavigationView navigationView = findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                                                              @Override
@@ -71,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
                                                                      case R.id.nav_drawer_favorites:
                                                                          Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
                                                                          startActivity(intent);
+                                                                         return true;
+                                                                     case R.id.nav_drawer_shared_games:
+                                                                         Intent intentSharedGames = new Intent(MainActivity.this, SharedGamesActivity.class);
+                                                                         startActivity(intentSharedGames);
                                                                          return true;
                                                                  }
 

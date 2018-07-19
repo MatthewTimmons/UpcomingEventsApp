@@ -48,14 +48,13 @@ public class EventsFragment extends Fragment {
 
         switch (eventType) {
             case FirebaseConstants.COLLECTION_CONCERTS:
-                v.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.stripes);
-
-                break;
-            case FirebaseConstants.COLLECTION_GAMES:
                 v.findViewById(R.id.events_recycler_view).setBackgroundColor(Color.parseColor("#FDEEB7"));
                 break;
+            case FirebaseConstants.COLLECTION_GAMES:
+                v.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.stripes);
+                break;
             case FirebaseConstants.COLLECTION_MOVIES:
-                v.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.abstract_geometric_wallpaper);
+                v.findViewById(R.id.events_recycler_view).setBackgroundColor(Color.parseColor("#ACD2A4"));
                 break;
         }
 
@@ -66,7 +65,7 @@ public class EventsFragment extends Fragment {
                 List<DocumentSnapshot> eventDocumentSnapshots = task.getResult().getDocuments();
                 recyclerView = v.findViewById(R.id.events_recycler_view);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                eventListAdapter = new EventListAdapter(eventDocumentSnapshots, eventType);
+                eventListAdapter = new EventListAdapter(eventDocumentSnapshots);
                 recyclerView.setAdapter(eventListAdapter);
             }
         });

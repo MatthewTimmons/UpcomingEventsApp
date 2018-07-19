@@ -8,7 +8,15 @@
         <item
             android:id="@+id/nav_drawer_favorites"
             android:icon="@drawable/ic_star"
+            android:iconTint="@android:color/darker_gray"
             android:title="My Favorites"
+            app:showAsAction="always"
+            />
+        <item
+            android:id="@+id/nav_drawer_shared_games"
+            android:icon="@drawable/ic_shared_games"
+            android:iconTint="@android:color/darker_gray"
+            android:title="Shared Games"
             app:showAsAction="always"
             />
         <item

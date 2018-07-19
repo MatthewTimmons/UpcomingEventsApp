@@ -24,6 +24,9 @@
         <activity android:name=".activities.FavoritesActivity">
 
         </activity>
+        <activity android:name=".activities.SharedGamesActivity">
+
+        </activity>
     </application>
 
 </manifest>

@@ -124,7 +124,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:tint="#ffff00"
             android:layout_marginBottom="16dp"
             app:layout_constraintEnd_toEndOf="@id/right_gutter"
             app:layout_constraintBottom_toBottomOf="parent"

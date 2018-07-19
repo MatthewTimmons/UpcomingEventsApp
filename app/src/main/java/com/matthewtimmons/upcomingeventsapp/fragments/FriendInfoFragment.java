@@ -4,16 +4,21 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
@@ -40,6 +45,31 @@ public class FriendInfoFragment extends Fragment {
         friendInfoFragment.setArguments(bundle);
         return friendInfoFragment;
     }
+
+//    public void onStart() {
+//        super.onStart();
+//        FirebaseFirestore.getInstance().collection("users").document("Matt").addSnapshotListener(new EventListener<DocumentSnapshot>() {
+//            @Override
+//            public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
+//                FragmentTransaction ft = getFragmentManager().beginTransaction();
+//                ft.detach(FriendInfoFragment.this).attach(FriendInfoFragment.this).commit();
+//                Toast.makeText(getContext(), "Something changed", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        FirebaseFirestore.getInstance().collection("users").document("Armando").addSnapshotListener(new EventListener<QuerySnapshot>() {
+//            @Override
+//            public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
+//                FragmentTransaction ft = getFragmentManager().beginTransaction();
+//                ft.detach(FriendInfoFragment.this).attach(FriendInfoFragment.this).commit();
+//                Toast.makeText(getContext(), "Something changed", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
     @Nullable
     @Override

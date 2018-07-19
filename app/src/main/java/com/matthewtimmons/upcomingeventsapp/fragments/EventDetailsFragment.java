@@ -13,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -20,13 +21,16 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
+import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.matthewtimmons.upcomingeventsapp.manager.UserManager;
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 
@@ -42,6 +46,7 @@ public class EventDetailsFragment extends Fragment {
     TextView secondEventInfoTextView;
     TextView thirdEventInfoTextView;
     CheckBox optionalCheckbox;
+    CheckBox favoritesCheckbox;
 
 
     public static EventDetailsFragment newInstance(String eventId, String eventKey) {
@@ -53,10 +58,21 @@ public class EventDetailsFragment extends Fragment {
         return instance;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseFirestore.getInstance().collection(eventKey).document(eventId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
+
+            }
+        });
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View v = inflater.inflate(R.layout.fragment_details_event, container, false);
+        View v = inflater.inflate(R.layout.fragment_details_event, container, false);
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -71,8 +87,6 @@ public class EventDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-
         // Assign all views to variables
         eventPictureImageView = view.findViewById(R.id.wide_image);
         titleTextView =view.findViewById(R.id.title);
@@ -81,8 +95,9 @@ public class EventDetailsFragment extends Fragment {
         secondEventInfoTextView = view.findViewById(R.id.second_info_field);
         thirdEventInfoTextView = view.findViewById(R.id.third_info_field);
         optionalCheckbox = view.findViewById(R.id.optional_checkbox);
+        favoritesCheckbox = view.findViewById(R.id.favorite_checkbox);
 
-        CollectionReference eventsCollectionReference = FirebaseFirestore.getInstance().collection(eventKey);
+        CollectionReference eventsCollectionReference = Firestore.collection(eventKey);
         eventsCollectionReference.document(eventId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -98,17 +113,21 @@ public class EventDetailsFragment extends Fragment {
                     case FirebaseConstants.COLLECTION_GAMES:
                         setAllSharedFields(eventDocumentSnapshot, "gameImageUrl", "gameTitle",
                                 "gameReleaseConsoles", "gameReleaseDate");
+                        optionalCheckbox.setVisibility(View.VISIBLE);
+                        optionalCheckbox.setText("Seen");
+                        setCheckmarkFunctionality(eventDocumentSnapshot.getId(), FieldPath.of(FirebaseConstants.KEY_GAMES_OWNED), optionalCheckbox, false);
                         break;
                     case FirebaseConstants.COLLECTION_MOVIES:
                         setAllSharedFields(eventDocumentSnapshot, "movieImageUrl", "movieTitle",
                                 "movieRating", "movieReleaseDate");
-                        optionalSecondSubtitleTextView .setVisibility(View.VISIBLE);
-                        optionalSecondSubtitleTextView .setText(eventDocumentSnapshot.getString("movieGenre"));
+                        optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);
+                        optionalSecondSubtitleTextView.setText(eventDocumentSnapshot.getString("movieGenre"));
                         optionalCheckbox.setVisibility(View.VISIBLE);
                         optionalCheckbox.setText("Seen");
-                        setCheckmarkFunctionality(eventDocumentSnapshot.getId());
+                        setCheckmarkFunctionality(eventDocumentSnapshot.getId(), FieldPath.of(FirebaseConstants.KEY_MOVIES_SEEN), optionalCheckbox, false);
                         break;
                 }
+                setCheckmarkFunctionality(eventId, FieldPath.of("myFavorites", eventKey), favoritesCheckbox, true);
             }
         });
     }
@@ -136,25 +155,27 @@ public class EventDetailsFragment extends Fragment {
         }
     }
 
-    public void setCheckmarkFunctionality(final String movieId) {
+    public void setCheckmarkFunctionality(final String eventId, final FieldPath fieldpathToArray, final CheckBox checkBox, final boolean toggleImage) {
         Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS)
                 .document(UserManager.CURRENT_USER).get();
         task.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 final DocumentReference currentUserDocument = task.getResult().getReference();
-                final List<String> allMoviesSeen = (List<String>) task.getResult().get(FirebaseConstants.KEY_MOVIES_SEEN);
-                boolean movieHasBeenSeen = allMoviesSeen.contains(movieId);
-                optionalCheckbox.setChecked(movieHasBeenSeen);
-                optionalCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                final List<String> arrayOfAllInstances = (List<String>) task.getResult().get(fieldpathToArray);
+                boolean existsInArray = arrayOfAllInstances.contains(eventId);
+                checkBox.setChecked(existsInArray);
+                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                         if (checked) {
-                            allMoviesSeen.add(movieId);
-                            currentUserDocument.update(FirebaseConstants.KEY_MOVIES_SEEN, allMoviesSeen);
+                            arrayOfAllInstances.add(eventId);
+                            currentUserDocument.update(fieldpathToArray, arrayOfAllInstances);
+                            if (toggleImage) { compoundButton.setButtonDrawable(R.drawable.ic_star); }
                         } else {
-                            allMoviesSeen.remove(movieId);
-                            currentUserDocument.update(FirebaseConstants.KEY_MOVIES_SEEN, allMoviesSeen);
+                            arrayOfAllInstances.remove(eventId);
+                            currentUserDocument.update(fieldpathToArray, arrayOfAllInstances);
+                            if (toggleImage) { compoundButton.setButtonDrawable(R.drawable.ic_hollow_star); }
                         }
                     }
                 });

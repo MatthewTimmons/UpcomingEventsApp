@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/pastel_blue"
     android:paddingBottom="16dp">
 
     <ImageView
@@ -88,6 +89,16 @@
         tools:text="Fifth Info Field" />
 
     <CheckBox
+        android:id="@+id/favorite_checkbox"
+        android:button="@drawable/ic_hollow_star"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:text="Favorite"
+        app:layout_constraintEnd_toEndOf="@id/right_gutter"
+        app:layout_constraintTop_toBottomOf="@id/optional_checkbox"/>
+
+    <CheckBox
         android:id="@+id/optional_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -98,5 +109,6 @@
         app:layout_constraintTop_toBottomOf="@id/third_info_field"
         tools:text="Optional Checkbox"
         tools:visibility="visible" />
+
 
 </android.support.constraint.ConstraintLayout>
