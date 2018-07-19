@@ -1,35 +1,27 @@
 package com.matthewtimmons.upcomingeventsapp.activities;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.Button;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventListAdapter;
-import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
+import com.matthewtimmons.upcomingeventsapp.fragments.FriendSelectorFragment;
+import com.matthewtimmons.upcomingeventsapp.fragments.SharedGamesFragment;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class SharedGamesActivity extends AppCompatActivity {
     EventListAdapter eventListAdapter;
     RecyclerView recyclerView;
+    Button nextButton;
+    Button backButton;
 
     private DocumentReference currentUserReference = FirebaseFirestore.getInstance().document("users/Matt");
 
@@ -40,52 +32,35 @@ public class SharedGamesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_favorites);
+        setContentView(R.layout.activity_friends_selector);
+        nextButton = findViewById(R.id.nextButton);
+        backButton = findViewById(R.id.backButton);
 
-        recyclerView = findViewById(R.id.favorites_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        FriendSelectorFragment fragment = new FriendSelectorFragment();
 
-        //TODO
-        final ArrayList<String> allSharedGames = new ArrayList<>();
-        final CollectionReference allUsers = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS);
-        final DocumentReference currentUserDocRef = allUsers.document(currentUserId);
-        final DocumentReference friendsDocRef = allUsers.document(friendUserId);
+        getSupportFragmentManager().beginTransaction().add(R.id.friend_selector_fragment_container, fragment).commit();
 
-
-        currentUserDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                final ArrayList<String> currentUsersGames = (ArrayList<String>) task.getResult().get("gamesOwnedByGameId");
-                friendsDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        ArrayList<String> friendsGames = (ArrayList<String>) task.getResult().get("gamesOwnedByGameId");
-
-                        for (String game : currentUsersGames) {
-                            if (friendsGames.contains(game)) {
-                                allSharedGames.add(game);
-                            }
-                        }
-
-                        final List<DocumentSnapshot> allFavoriteDocumentSnapshots = new ArrayList<>();
-                        final CollectionReference collectionReferenceGames = FirebaseFirestore.getInstance().collection("games");
-
-                        collectionReferenceGames.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                List<DocumentSnapshot> allGames = task.getResult().getDocuments();
-                                for (DocumentSnapshot game : allGames) {
-                                    if (allSharedGames.contains(game.getId())) {
-                                        allFavoriteDocumentSnapshots.add(game);
-                                    }
-                                }
-                                EventListAdapter gameListAdapter = new EventListAdapter(allFavoriteDocumentSnapshots);
-                                recyclerView.setAdapter(gameListAdapter);
-                            }
-                        });
-                    }
-                });
+            public void onClick(View view) {
+                Fragment newFragment = SharedGamesFragment.newInstance(currentUserId, friendUserId);
+                getSupportFragmentManager().beginTransaction().replace(R.id.friend_selector_fragment_container, newFragment).commit();
+                backButton.setVisibility(View.VISIBLE);
+                nextButton.setVisibility(View.GONE);
             }
         });
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment newFragment = new FriendSelectorFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.friend_selector_fragment_container, newFragment).commit();
+                backButton.setVisibility(View.GONE);
+                nextButton.setVisibility(View.VISIBLE);
+            }
+        });
+
+
     }
+
 }

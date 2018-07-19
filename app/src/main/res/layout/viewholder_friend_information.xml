@@ -2,10 +2,10 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/friend_row_data"
+    android:id="@+id/friend_row"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="#ACD2A4">
+    android:background="@color/pastel_blue">
 
     <TextView
         android:id="@+id/friend_user_name"
@@ -18,16 +18,17 @@
         android:shadowDx="1"
         android:shadowDy="1"
         android:shadowRadius="2"
-        app:layout_constraintEnd_toStartOf="@id/friend_interest_level"
+        app:layout_constraintEnd_toStartOf="@id/number_of_shared_games"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:text="Ryan" />
 
     <TextView
-        android:id="@+id/friend_interest_level"
+        android:id="@+id/number_of_shared_games"
         android:layout_width="60dp"
         android:layout_height="0dp"
+        android:visibility="gone"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:autoSizeTextType="uniform"
@@ -38,19 +39,20 @@
         android:shadowRadius="2"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/friend_checkbox"
+        app:layout_constraintEnd_toStartOf="@id/friend_checkbox"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="2" />
 
-    <ImageView
+    <CheckBox
         android:id="@+id/friend_checkbox"
         android:layout_width="40dp"
         android:layout_height="0dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:visibility="gone"
+        android:autoSizeTextType="uniform"
         android:outlineAmbientShadowColor="@android:color/white"
         android:outlineSpotShadowColor="@android:color/white"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
