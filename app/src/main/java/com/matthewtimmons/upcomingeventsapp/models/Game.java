@@ -1,5 +1,7 @@
 package com.matthewtimmons.upcomingeventsapp.models;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,16 @@ public class Game implements Serializable {
         listOfGames.add(new Game("Call of Duty: Black Ops 4", "PC, Xbox One, Playstation 4", "10/12/2018", "https://ksassets.timeincuk.net/wp/uploads/sites/54/2018/06/screen-call-of-duty-black-ops-4-reveal-trailer-1.jpg"));
         listOfGames.add(new Game("Red Dead Redemption 2", "Xbox One, Playstation 4", "10/26/2018", "https://media.playstation.com/is/image/SCEA/red-dead-redemption-2-listing-thumb-01-ps4-us-18oct16?$Icon$"));
         return listOfGames;
+    }
+
+    public static String fetchGamesAsString(DocumentSnapshot gameDocumentSnapshot) {
+        List<String> listOfGames = (ArrayList<String>) gameDocumentSnapshot.get("releaseConsoles");
+        String output = "";
+        for (int i = 0; i < listOfGames.size() -1; i++) {
+            output = output.concat(listOfGames.get(i) + ", ");
+        }
+        output = output.concat(listOfGames.get(listOfGames.size() -1));
+        return output;
     }
 
     private String gameTitle;

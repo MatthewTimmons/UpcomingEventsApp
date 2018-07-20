@@ -23,13 +23,13 @@ public class EventPagerAdapter extends FragmentPagerAdapter {
         Fragment fragment = null;
         switch (i) {
             case INDEX_CONCERTS:
-                fragment = EventsFragment.newInstance(FirebaseConstants.COLLECTION_CONCERTS, FirebaseConstants.KEY_CONCERT_DATE);
+                fragment = EventsFragment.newInstance(FirebaseConstants.COLLECTION_CONCERTS);
                 break;
             case INDEX_GAMES:
-                fragment = EventsFragment.newInstance(FirebaseConstants.COLLECTION_GAMES, FirebaseConstants.KEY_GAME_DATE);
+                fragment = EventsFragment.newInstance(FirebaseConstants.COLLECTION_GAMES);
                 break;
             case INDEX_MOVIES:
-                fragment = EventsFragment.newInstance(FirebaseConstants.COLLECTION_MOVIES, FirebaseConstants.KEY_MOVIE_DATE);
+                fragment = EventsFragment.newInstance(FirebaseConstants.COLLECTION_MOVIES);
                 break;
         }
         return fragment;

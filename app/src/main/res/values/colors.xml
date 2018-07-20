@@ -5,4 +5,9 @@
     <color name="colorPrimaryLight">#0066FF</color>
     <color name="colorAccent">#FF4081</color>
     <color name="pastel_blue">#B3D1FF</color>
+    <color name="light_gray">#B3B3B3</color>
+    <color name="light_gray_tint">#80B3B3B3</color>
+    <color name="darker_gray">#999999</color>
+    <color name="transparent">#80000000</color>
+    <color name="white">#FFFFFF</color>
 </resources>

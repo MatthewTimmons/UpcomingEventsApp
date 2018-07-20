@@ -26,6 +26,7 @@ import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
+import com.matthewtimmons.upcomingeventsapp.models.Game;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -40,8 +41,8 @@ public class EventDetailsFragment extends Fragment {
     TextView titleTextView;
     TextView subtitleTextView;
     TextView optionalSecondSubtitleTextView;
-    TextView secondEventInfoTextView;
-    TextView thirdEventInfoTextView;
+    TextView fourthTextView;
+    TextView fifthTextView;
     CheckBox optionalCheckbox;
     CheckBox favoritesCheckbox;
 
@@ -88,9 +89,9 @@ public class EventDetailsFragment extends Fragment {
         eventPictureImageView = view.findViewById(R.id.wide_image);
         titleTextView =view.findViewById(R.id.title);
         subtitleTextView =view.findViewById(R.id.optional_subtitle);
-        optionalSecondSubtitleTextView = view.findViewById(R.id.optional_second_subtitle_field);
-        secondEventInfoTextView = view.findViewById(R.id.second_info_field);
-        thirdEventInfoTextView = view.findViewById(R.id.third_info_field);
+        optionalSecondSubtitleTextView = view.findViewById(R.id.third_info_field);
+        fourthTextView = view.findViewById(R.id.fourth_info_field);
+        fifthTextView = view.findViewById(R.id.fifth_info_field);
         optionalCheckbox = view.findViewById(R.id.optional_checkbox);
         favoritesCheckbox = view.findViewById(R.id.favorite_checkbox);
 
@@ -103,20 +104,19 @@ public class EventDetailsFragment extends Fragment {
                 // Assign values to each view
                 switch (eventKey) {
                     case FirebaseConstants.COLLECTION_CONCERTS:
-                        setAllSharedFields(eventDocumentSnapshot,"concertImageUrl", "NA",
-                                "concertLocation", "concertDate");
+                        setAllSharedFields(eventDocumentSnapshot, R.drawable.ic_concerts_blue,"concertLocation");
                         setConditionalBandTextViews(eventDocumentSnapshot);
                         break;
                     case FirebaseConstants.COLLECTION_GAMES:
-                        setAllSharedFields(eventDocumentSnapshot, "gameImageUrl", "gameTitle",
-                                "gameReleaseConsoles", "gameReleaseDate");
+                        String releaseConsolesAsString = Game.fetchGamesAsString(eventDocumentSnapshot);
+                        setAllSharedFields(eventDocumentSnapshot, R.drawable.ic_games_blue, "NA");
+                        fourthTextView.setText(releaseConsolesAsString);
                         optionalCheckbox.setVisibility(View.VISIBLE);
-                        optionalCheckbox.setText("Seen");
+                        optionalCheckbox.setText("Owned");
                         setCheckmarkFunctionality(eventDocumentSnapshot.getId(), FieldPath.of(FirebaseConstants.KEY_GAMES_OWNED), optionalCheckbox, false);
                         break;
                     case FirebaseConstants.COLLECTION_MOVIES:
-                        setAllSharedFields(eventDocumentSnapshot, "movieImageUrl", "movieTitle",
-                                "movieGenre", "movieReleaseDate");
+                        setAllSharedFields(eventDocumentSnapshot, R.drawable.ic_movies_blue,"movieGenre");
                         optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);
                         optionalSecondSubtitleTextView.setText("Rated " + eventDocumentSnapshot.getString("movieRating"));
                         optionalCheckbox.setVisibility(View.VISIBLE);
@@ -129,16 +129,16 @@ public class EventDetailsFragment extends Fragment {
         });
     }
 
-    public void setAllSharedFields(DocumentSnapshot eventDocumentSnapshot, String imageUrl,
-                                   String titleText, String secondEventInfoText, String thirdEventInfoText) {
-        Picasso.get().load(eventDocumentSnapshot.getString(imageUrl)).error(R.drawable.ic_concerts_blue).into(eventPictureImageView);
-        titleTextView.setText(eventDocumentSnapshot.getString(titleText));
-        secondEventInfoTextView.setText(eventDocumentSnapshot.getString(secondEventInfoText));
-        thirdEventInfoTextView.setText(eventDocumentSnapshot.getString(thirdEventInfoText));
+    public void setAllSharedFields(DocumentSnapshot eventDocumentSnapshot, int backupImageId,
+                                   String secondEventInfoText) {
+        Picasso.get().load(eventDocumentSnapshot.getString(FirebaseConstants.KEY_IMAGE_URL)).error(backupImageId).into(eventPictureImageView);
+        titleTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_TITLE));
+        fourthTextView.setText(eventDocumentSnapshot.getString(secondEventInfoText));
+        fifthTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_DATE));
     }
 
     public void setConditionalBandTextViews(DocumentSnapshot eventDocumentSnapshot) {
-        List<String> listOfBandsAtConcert = (List<String>) eventDocumentSnapshot.get("concertBandsArray");
+        List<String> listOfBandsAtConcert = (List<String>) eventDocumentSnapshot.get(FirebaseConstants.KEY_CONCERT_BANDS_ARRAY);
         titleTextView.setText(listOfBandsAtConcert.get(0));
         if (listOfBandsAtConcert.size() > 1) {
             subtitleTextView.setVisibility(View.VISIBLE);
@@ -176,7 +176,7 @@ public class EventDetailsFragment extends Fragment {
                         }
                     }
                 });
-                // TODO Clean this patch up in method 
+                // TODO Clean this patch up in method
                 if (toggleImage) {
                     if (checkBox.isChecked()) { checkBox.setButtonDrawable(R.drawable.ic_star); }
                     else { checkBox.setButtonDrawable(R.drawable.ic_hollow_star); }

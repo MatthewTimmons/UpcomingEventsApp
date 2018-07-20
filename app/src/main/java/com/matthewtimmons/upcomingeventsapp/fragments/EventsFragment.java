@@ -25,17 +25,14 @@ import java.util.List;
 
 public class EventsFragment extends Fragment {
     private static final String KEY_EVENT_TYPE = "keyEventType";
-    private static final String KEY_EVENT_DATE = "keyEventDate";
     private String eventType;
-    private String eventDate;
     RecyclerView recyclerView;
     EventListAdapter eventListAdapter;
 
-    public static EventsFragment newInstance(String eventType, String keyEventDate) {
+    public static EventsFragment newInstance(String eventType) {
         EventsFragment fragment = new EventsFragment();
         Bundle args = new Bundle();
         args.putString(KEY_EVENT_TYPE, eventType);
-        args.putString(KEY_EVENT_DATE, keyEventDate);
         fragment.setArguments(args);
         return fragment;
     }
@@ -44,7 +41,6 @@ public class EventsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_events, container, false);
         eventType = getArguments().getString(KEY_EVENT_TYPE);
-        eventDate = getArguments().getString(KEY_EVENT_DATE);
 
         switch (eventType) {
             case FirebaseConstants.COLLECTION_CONCERTS:
@@ -58,7 +54,7 @@ public class EventsFragment extends Fragment {
                 break;
         }
 
-        Query eventQuery = FirebaseFirestore.getInstance().collection(eventType).orderBy(eventDate);
+        Query eventQuery = FirebaseFirestore.getInstance().collection(eventType).orderBy(FirebaseConstants.KEY_DATE);
         eventQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

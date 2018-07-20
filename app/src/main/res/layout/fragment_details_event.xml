@@ -56,7 +56,7 @@
         tools:visibility="visible" />
 
     <TextView
-        android:id="@+id/optional_second_subtitle_field"
+        android:id="@+id/third_info_field"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -69,23 +69,23 @@
         tools:visibility="visible" />
 
     <TextView
-        android:id="@+id/second_info_field"
+        android:id="@+id/fourth_info_field"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="@id/right_gutter"
         app:layout_constraintStart_toStartOf="@id/left_gutter"
-        app:layout_constraintTop_toBottomOf="@id/optional_second_subtitle_field"
+        app:layout_constraintTop_toBottomOf="@id/third_info_field"
         tools:text="Second Info Field" />
 
     <TextView
-        android:id="@+id/third_info_field"
+        android:id="@+id/fifth_info_field"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="@id/right_gutter"
         app:layout_constraintStart_toStartOf="@id/left_gutter"
-        app:layout_constraintTop_toBottomOf="@id/second_info_field"
+        app:layout_constraintTop_toBottomOf="@id/fourth_info_field"
         tools:text="Third Info Field" />
 
     <CheckBox
@@ -106,7 +106,7 @@
         android:textSize="30sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/right_gutter"
-        app:layout_constraintTop_toBottomOf="@id/third_info_field"
+        app:layout_constraintTop_toBottomOf="@id/fourth_info_field"
         tools:text="Optional Checkbox"
         tools:visibility="visible" />
 

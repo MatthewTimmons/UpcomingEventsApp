@@ -2,6 +2,7 @@ package com.matthewtimmons.upcomingeventsapp.fragments;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -25,7 +26,11 @@ import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.EventConstants;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 
+import java.lang.reflect.Type;
 import java.util.Map;
+
+import static android.graphics.Color.DKGRAY;
+import static android.graphics.Color.WHITE;
 
 public class InterestLevelSeekbarFragment extends Fragment {
     private static final long DELAY_SEEKBAR_HINT_MS = 1000L;
@@ -51,11 +56,6 @@ public class InterestLevelSeekbarFragment extends Fragment {
         return interestLevelSeekbarFragment;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-    }
-
         @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -66,10 +66,10 @@ public class InterestLevelSeekbarFragment extends Fragment {
         eventId = getArguments().getString(EVENT_ID);
         eventType = getArguments().getString(EVENT_TYPE);
 
-        setSeekbarToCurrentInterestLevel(getContext(), eventType, eventId);
+        setSeekbarToCurrentInterestLevel(eventType, eventId);
+
 
         interestLevelSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -89,10 +89,23 @@ public class InterestLevelSeekbarFragment extends Fragment {
 
 
         });
+
+
         return v;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+    }
+
+
+
         public void updateText(int i) {
+        interestLevelTextView.setTypeface(null, Typeface.NORMAL);
+        interestLevelTextView.setTextColor(getResources().getColor(R.color.white));
             switch(i) {
                 case INTEREST_LEVEL_LOW:
                     interestLevelTextView.setText(R.string.interest_level_display_name_low);
@@ -131,7 +144,7 @@ public class InterestLevelSeekbarFragment extends Fragment {
                     } else {
                         Toast.makeText(getContext(), R.string.error_event_id_not_found, Toast.LENGTH_SHORT).show();
                     }
-                    interestLevelTextView.setVisibility(View.INVISIBLE);
+                    resetFontAndColorForTextView();
                 }
             }, DELAY_SEEKBAR_HINT_MS);
         }
@@ -149,21 +162,31 @@ public class InterestLevelSeekbarFragment extends Fragment {
         });
     }
 
-        public void setSeekbarToCurrentInterestLevel(final Context context, final String eventType, final String eventId) {
+        public void setSeekbarToCurrentInterestLevel(final String eventType, final String eventId) {
             FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     try {
-                        // TODO: Change this get(1) to get the current user
-                        DocumentSnapshot userDocumentSnapshot = task.getResult().getDocuments().get(1);
+                        // TODO: Change this get(2) to get the current user
+                        DocumentSnapshot userDocumentSnapshot = task.getResult().getDocuments().get(2);
                         Map<String, Object> interestLevels = (Map<String, Object>) userDocumentSnapshot.get(FirebaseConstants.KEY_INTEREST_LEVELS_USER);
                         Map<String, Object> events = (Map<String, Object>) interestLevels.get(eventType);
                         Integer interestLevelValue = ((Long) events.get(eventId)).intValue();
                         interestLevelSeekbar.setProgress(interestLevelValue);
+                        if (interestLevelValue.equals(0)) { interestLevelTextView.setText(R.string.interest_level_display_name_low); }
+                        else if (interestLevelValue.equals(1)) { interestLevelTextView.setText(R.string.interest_level_display_name_medium); }
+                        else { interestLevelTextView.setText(R.string.interest_level_display_name_high); }
+                        resetFontAndColorForTextView();
                     } catch(NullPointerException e) {
                         e.printStackTrace();
                     }
                 }
             });
+        }
+
+        public void resetFontAndColorForTextView() {
+            interestLevelTextView.setTypeface(null, Typeface.ITALIC);
+            interestLevelTextView.setTextColor(getResources().getColor(R.color.darker_gray));
+            interestLevelTextView.setBackgroundColor(getResources().getColor(R.color.light_gray_tint));
         }
 }

@@ -1,6 +1,7 @@
 package com.matthewtimmons.upcomingeventsapp.adapters;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -13,18 +14,16 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.activities.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
+import com.matthewtimmons.upcomingeventsapp.models.Game;
 import com.squareup.picasso.Picasso;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.EventViewHolder>{
     List<DocumentSnapshot> events;
@@ -54,22 +53,22 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         switch (eventType) {
             case FirebaseConstants.COLLECTION_CONCERTS:
                 backupImage = R.drawable.ic_concerts_blue;
-                setAllSharedFields(eventDocumentSnapshot, viewHolder, FirebaseConstants.KEY_CONCERT_IMAGE_URL, "NA",
-                        FirebaseConstants.KEY_CONCERT_LOCATION, FirebaseConstants.KEY_CONCERT_DATE);
+                setAllSharedFields(eventDocumentSnapshot, viewHolder);
                 setBandNameValues(eventDocumentSnapshot, viewHolder);
+                viewHolder.thirdEventInfoTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_CONCERT_LOCATION));
                 break;
             case FirebaseConstants.COLLECTION_GAMES:
                 backupImage = R.drawable.ic_games_blue;
-                setAllSharedFields(eventDocumentSnapshot, viewHolder, FirebaseConstants.KEY_GAME_IMAGE_URL,
-                        FirebaseConstants.KEY_GAME_TITLE, FirebaseConstants.KEY_GAME_LOCATION, FirebaseConstants.KEY_GAME_DATE);
+                String releaseConsolesAsString = Game.fetchGamesAsString(eventDocumentSnapshot);
+                setAllSharedFields(eventDocumentSnapshot, viewHolder);
+                viewHolder.thirdEventInfoTextView.setText(releaseConsolesAsString);
                 break;
             case FirebaseConstants.COLLECTION_MOVIES:
                 backupImage = R.drawable.ic_movies_blue;
-                setAllSharedFields(eventDocumentSnapshot, viewHolder, FirebaseConstants.KEY_MOVIE_IMAGE_URL,
-                        FirebaseConstants.KEY_MOVIE_TITLE, FirebaseConstants.KEY_MOVIE_RATING, FirebaseConstants.KEY_MOVIE_GENRE);
-                viewHolder.optionalFourthEventInfoTextView.setVisibility(View.VISIBLE);
-                viewHolder.optionalFourthEventInfoTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_MOVIE_DATE));
-                viewHolder.secondEventInfoTextView.setText("Rated " + viewHolder.secondEventInfoTextView.getText());
+                setAllSharedFields(eventDocumentSnapshot, viewHolder);
+                viewHolder.optionalSecondEventInfoTextView.setVisibility(View.VISIBLE);
+                viewHolder.optionalSecondEventInfoTextView.setText("Rated " + eventDocumentSnapshot.getString(FirebaseConstants.KEY_MOVIE_RATING));
+                viewHolder.thirdEventInfoTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_MOVIE_GENRE));
                 break;
         }
 
@@ -100,13 +99,10 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
     }
 
-    public void setAllSharedFields(DocumentSnapshot eventDocumentSnapshot, EventViewHolder viewHolder,
-                                   String imageUrlFirebaseKey, String titleFirebaseKey,
-                                   String locationFirebaseKey, String eventDateTextView) {
-        Picasso.get().load(eventDocumentSnapshot.getString(imageUrlFirebaseKey)).error(backupImage).into(viewHolder.eventPictureImageView);
-        viewHolder.titleTextView.setText(eventDocumentSnapshot.getString(titleFirebaseKey));
-        viewHolder.secondEventInfoTextView.setText(eventDocumentSnapshot.getString(locationFirebaseKey));
-        viewHolder.thirdEventInfoTextView.setText(eventDocumentSnapshot.getString(eventDateTextView));
+    public void setAllSharedFields(DocumentSnapshot eventDocumentSnapshot, EventViewHolder viewHolder) {
+        Picasso.get().load(eventDocumentSnapshot.getString(FirebaseConstants.KEY_IMAGE_URL)).error(backupImage).into(viewHolder.eventPictureImageView);
+        viewHolder.titleTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_TITLE));
+        viewHolder.fourthEventInfoTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_DATE));
     }
 
     public void setBandNameValues(DocumentSnapshot concertDocumentSnapshot, EventViewHolder viewHolder) {
@@ -116,9 +112,11 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         if (listOfBandsAtConcert.size() > 1) {
             viewHolder.subtitleTextView.setVisibility(View.VISIBLE);
             viewHolder.subtitleTextView.setText(listOfBandsAtConcert.get(1));
+            viewHolder.subtitleTextView.setTextColor(viewHolder.itemView.getResources().getColor(R.color.darker_gray));
             if (listOfBandsAtConcert.size() > 2) {
-                viewHolder.andMoreTextView.setVisibility(View.VISIBLE);
-                viewHolder.andMoreTextView.setTextSize(18);
+                viewHolder.optionalSecondSubtitle.setVisibility(View.VISIBLE);
+                viewHolder.optionalSecondSubtitle.setTextSize(18);
+                viewHolder.optionalSecondSubtitle.setTextColor(viewHolder.itemView.getResources().getColor(R.color.darker_gray));
             }
         }
     }
@@ -135,10 +133,10 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         private ImageView favoriteStarImageView;
         private TextView titleTextView;
         private TextView subtitleTextView;
-        private TextView andMoreTextView;
-        private TextView secondEventInfoTextView;
+        private TextView optionalSecondSubtitle;
+        private TextView optionalSecondEventInfoTextView;
         private TextView thirdEventInfoTextView;
-        private TextView optionalFourthEventInfoTextView;
+        private TextView fourthEventInfoTextView;
 
         EventViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -147,10 +145,10 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             favoriteStarImageView = itemView.findViewById(R.id.event_view_favorite_star);
             titleTextView = itemView.findViewById(R.id.title);
             subtitleTextView = itemView.findViewById(R.id.optional_subtitle);
-            andMoreTextView = itemView.findViewById(R.id.and_more);
-            secondEventInfoTextView = itemView.findViewById(R.id.optional_second_subtitle_field);
-            thirdEventInfoTextView = itemView.findViewById(R.id.second_info_field);
-            optionalFourthEventInfoTextView = itemView.findViewById(R.id.third_info_field);
+            optionalSecondSubtitle = itemView.findViewById(R.id.optional_second_subtitle);
+            optionalSecondEventInfoTextView = itemView.findViewById(R.id.optional_second_info_field);
+            thirdEventInfoTextView = itemView.findViewById(R.id.third_info_field);
+            fourthEventInfoTextView = itemView.findViewById(R.id.fourth_info_field);
         }
     }
 }

@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="16dp"/>
+            app:layout_constraintGuide_begin="16dp" />
 
         <android.support.constraint.Guideline
             android:id="@+id/right_gutter"
@@ -43,12 +43,10 @@
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/main_title_constraint"
-            android:layout_width="0dp"
+            android:layout_width="224dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            app:layout_constraintBottom_toTopOf="@id/optional_second_subtitle_field"
-            app:layout_constraintEnd_toStartOf="@id/right_gutter"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintBottom_toTopOf="@+id/optional_second_info_field"
             app:layout_constraintStart_toEndOf="@id/event_picture"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="spread">
@@ -76,42 +74,30 @@
                 tools:visibility="visible" />
 
             <TextView
-                android:id="@+id/and_more"
+                android:id="@+id/optional_second_subtitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="and more"
+                android:textColor="@color/darker_gray"
                 android:visibility="gone"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="14sp"
                 app:layout_constraintTop_toBottomOf="@id/optional_subtitle"
                 tools:visibility="visible" />
+
 
         </android.support.constraint.ConstraintLayout>
 
         <TextView
-            android:id="@+id/optional_second_subtitle_field"
+            android:id="@+id/optional_second_info_field"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            app:layout_constraintTop_toBottomOf="@id/main_title_constraint"
+            android:textSize="14sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/third_info_field"
             app:layout_constraintStart_toEndOf="@id/event_picture"
-            app:layout_constraintBottom_toTopOf="@id/second_info_field"
-            tools:text="Second Info Field"
-            />
-
-        <TextView
-            android:id="@+id/second_info_field"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            app:layout_constraintBottom_toTopOf="@id/third_info_field"
-            app:layout_constraintStart_toEndOf="@id/event_picture"
-            app:layout_constraintTop_toBottomOf="@id/optional_second_subtitle_field"
-            tools:text="Third Info Field" />
+            app:layout_constraintTop_toBottomOf="@+id/main_title_constraint"
+            tools:text="Optional Second Info Field"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/third_info_field"
@@ -120,25 +106,35 @@
             android:layout_marginLeft="16dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/fourth_info_field"
+            app:layout_constraintStart_toEndOf="@id/event_picture"
+            app:layout_constraintTop_toBottomOf="@+id/optional_second_info_field"
+            tools:text="Third Info Field" />
+
+        <TextView
+            android:id="@+id/fourth_info_field"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/event_picture"
-            app:layout_constraintTop_toBottomOf="@+id/second_info_field"
-            tools:text="Optonal Fourth Info Field"
-            tools:visibility="visible" />
+            app:layout_constraintTop_toBottomOf="@+id/third_info_field"
+            tools:text="Optonal Fourth Info Field" />
 
         <ImageView
             android:id="@+id/event_view_favorite_star"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:visibility="gone"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintEnd_toEndOf="@id/right_gutter"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/right_gutter"
             app:srcCompat="@drawable/ic_star"
-            tools:visibility="visible"/>
+            tools:visibility="visible" />
 
 
     </android.support.constraint.ConstraintLayout>
