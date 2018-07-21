@@ -6,14 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.matthewtimmons.upcomingeventsapp.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FriendSelectorListAdapter extends RecyclerView.Adapter<FriendSelectorListAdapter.FriendSelectorViewHolder> {
@@ -56,7 +53,7 @@ public class FriendSelectorListAdapter extends RecyclerView.Adapter<FriendSelect
             super(itemView);
             friendUsername = itemView.findViewById(R.id.friend_user_name);
             numberOfSharedGames = itemView.findViewById(R.id.number_of_shared_games);
-            friendCheckbox = itemView.findViewById(R.id.friend_checkbox);
+            friendCheckbox = itemView.findViewById(R.id.event_type_icon);
         }
     }
 }

@@ -14,12 +14,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventPagerAdapter;
 import com.matthewtimmons.upcomingeventsapp.R;
+import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
+import com.squareup.picasso.Picasso;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -48,24 +54,36 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         NavigationView navigationView = findViewById(R.id.navigation_view);
+
+        View navHeader = navigationView.getHeaderView(0);
+        final ImageView profilePhotoImageView = navHeader.findViewById(R.id.nav_bar_profile_photo);
+
+        profilePhotoImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intentToProfileViewActivity = new Intent(MainActivity.this, ProfileViewActivity.class);
+                startActivity(intentToProfileViewActivity);
+            }
+        });
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                                                              @Override
                                                              public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 //                                                                 Toast.makeText(MainActivity.this, menuItem.toString(), Toast.LENGTH_SHORT).show();
                                                                  switch (menuItem.getItemId()) {
                                                                      case R.id.nav_drawer_favorites:
-                                                                         Intent intent = new Intent(MainActivity.this, FavoritesActivity.class);
-                                                                         startActivity(intent);
+                                                                         Intent intentToDrawersFavorites = new Intent(MainActivity.this, FavoritesActivity.class);
+                                                                         startActivity(intentToDrawersFavorites);
                                                                          return true;
                                                                      case R.id.nav_drawer_shared_games:
-                                                                         Intent intentSharedGames = new Intent(MainActivity.this, SharedGamesActivity.class);
-                                                                         startActivity(intentSharedGames);
+                                                                         Intent intentToSharedGames = new Intent(MainActivity.this, SharedGamesActivity.class);
+                                                                         startActivity(intentToSharedGames);
                                                                          return true;
                                                                  }
-
                                                                  return true;
                                                              }
                                                          });
+
 
 
 
@@ -116,6 +134,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageScrollStateChanged(int i) {
 
+            }
+        });
+
+        FirebaseFirestore.getInstance().document("users/" + currentUserDisplayname).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                Picasso.get().load(task.getResult().getString("profilePhotoURL")).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
             }
         });
     }

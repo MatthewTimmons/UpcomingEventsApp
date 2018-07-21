@@ -18,7 +18,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.adapters.FriendSelectorListAdapter;
 import com.matthewtimmons.upcomingeventsapp.R;
+import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FriendSelectorFragment extends Fragment {
@@ -43,6 +45,7 @@ public class FriendSelectorFragment extends Fragment {
         final View v = inflater.inflate(R.layout.fragment_friends_interest, container, false);
 //        eventId = getArguments().getString(KEY_EVENT_ID);
 //        eventType = getArguments().getString(KEY_EVENT_TYPE);
+        v.findViewById(R.id.second_column_name).setVisibility(View.INVISIBLE);
         return v;
     }
 
@@ -56,12 +59,22 @@ public class FriendSelectorFragment extends Fragment {
         FirebaseFirestore.getInstance().collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<DocumentSnapshot> allUsers = task.getResult().getDocuments();
+                final List<DocumentSnapshot> allUsers = task.getResult().getDocuments();
+                currentUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get("friends");
+                        ArrayList<DocumentSnapshot> friendDocumentSnapshots = UserHelper.fetchFilteredUsersList(allUsers, allFriendIds, CURRENT_USER);
 
-//                List<DocumentSnapshot> allFriends = UserHelper.getFilteredUsersList(allUsers);
 
-                friendSelectorListAdapter = new FriendSelectorListAdapter(allUsers);
-                recyclerView.setAdapter(friendSelectorListAdapter);
+
+    //                List<DocumentSnapshot> allFriends = UserHelper.fetchFilteredUsersList(allUsers);
+
+                    friendSelectorListAdapter = new FriendSelectorListAdapter(friendDocumentSnapshots);
+                    recyclerView.setAdapter(friendSelectorListAdapter);
+
+                    }
+                });
             }
         });
     }

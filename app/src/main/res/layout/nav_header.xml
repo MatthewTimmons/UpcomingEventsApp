@@ -5,6 +5,16 @@
     android:layout_height="200dp"
     android:background="@color/pastel_blue">
 
+    <ImageView
+        android:id="@+id/nav_bar_profile_photo"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/current_user_displayname"
+        android:src="@drawable/ic_default_profile_photo"
+        />
+
     <TextView
         android:id="@+id/current_user_displayname"
         android:layout_width="0dp"
@@ -14,6 +24,7 @@
         android:layout_marginLeft="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
 </android.support.constraint.ConstraintLayout>

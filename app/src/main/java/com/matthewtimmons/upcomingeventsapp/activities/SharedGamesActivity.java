@@ -18,13 +18,12 @@ import com.matthewtimmons.upcomingeventsapp.fragments.SharedGamesFragment;
 import java.util.ArrayList;
 
 public class SharedGamesActivity extends AppCompatActivity {
-    EventListAdapter eventListAdapter;
-    RecyclerView recyclerView;
     Button nextButton;
     Button backButton;
 
     private DocumentReference currentUserReference = FirebaseFirestore.getInstance().document("users/Matt");
 
+    // TODO Get these values from the checked items
     public static final String currentUserId = "Matt";
     public static final String friendUserId = "Ryan";
 
@@ -37,7 +36,6 @@ public class SharedGamesActivity extends AppCompatActivity {
         backButton = findViewById(R.id.backButton);
 
         FriendSelectorFragment fragment = new FriendSelectorFragment();
-
         getSupportFragmentManager().beginTransaction().add(R.id.friend_selector_fragment_container, fragment).commit();
 
         nextButton.setOnClickListener(new View.OnClickListener() {

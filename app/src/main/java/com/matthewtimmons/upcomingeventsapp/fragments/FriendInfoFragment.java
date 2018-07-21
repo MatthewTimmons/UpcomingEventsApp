@@ -1,7 +1,6 @@
 package com.matthewtimmons.upcomingeventsapp.fragments;
 
 import android.os.Bundle;
-import android.os.UserManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,6 +21,7 @@ import com.matthewtimmons.upcomingeventsapp.adapters.FriendInfoListAdapter;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FriendInfoFragment extends Fragment {
@@ -62,15 +62,22 @@ public class FriendInfoFragment extends Fragment {
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<DocumentSnapshot> allUsers = task.getResult().getDocuments();
-                List<DocumentSnapshot> friends = UserHelper.getFilteredUsersList(allUsers);
-                friendsListAdapter = new FriendInfoListAdapter(friends, eventType, eventId);
-                recyclerView.setAdapter(friendsListAdapter);
+                final List<DocumentSnapshot> allUsers = task.getResult().getDocuments();
+                FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(CURRENT_USER).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                      @Override
+                      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                          ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get("friends");
+                          List<DocumentSnapshot> friends = UserHelper.fetchFilteredUsersList(allUsers, allFriendIds);
+
+                          friendsListAdapter = new FriendInfoListAdapter(friends, eventType, eventId);
+                          recyclerView.setAdapter(friendsListAdapter);
+                    }
+                });
             }
         });
 
         if (eventType.equals(FirebaseConstants.COLLECTION_MOVIES)) {
-            view.findViewById(R.id.friend_checkbox_column).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.third_column_name).setVisibility(View.VISIBLE);
         }
     }
 }

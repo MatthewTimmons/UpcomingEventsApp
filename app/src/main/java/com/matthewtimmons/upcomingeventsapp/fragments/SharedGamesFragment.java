@@ -1,5 +1,6 @@
 package com.matthewtimmons.upcomingeventsapp.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,12 +23,14 @@ import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventListAdapter;
 import com.matthewtimmons.upcomingeventsapp.adapters.FriendSelectorListAdapter;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
+import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class SharedGamesFragment extends Fragment {
+    public static final CollectionReference allGamesCollectionReference = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_GAMES);
+    public static final CollectionReference allUsersCollectionReference = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS);
     DocumentReference currentUser = FirebaseFirestore.getInstance().collection("users").document("Matt");
     private static final String KEY_FIRST_USER_ID = "keyFirstUserId";
     private static final String KEY_SECOND_USER_ID = "keySecondUserId";
@@ -61,42 +65,33 @@ public class SharedGamesFragment extends Fragment {
         recyclerView = view.findViewById(R.id.events_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-                //TODO
+                final ArrayList<DocumentSnapshot> allSharedGameDocumentSnapshots = new ArrayList<>();
                 final ArrayList<String> allSharedGames = new ArrayList<>();
-                final CollectionReference allUsers = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS);
-                final DocumentReference currentUserDocRef = allUsers.document(firstUserId);
-                final DocumentReference friendsDocRef = allUsers.document(secondUserId);
 
+                final DocumentReference currentUserDocRef = allUsersCollectionReference.document(firstUserId);
+                final DocumentReference friendsDocRef = allUsersCollectionReference.document(secondUserId);
 
                 currentUserDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        final ArrayList<String> currentUsersGames = (ArrayList<String>) task.getResult().get("gamesOwnedByGameId");
+                        final ArrayList<String> listOfGames1 = (ArrayList<String>) task.getResult().get(FirebaseConstants.KEY_GAMES_OWNED);
                         friendsDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                ArrayList<String> friendsGames = (ArrayList<String>) task.getResult().get("gamesOwnedByGameId");
-
-                                for (String game : currentUsersGames) {
-                                    if (friendsGames.contains(game)) {
-                                        allSharedGames.add(game);
-                                    }
-                                }
-
-                                final List<DocumentSnapshot> allFavoriteDocumentSnapshots = new ArrayList<>();
-                                final CollectionReference collectionReferenceGames = FirebaseFirestore.getInstance().collection("games");
-
-                                collectionReferenceGames.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                ArrayList<String> listOfGames2 = (ArrayList<String>) task.getResult().get(FirebaseConstants.KEY_GAMES_OWNED);
+                                allSharedGames.addAll(UserHelper.fetchListOfMatchingItems(listOfGames1, listOfGames2));
+                                allGamesCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        List<DocumentSnapshot> allGames = task.getResult().getDocuments();
-                                        for (DocumentSnapshot game : allGames) {
+                                        ArrayList<DocumentSnapshot> allGameDocumentSnapshots = (ArrayList<DocumentSnapshot>) task.getResult().getDocuments();
+                                        for (DocumentSnapshot game : allGameDocumentSnapshots) {
                                             if (allSharedGames.contains(game.getId())) {
-                                                allFavoriteDocumentSnapshots.add(game);
+                                                allSharedGameDocumentSnapshots.add(game);
                                             }
                                         }
-                                        EventListAdapter gameListAdapter = new EventListAdapter(allFavoriteDocumentSnapshots);
+                                        EventListAdapter gameListAdapter = new EventListAdapter(allSharedGameDocumentSnapshots);
                                         recyclerView.setAdapter(gameListAdapter);
+
                                     }
                                 });
                             }

@@ -74,8 +74,8 @@ public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAd
         public FriendInfoViewHolder(@NonNull View itemView) {
             super(itemView);
             friendUsername = itemView.findViewById(R.id.friend_user_name);
-            friendInterestLevel = itemView.findViewById(R.id.friend_interest_level);
-            friendCheckbox = itemView.findViewById(R.id.friend_checkbox);
+            friendInterestLevel = itemView.findViewById(R.id.favorite_star_icon);
+            friendCheckbox = itemView.findViewById(R.id.event_type_icon);
         }
     }
 }

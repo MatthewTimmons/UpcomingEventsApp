@@ -27,7 +27,8 @@
         <activity android:name=".activities.SharedGamesActivity">
 
         </activity>
-        <activity android:name=".fragments.FriendSelectorFragment">
+
+        <activity android:name=".activities.ProfileViewActivity">
 
         </activity>
     </application>
