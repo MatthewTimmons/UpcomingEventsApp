@@ -31,6 +31,9 @@
         <activity android:name=".activities.ProfileViewActivity">
 
         </activity>
+        <activity android:name=".activities.FriendsListActivity">
+
+        </activity>
     </application>
 
 </manifest>

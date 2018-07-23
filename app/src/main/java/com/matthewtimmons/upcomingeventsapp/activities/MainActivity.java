@@ -79,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
                                                                          Intent intentToSharedGames = new Intent(MainActivity.this, SharedGamesActivity.class);
                                                                          startActivity(intentToSharedGames);
                                                                          return true;
+                                                                     case R.id.nav_drawer_friends:
+                                                                         Intent intentToFriends = new Intent(MainActivity.this, FriendsListActivity.class);
+                                                                         startActivity(intentToFriends);
                                                                  }
                                                                  return true;
                                                              }
