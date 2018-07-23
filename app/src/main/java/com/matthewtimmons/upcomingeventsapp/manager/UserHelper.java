@@ -92,7 +92,6 @@ public class UserHelper {
     }
 
     public static void setFavoritesRecyclerViewAdapter(DocumentReference currentUserReference, final RecyclerView recyclerView, final boolean collapsed) {
-
         currentUserReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

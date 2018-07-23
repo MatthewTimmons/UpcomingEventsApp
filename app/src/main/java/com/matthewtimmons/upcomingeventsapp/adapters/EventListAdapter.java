@@ -65,7 +65,9 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                 backupImage = R.drawable.ic_movies_blue;
                 setAllSharedFields(eventDocumentSnapshot, viewHolder);
                 viewHolder.optionalSecondEventInfoTextView.setVisibility(View.VISIBLE);
-                viewHolder.optionalSecondEventInfoTextView.setText("Rated " + eventDocumentSnapshot.getString(FirebaseConstants.KEY_MOVIE_RATING));
+                String formattedRating = viewHolder.itemView.getResources()
+                        .getString(R.string.formatted_rating, eventDocumentSnapshot.getString(FirebaseConstants.KEY_MOVIE_RATING));
+                viewHolder.optionalSecondEventInfoTextView.setText(formattedRating);
                 viewHolder.thirdEventInfoTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_MOVIE_GENRE));
                 break;
         }
@@ -78,8 +80,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                 }
             });
 
-
-
+        // Set star visibility if favorited
         FirebaseFirestore.getInstance().collection("users").document("Matt").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -94,7 +95,6 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                 };
             }
         });
-
     }
 
     public void setAllSharedFields(DocumentSnapshot eventDocumentSnapshot, EventViewHolder viewHolder) {

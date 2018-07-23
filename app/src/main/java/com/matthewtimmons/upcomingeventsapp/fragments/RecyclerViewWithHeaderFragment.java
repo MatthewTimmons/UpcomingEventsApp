@@ -11,21 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.matthewtimmons.upcomingeventsapp.CustomLinearLayoutManager;
 import com.matthewtimmons.upcomingeventsapp.R;
-import com.matthewtimmons.upcomingeventsapp.adapters.RecyclerViewWithHeaderListAdapter;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class RecyclerViewWithHeaderFragment extends Fragment {
     private static final String KEY_EVENT_TYPE = "keyEventType";
@@ -49,11 +40,7 @@ public class RecyclerViewWithHeaderFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View v = inflater.inflate(R.layout.fragment_friends_interest, container, false);
-        firstColumnName = v.findViewById(R.id.first_column_name);
-        secondColumnName = v.findViewById(R.id.second_column_name);
-        thirdColumnName = v.findViewById(R.id.third_column_name);
-        eventId = getArguments().getString(KEY_CURRENT_USER_ID);
+        final View v = inflater.inflate(R.layout.fragment_recycler_view_header, container, false);
         return v;
     }
 
@@ -61,13 +48,10 @@ public class RecyclerViewWithHeaderFragment extends Fragment {
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-
-        recyclerView = view.findViewById(R.id.friends_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        UserHelper.setFavoritesRecyclerViewAdapter(currentUserReference, recyclerView, true);
-
-
+        eventId = getArguments().getString(KEY_CURRENT_USER_ID);
+        firstColumnName = view.findViewById(R.id.first_column_name);
+        secondColumnName = view.findViewById(R.id.second_column_name);
+        thirdColumnName = view.findViewById(R.id.third_column_name);
 
 
         firstColumnName.setText("Favorite Events:");

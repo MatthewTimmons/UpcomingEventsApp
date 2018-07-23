@@ -45,13 +45,15 @@ public class FriendSelectorFragment extends Fragment {
         final View v = inflater.inflate(R.layout.fragment_friends_interest, container, false);
 //        eventId = getArguments().getString(KEY_EVENT_ID);
 //        eventType = getArguments().getString(KEY_EVENT_TYPE);
-        v.findViewById(R.id.second_column_name).setVisibility(View.INVISIBLE);
+
         return v;
     }
 
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        view.findViewById(R.id.second_column_name).setVisibility(View.INVISIBLE);
 
         recyclerView = view.findViewById(R.id.friends_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

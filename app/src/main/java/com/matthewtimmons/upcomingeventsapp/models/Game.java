@@ -19,13 +19,13 @@ public class Game implements Serializable {
     }
 
     public static String fetchGamesAsString(DocumentSnapshot gameDocumentSnapshot) {
-        List<String> listOfGames = (ArrayList<String>) gameDocumentSnapshot.get("releaseConsoles");
-        String output = "";
+        List<String> listOfGames = (List<String>) gameDocumentSnapshot.get("releaseConsoles");
+        StringBuilder output = new StringBuilder();
         for (int i = 0; i < listOfGames.size() -1; i++) {
-            output = output.concat(listOfGames.get(i) + ", ");
+            output = output.append(listOfGames.get(i) + ", ");
         }
-        output = output.concat(listOfGames.get(listOfGames.size() -1));
-        return output;
+        output = output.append(listOfGames.get(listOfGames.size() -1));
+        return output.toString();
     }
 
     private String gameTitle;

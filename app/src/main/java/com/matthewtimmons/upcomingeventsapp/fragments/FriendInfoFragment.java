@@ -46,14 +46,15 @@ public class FriendInfoFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_friends_interest, container, false);
-        eventId = getArguments().getString(KEY_EVENT_ID);
-        eventType = getArguments().getString(KEY_EVENT_TYPE);
         return v;
     }
 
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        eventId = getArguments().getString(KEY_EVENT_ID);
+        eventType = getArguments().getString(KEY_EVENT_TYPE);
 
         recyclerView = view.findViewById(R.id.friends_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

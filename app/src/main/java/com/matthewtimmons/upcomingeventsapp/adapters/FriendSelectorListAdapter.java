@@ -15,6 +15,7 @@ import java.util.List;
 
 public class FriendSelectorListAdapter extends RecyclerView.Adapter<FriendSelectorListAdapter.FriendSelectorViewHolder> {
     List<DocumentSnapshot> friends;
+    String numberOfSharedGames = "0";
 
     public FriendSelectorListAdapter(List<DocumentSnapshot> friends) {
         this.friends = friends;
@@ -33,7 +34,6 @@ public class FriendSelectorListAdapter extends RecyclerView.Adapter<FriendSelect
 
         friendSelectorViewHolder.friendUsername.setText(userDocumentSnapshot.getId());
 
-        String numberOfSharedGames = "0";
         friendSelectorViewHolder.numberOfSharedGames.setText("Number of shared games");
         friendSelectorViewHolder.numberOfSharedGames.setVisibility(View.GONE);
     }

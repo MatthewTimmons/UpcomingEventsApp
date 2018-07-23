@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-//This is an entirely generic RecyclerView that binds data to a list of events with the ViewHolder, //TODO: Change this to generic also
+//This is an entirely generic RecyclerView that binds data to a list of events with the ViewHolder, RecyclerViewWithHeaderViewHolder //TODO: Change this to generic also
 
 public class RecyclerViewWithHeaderListAdapter extends RecyclerView.Adapter<RecyclerViewWithHeaderListAdapter.RecyclerViewWithHeaderViewHolder> {
     List<DocumentSnapshot> viewItems;
@@ -85,15 +85,12 @@ public class RecyclerViewWithHeaderListAdapter extends RecyclerView.Adapter<Recy
 
 
     @Override
-    public int getItemCount() {
-        return viewItems.size();
-    }
+    public int getItemCount() { return viewItems != null ? viewItems.size() : 0; }
 
     public class RecyclerViewWithHeaderViewHolder extends RecyclerView.ViewHolder {
         TextView firstColumnNameTextView;
 
         ImageView thirdColumnImageView;
-
 
         public RecyclerViewWithHeaderViewHolder(@NonNull View itemView) {
             super(itemView);

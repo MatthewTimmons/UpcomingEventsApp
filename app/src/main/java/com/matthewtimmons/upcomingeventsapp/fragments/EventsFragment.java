@@ -40,17 +40,23 @@ public class EventsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_events, container, false);
+        return v;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         eventType = getArguments().getString(KEY_EVENT_TYPE);
 
         switch (eventType) {
             case FirebaseConstants.COLLECTION_CONCERTS:
-                v.findViewById(R.id.events_recycler_view).setBackgroundColor(Color.parseColor("#FDEEB7"));
+                view.findViewById(R.id.events_recycler_view).setBackgroundColor(Color.parseColor("#FDEEB7"));
                 break;
             case FirebaseConstants.COLLECTION_GAMES:
-                v.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.stripes);
+                view.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.stripes);
                 break;
             case FirebaseConstants.COLLECTION_MOVIES:
-                v.findViewById(R.id.events_recycler_view).setBackgroundColor(Color.parseColor("#ACD2A4"));
+                view.findViewById(R.id.events_recycler_view).setBackgroundColor(Color.parseColor("#ACD2A4"));
                 break;
         }
 
@@ -59,17 +65,11 @@ public class EventsFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 List<DocumentSnapshot> eventDocumentSnapshots = task.getResult().getDocuments();
-                recyclerView = v.findViewById(R.id.events_recycler_view);
+                recyclerView = view.findViewById(R.id.events_recycler_view);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                 eventListAdapter = new EventListAdapter(eventDocumentSnapshots);
                 recyclerView.setAdapter(eventListAdapter);
             }
         });
-        return v;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 }

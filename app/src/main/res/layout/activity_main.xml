@@ -21,22 +21,18 @@
 
             </android.support.v7.widget.Toolbar>
 
-            <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <android.support.constraint.ConstraintLayout
                 android:id="@+id/card_contents"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                <android.support.v4.view.ViewPager
                     android:id="@+id/pager"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_above="@+id/bottom_navigation"
                     app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                </android.support.v4.view.ViewPager>
+                    app:layout_constraintTop_toTopOf="parent"/>
 
                 <android.support.design.widget.BottomNavigationView
                     android:id="@+id/bottom_navigation"

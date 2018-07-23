@@ -60,17 +60,20 @@ public class InterestLevelSeekbarFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_interest_level, container, false);
+        return v;
+    }
 
-        interestLevelSeekbar = v.findViewById(R.id.slider_bar);
-        interestLevelTextView = v.findViewById(R.id.interest_level);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        interestLevelSeekbar = view.findViewById(R.id.slider_bar);
+        interestLevelTextView = view.findViewById(R.id.interest_level);
         eventId = getArguments().getString(EVENT_ID);
         eventType = getArguments().getString(EVENT_TYPE);
 
         setSeekbarToCurrentInterestLevel(eventType, eventId);
 
-
         interestLevelSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 updateText(i);
@@ -86,19 +89,7 @@ public class InterestLevelSeekbarFragment extends Fragment {
             public void onStopTrackingTouch(final SeekBar seekBar) {
                 sendDataAndResetView(seekBar);
             }
-
-
         });
-
-
-        return v;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-
     }
 
 
@@ -163,12 +154,12 @@ public class InterestLevelSeekbarFragment extends Fragment {
     }
 
         public void setSeekbarToCurrentInterestLevel(final String eventType, final String eventId) {
-            FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            FirebaseFirestore.getInstance().document("users/Matt").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     try {
                         // TODO: Change this get(2) to get the current user
-                        DocumentSnapshot userDocumentSnapshot = task.getResult().getDocuments().get(2);
+                        DocumentSnapshot userDocumentSnapshot = task.getResult();
                         Map<String, Object> interestLevels = (Map<String, Object>) userDocumentSnapshot.get(FirebaseConstants.KEY_INTEREST_LEVELS_USER);
                         Map<String, Object> events = (Map<String, Object>) interestLevels.get(eventType);
                         Integer interestLevelValue = ((Long) events.get(eventId)).intValue();

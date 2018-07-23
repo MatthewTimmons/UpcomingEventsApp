@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,10 +40,12 @@ public class ProfileViewActivity extends AppCompatActivity {
 //        Set display name
 //        Set Favorites recycler view
 
-
+        recyclerView = findViewById(R.id.profile_favorite_events_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        UserHelper.setFavoritesRecyclerViewAdapter(currentUserReference, recyclerView, true);
 
         RecyclerViewWithHeaderFragment recyclerViewWithHeaderFragment = RecyclerViewWithHeaderFragment.newInstance(CURRENT_USER_KEY);
-        getSupportFragmentManager().beginTransaction().add(R.id.profile_favorite_events_recycler_view, recyclerViewWithHeaderFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.profile_favorite_events_recycler_view_container, recyclerViewWithHeaderFragment).commit();
 
 
         currentUserReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

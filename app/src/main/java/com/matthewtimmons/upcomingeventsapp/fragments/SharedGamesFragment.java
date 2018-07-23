@@ -53,14 +53,15 @@ public class SharedGamesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_events, container, false);
-        firstUserId = getArguments().getString(KEY_FIRST_USER_ID);
-        secondUserId = getArguments().getString(KEY_SECOND_USER_ID);
         return v;
     }
 
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        firstUserId = getArguments().getString(KEY_FIRST_USER_ID);
+        secondUserId = getArguments().getString(KEY_SECOND_USER_ID);
 
         recyclerView = view.findViewById(R.id.events_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

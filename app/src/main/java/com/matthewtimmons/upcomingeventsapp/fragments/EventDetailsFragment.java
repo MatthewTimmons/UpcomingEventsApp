@@ -59,31 +59,24 @@ public class EventDetailsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        FirebaseFirestore.getInstance().collection(eventKey).document(eventId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
-
-            }
-        });
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_details_event, container, false);
-
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            eventId = bundle.getString(ARGS_CONCERT_ID);
-            eventKey = bundle.getString(ARGS_EVENT_TYPE);
-        }
-
         return v;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            eventId = bundle.getString(ARGS_CONCERT_ID);
+            eventKey = bundle.getString(ARGS_EVENT_TYPE);
+        }
 
         // Assign all views to variables
         eventPictureImageView = view.findViewById(R.id.wide_image);
@@ -118,7 +111,9 @@ public class EventDetailsFragment extends Fragment {
                     case FirebaseConstants.COLLECTION_MOVIES:
                         setAllSharedFields(eventDocumentSnapshot, R.drawable.ic_movies_blue,"movieGenre");
                         optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);
-                        optionalSecondSubtitleTextView.setText("Rated " + eventDocumentSnapshot.getString("movieRating"));
+                        String formattedRating = getResources()
+                                .getString(R.string.formatted_rating, eventDocumentSnapshot.getString(FirebaseConstants.KEY_MOVIE_RATING));
+                        optionalSecondSubtitleTextView.setText(formattedRating);
                         optionalCheckbox.setVisibility(View.VISIBLE);
                         optionalCheckbox.setText("Seen");
                         setCheckmarkFunctionality(eventDocumentSnapshot.getId(), FieldPath.of(FirebaseConstants.KEY_MOVIES_SEEN), optionalCheckbox, false);
