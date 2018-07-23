@@ -1,6 +1,7 @@
 package com.matthewtimmons.upcomingeventsapp.fragments;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FriendSelectorFragment extends Fragment {
+    private static final String FRIENDS_CHECKED = "FRIENDS_CHECKED";
     DocumentReference currentUser = FirebaseFirestore.getInstance().collection("users").document("Matt");
     private static final String KEY_EVENT_TYPE = "keyEventType";
     private static final String KEY_EVENT_ID = "keyEventId";
@@ -31,10 +33,10 @@ public class FriendSelectorFragment extends Fragment {
     FriendSelectorListAdapter friendSelectorListAdapter;
     RecyclerView recyclerView;
 
-    public static FriendSelectorFragment newInstance() {
+    public static FriendSelectorFragment newInstance(ArrayList<String> friendsChecked) {
         FriendSelectorFragment friendSelectorFragment = new FriendSelectorFragment();
         Bundle bundle = new Bundle();
-//        bundle.putString(KEY_EVENT_ID, eventId);
+        bundle.putStringArrayList(FRIENDS_CHECKED, friendsChecked);
         friendSelectorFragment.setArguments(bundle);
         return friendSelectorFragment;
     }
@@ -52,6 +54,8 @@ public class FriendSelectorFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        final ArrayList<String> friendsChecked = getArguments().getStringArrayList(FRIENDS_CHECKED);
 
         view.findViewById(R.id.second_column_name).setVisibility(View.INVISIBLE);
 
@@ -72,7 +76,7 @@ public class FriendSelectorFragment extends Fragment {
 
     //                List<DocumentSnapshot> allFriends = UserHelper.fetchFilteredUsersList(allUsers);
 
-                    friendSelectorListAdapter = new FriendSelectorListAdapter(friendDocumentSnapshots);
+                    friendSelectorListAdapter = new FriendSelectorListAdapter(friendDocumentSnapshots, friendsChecked);
                     recyclerView.setAdapter(friendSelectorListAdapter);
 
                     }

@@ -6,19 +6,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FriendSelectorListAdapter extends RecyclerView.Adapter<FriendSelectorListAdapter.FriendSelectorViewHolder> {
     List<DocumentSnapshot> friends;
+    List<String> friendsChecked;
     String numberOfSharedGames = "0";
 
-    public FriendSelectorListAdapter(List<DocumentSnapshot> friends) {
+    public FriendSelectorListAdapter(List<DocumentSnapshot> friends, ArrayList<String> friendsChecked) {
         this.friends = friends;
+        this.friendsChecked = friendsChecked;
     }
 
     @NonNull
@@ -29,13 +34,30 @@ public class FriendSelectorListAdapter extends RecyclerView.Adapter<FriendSelect
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FriendSelectorListAdapter.FriendSelectorViewHolder friendSelectorViewHolder, int i) {
-        DocumentSnapshot userDocumentSnapshot = friends.get(i);
+    public void onBindViewHolder(@NonNull final FriendSelectorListAdapter.FriendSelectorViewHolder friendSelectorViewHolder, int i) {
+        final DocumentSnapshot userDocumentSnapshot = friends.get(i);
 
         friendSelectorViewHolder.friendUsername.setText(userDocumentSnapshot.getId());
 
         friendSelectorViewHolder.numberOfSharedGames.setText("Number of shared games");
         friendSelectorViewHolder.numberOfSharedGames.setVisibility(View.GONE);
+
+        friendSelectorViewHolder.friendCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (friendsChecked.size() > 1) {
+                    Toast.makeText(friendSelectorViewHolder.itemView.getContext(), "Cannot select more than two people", Toast.LENGTH_LONG).show();
+                    compoundButton.setChecked(false);
+                    friendsChecked.remove(userDocumentSnapshot.getId());
+                } else if (friendsChecked.size() <= 1){
+                    if (b) {
+                        friendsChecked.add(userDocumentSnapshot.getId());
+                    } else if (!b) {
+                        friendsChecked.remove(userDocumentSnapshot.getId());
+                    }
+                }
+            }
+        });
     }
 
     @Override
