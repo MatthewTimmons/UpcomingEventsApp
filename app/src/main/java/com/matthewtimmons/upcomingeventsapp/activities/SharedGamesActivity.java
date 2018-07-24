@@ -26,8 +26,6 @@ public class SharedGamesActivity extends AppCompatActivity {
     Button nextButton;
     Button backButton;
 
-    private DocumentReference currentUserReference = FirebaseFirestore.getInstance().document("users/Matt");
-
     // TODO Get these values from the checked items
     public static String currentUserId = "Matt";
     public static String friendUserId = "Ryan";
@@ -43,7 +41,7 @@ public class SharedGamesActivity extends AppCompatActivity {
 
         currentUser = getIntent().getStringExtra("CURRENT_USER");
 
-        FriendSelectorFragment fragment = FriendSelectorFragment.newInstance(friendsChecked, "Matt", true, false);
+        FriendSelectorFragment fragment = FriendSelectorFragment.newInstance(friendsChecked, currentUser, true, false);
         getSupportFragmentManager().beginTransaction().add(R.id.friend_selector_fragment_container, fragment).commit();
 
 

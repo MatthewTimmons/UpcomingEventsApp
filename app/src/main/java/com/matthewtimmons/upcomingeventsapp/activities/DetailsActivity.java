@@ -22,7 +22,6 @@ public class DetailsActivity extends AppCompatActivity {
     String eventType;
 
     //TODO: Fix later
-    public static final String MY_NAME = "Matt";
 
     public static Intent newIntent(Context context, String eventId, String eventType) {
         Intent intent = new Intent(context, DetailsActivity.class);

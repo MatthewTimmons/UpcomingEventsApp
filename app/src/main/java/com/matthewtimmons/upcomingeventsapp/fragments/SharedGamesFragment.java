@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
@@ -33,11 +34,8 @@ public class SharedGamesFragment extends Fragment {
     public static final CollectionReference allGamesCollectionReference = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_GAMES);
     public static final CollectionReference allUsersCollectionReference = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS);
     private static final String KEY_FRIENDS_CHECKED = "KEY_FRIENDS_CHECKED";
-    DocumentReference currentUser = FirebaseFirestore.getInstance().collection("users").document("Matt");
     private static final String KEY_FIRST_USER_ID = "keyFirstUserId";
     private static final String KEY_SECOND_USER_ID = "keySecondUserId";
-    private static final String CURRENT_USER = "Matt";
-    FriendSelectorListAdapter friendSelectorListAdapter;
     RecyclerView recyclerView;
     String firstUserId;
     String secondUserId;
@@ -79,11 +77,11 @@ public class SharedGamesFragment extends Fragment {
             currentUserDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    final ArrayList<String> listOfGames1 = (ArrayList<String>) task.getResult().get(FirebaseConstants.KEY_GAMES_OWNED);
+                    final ArrayList<String> listOfGames1 = (ArrayList<String>) task.getResult().get(FieldPath.of("allAppData", FirebaseConstants.KEY_GAMES_OWNED));
                     friendsDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            ArrayList<String> listOfGames2 = (ArrayList<String>) task.getResult().get(FirebaseConstants.KEY_GAMES_OWNED);
+                            ArrayList<String> listOfGames2 = (ArrayList<String>) task.getResult().get(FieldPath.of("allAppData", FirebaseConstants.KEY_GAMES_OWNED));
                             allSharedGames.addAll(UserHelper.fetchListOfMatchingItems(listOfGames1, listOfGames2));
 
                             allGamesCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

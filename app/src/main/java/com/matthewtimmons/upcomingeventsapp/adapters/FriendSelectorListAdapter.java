@@ -44,7 +44,7 @@ public class FriendSelectorListAdapter extends RecyclerView.Adapter<FriendSelect
     public void onBindViewHolder(@NonNull final FriendSelectorListAdapter.FriendSelectorViewHolder friendSelectorViewHolder, int i) {
         final DocumentSnapshot userDocumentSnapshot = friends.get(i);
 
-        friendSelectorViewHolder.friendUsername.setText(userDocumentSnapshot.getId());
+        friendSelectorViewHolder.friendUsername.setText(userDocumentSnapshot.getString("displayName"));
 
         friendSelectorViewHolder.numberOfSharedGames.setText("Number of shared games");
         friendSelectorViewHolder.numberOfSharedGames.setVisibility(View.GONE);

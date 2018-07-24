@@ -29,7 +29,6 @@ import java.util.Map;
 
 public class UserHelper {
     //TODO: Implement method to get the current user
-    public static final String CURRENT_USER = "Matt";
 
     public static void setFriendsListAdapter(final RecyclerView recyclerView, final String currentUser) {
         FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -39,7 +38,7 @@ public class UserHelper {
                 FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(currentUser).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get("friends");
+                        ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get(FieldPath.of("allAppData", "friends"));
                         List<DocumentSnapshot> friends = UserHelper.fetchFilteredUsersList(allUsers, allFriendIds);
 
                         FriendListAdapter recyclerAdapter = new FriendListAdapter(friends);
@@ -86,19 +85,6 @@ public class UserHelper {
         return friends;
     }
 
-    public static ArrayList<String> fetchListOfOwnedGames(DocumentReference userDocRef) {
-        final ArrayList<String> listOfOwnedGames = new ArrayList<>();
-        userDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                ArrayList<String> listOfGames = (ArrayList<String>) task.getResult().get(FirebaseConstants.KEY_GAMES_OWNED);
-
-                listOfOwnedGames.addAll(listOfGames);
-            }
-        });
-        return listOfOwnedGames;
-    }
-
     public static ArrayList<String> fetchListOfMatchingItems(ArrayList<String> firstUser, ArrayList<String> secondUser) {
         final ArrayList<String> listOfSharedGames = new ArrayList<>();
         for (String item : firstUser) {
@@ -123,7 +109,7 @@ public class UserHelper {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 final HashMap<String, Object> allEventsMap = new HashMap<>();
-                Map<String, Object> allDataForUser = (Map<String, Object>) task.getResult().get("myFavorites");
+                Map<String, Object> allDataForUser = (Map<String, Object>) task.getResult().get(FieldPath.of("allAppData", "myFavorites"));
 
                 allEventsMap.putAll(fetchSharedValues(allDataForUser, "concerts"));
                 allEventsMap.putAll(fetchSharedValues(allDataForUser, "games"));

@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -33,8 +34,9 @@ import java.util.List;
 
 
 public class EventDetailsFragment extends Fragment {
-    private static final String ARGS_CONCERT_ID = "eventId";
-    private static final String ARGS_EVENT_TYPE = "eventKey";
+    private static final String ARGS_CONCERT_ID = "ARGS_CONCERT_ID";
+    private static final String ARGS_EVENT_TYPE = "ARGS_EVENT_TYPE";
+    String currentUserId;
     String eventId;
     String eventKey;
     ImageView eventPictureImageView;
@@ -65,6 +67,7 @@ public class EventDetailsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_details_event, container, false);
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         return v;
     }
 
@@ -106,7 +109,7 @@ public class EventDetailsFragment extends Fragment {
                         fourthTextView.setText(releaseConsolesAsString);
                         optionalCheckbox.setVisibility(View.VISIBLE);
                         optionalCheckbox.setText("Owned");
-                        setCheckmarkFunctionality(eventDocumentSnapshot.getId(), FieldPath.of(FirebaseConstants.KEY_GAMES_OWNED), optionalCheckbox, false);
+                        setCheckmarkFunctionality(eventDocumentSnapshot.getId(), FieldPath.of("allAppData", FirebaseConstants.KEY_GAMES_OWNED), optionalCheckbox, false);
                         break;
                     case FirebaseConstants.COLLECTION_MOVIES:
                         setAllSharedFields(eventDocumentSnapshot, R.drawable.ic_movies_blue,"movieGenre");
@@ -116,10 +119,10 @@ public class EventDetailsFragment extends Fragment {
                         optionalSecondSubtitleTextView.setText(formattedRating);
                         optionalCheckbox.setVisibility(View.VISIBLE);
                         optionalCheckbox.setText("Seen");
-                        setCheckmarkFunctionality(eventDocumentSnapshot.getId(), FieldPath.of(FirebaseConstants.KEY_MOVIES_SEEN), optionalCheckbox, false);
+                        setCheckmarkFunctionality(eventDocumentSnapshot.getId(), FieldPath.of("allAppData", FirebaseConstants.KEY_MOVIES_SEEN), optionalCheckbox, false);
                         break;
                 }
-                setCheckmarkFunctionality(eventId, FieldPath.of("myFavorites", eventKey), favoritesCheckbox, true);
+                setCheckmarkFunctionality(eventId, FieldPath.of("allAppData", "myFavorites", eventKey), favoritesCheckbox, true);
             }
         });
     }
@@ -149,7 +152,7 @@ public class EventDetailsFragment extends Fragment {
 
     public void setCheckmarkFunctionality(final String eventId, final FieldPath fieldpathToArray, final CheckBox checkBox, final boolean toggleImage) {
         Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS)
-                .document(UserHelper.CURRENT_USER).get();
+                .document(currentUserId).get();
         task.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

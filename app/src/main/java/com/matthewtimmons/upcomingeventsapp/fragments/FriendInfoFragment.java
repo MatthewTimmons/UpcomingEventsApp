@@ -12,7 +12,9 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -27,9 +29,9 @@ import java.util.List;
 public class FriendInfoFragment extends Fragment {
     private static final String KEY_EVENT_TYPE = "keyEventType";
     private static final String KEY_EVENT_ID = "keyEventId";
-    private static final String CURRENT_USER = "Matt";
     FriendInfoListAdapter friendsListAdapter;
     RecyclerView recyclerView;
+    String currentUserId;
     String eventId;
     String eventType;
 
@@ -46,6 +48,7 @@ public class FriendInfoFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_friends_interest, container, false);
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         return v;
     }
 
@@ -64,10 +67,10 @@ public class FriendInfoFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 final List<DocumentSnapshot> allUsers = task.getResult().getDocuments();
-                FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(CURRENT_USER).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                       @Override
                       public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                          ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get("friends");
+                          ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get(FieldPath.of("allAppData", "friends"));
                           List<DocumentSnapshot> friends = UserHelper.fetchFilteredUsersList(allUsers, allFriendIds);
 
                           friendsListAdapter = new FriendInfoListAdapter(friends, eventType, eventId);

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
@@ -37,6 +38,7 @@ public class InterestLevelSeekbarFragment extends Fragment {
     Handler seekbarHandler = new Handler();
     SeekBar interestLevelSeekbar;
     TextView interestLevelTextView;
+    String currentUserId;
     String eventId;
     String eventType;
 
@@ -60,6 +62,7 @@ public class InterestLevelSeekbarFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_interest_level, container, false);
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         return v;
     }
 
@@ -154,13 +157,13 @@ public class InterestLevelSeekbarFragment extends Fragment {
     }
 
         public void setSeekbarToCurrentInterestLevel(final String eventType, final String eventId) {
-            FirebaseFirestore.getInstance().document("users/Matt").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            FirebaseFirestore.getInstance().document("users/" + currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     try {
                         // TODO: Change this get(2) to get the current user
                         DocumentSnapshot userDocumentSnapshot = task.getResult();
-                        Map<String, Object> interestLevels = (Map<String, Object>) userDocumentSnapshot.get(FirebaseConstants.KEY_INTEREST_LEVELS_USER);
+                        Map<String, Object> interestLevels = (Map<String, Object>) userDocumentSnapshot.get(FieldPath.of("allAppData", FirebaseConstants.KEY_INTEREST_LEVELS_USER));
                         Map<String, Object> events = (Map<String, Object>) interestLevels.get(eventType);
                         Integer interestLevelValue = ((Long) events.get(eventId)).intValue();
                         interestLevelSeekbar.setProgress(interestLevelValue);

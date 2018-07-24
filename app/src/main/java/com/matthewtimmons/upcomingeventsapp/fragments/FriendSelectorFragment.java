@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.adapters.FriendSelectorListAdapter;
@@ -77,12 +78,8 @@ public class FriendSelectorFragment extends Fragment {
                 currentUserDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get("friends");
+                        ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get(FieldPath.of("allAppData", "friends"));
                         ArrayList<DocumentSnapshot> friendDocumentSnapshots = UserHelper.fetchFilteredUsersList(allUsers, allFriendIds, currentUser, includeCheckmarks);
-
-
-
-    //                List<DocumentSnapshot> allFriends = UserHelper.fetchFilteredUsersList(allUsers);
 
                     friendSelectorListAdapter = new FriendSelectorListAdapter(friendDocumentSnapshots, friendsChecked, includeCheckmarks, usersClickable);
                     recyclerView.setAdapter(friendSelectorListAdapter);

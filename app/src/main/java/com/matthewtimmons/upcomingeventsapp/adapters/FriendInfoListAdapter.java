@@ -51,7 +51,7 @@ public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAd
 
         // Check checkbox if movie has been seen
         if (eventType.equals(FirebaseConstants.COLLECTION_MOVIES)) {
-            ArrayList<String> moviesSeen = (ArrayList<String>) userDocumentSnapshot.get(FirebaseConstants.KEY_MOVIES_SEEN);
+            ArrayList<String> moviesSeen = (ArrayList<String>) userDocumentSnapshot.get(FieldPath.of("allAppData", FirebaseConstants.KEY_MOVIES_SEEN));
             if (moviesSeen.contains(eventId)) {
                 friendInfoViewHolder.friendCheckbox.setVisibility(View.VISIBLE);
                 friendInfoViewHolder.friendCheckbox.setImageResource(R.drawable.ic_checked_checkbox);

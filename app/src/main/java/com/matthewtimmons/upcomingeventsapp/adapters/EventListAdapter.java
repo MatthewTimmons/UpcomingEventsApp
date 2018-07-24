@@ -13,7 +13,9 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.activities.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.R;
@@ -27,6 +29,7 @@ import java.util.List;
 
 public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.EventViewHolder>{
     List<DocumentSnapshot> events;
+    String currentUserId;
     String eventType;
     int backupImage;
 
@@ -39,6 +42,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.viewholder_event, viewGroup, false);
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         return new EventViewHolder(view);
     }
 
@@ -81,10 +85,10 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             });
 
         // Set star visibility if favorited
-        FirebaseFirestore.getInstance().collection("users").document("Matt").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        FirebaseFirestore.getInstance().collection("users").document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                HashMap<String, Object> allData = (HashMap<String, Object>) task.getResult().get("myFavorites");
+                HashMap<String, Object> allData = (HashMap<String, Object>) task.getResult().get(FieldPath.of("allAppData", "myFavorites"));
                 ArrayList<String> allFavorites = new ArrayList<>();
                 allFavorites.addAll((ArrayList<String>) allData.get("concerts"));
                 allFavorites.addAll((ArrayList<String>) allData.get("games"));

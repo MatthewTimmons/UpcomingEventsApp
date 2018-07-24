@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -25,15 +26,17 @@ import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.matthewtimmons.upcomingeventsapp.manager.UserHelper.CURRENT_USER;
 
 public class FriendsListActivity extends AppCompatActivity {
     RecyclerView recyclerView;
+    String currentUserId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
+
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         // Find number of columns based on phone screen dimensions
         int numberOfColumns = UserHelper.calculateNumberOfColumns(this, 200);
@@ -41,6 +44,6 @@ public class FriendsListActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.list_of_friends_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
 
-        UserHelper.setFriendsListAdapter(recyclerView, "Matt");
+        UserHelper.setFriendsListAdapter(recyclerView, currentUserId);
     }
 }

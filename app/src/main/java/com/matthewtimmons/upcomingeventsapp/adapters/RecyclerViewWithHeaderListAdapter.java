@@ -36,10 +36,6 @@ public class RecyclerViewWithHeaderListAdapter extends RecyclerView.Adapter<Recy
         this.viewItems = viewItems;
     }
 
-    public RecyclerViewWithHeaderListAdapter() {
-
-    }
-
     @NonNull
     @Override
     public RecyclerViewWithHeaderListAdapter.RecyclerViewWithHeaderViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {

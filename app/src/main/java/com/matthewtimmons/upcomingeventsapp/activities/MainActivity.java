@@ -18,34 +18,59 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventPagerAdapter;
 import com.matthewtimmons.upcomingeventsapp.R;
-import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
+import com.matthewtimmons.upcomingeventsapp.authorization.AuthorizeUserActivity;
+import com.matthewtimmons.upcomingeventsapp.authorization.SignUpFragment;
+import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.squareup.picasso.Picasso;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+    FirebaseAuth firebaseAuth;
+    FirebaseUser currentFirebaseUser;
     ViewPager viewPager;
     FragmentPagerAdapter pagerAdapter;
     BottomNavigationView bottomNavigationView;
     DrawerLayout drawerLayout;
     String currentUserDisplayname;
+    String currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        currentFirebaseUser = firebaseAuth.getCurrentUser();
+        if (currentFirebaseUser == null) {
+            Toast.makeText(this, "You are not signed in", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, AuthorizeUserActivity.class);
+            startActivity(intent);
+        }
+
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         viewPager = findViewById(R.id.pager);
         pagerAdapter = new EventPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
 
         //TODO: Change current user to be dynamic
-        currentUserDisplayname = "Matt";
+        currentUserId = firebaseAuth.getCurrentUser().getUid();
+        currentUserDisplayname = firebaseAuth.getCurrentUser().getDisplayName();
+
 
         // Set up nav drawer
         drawerLayout = findViewById(R.id.nav_drawer);
@@ -62,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intentToProfileViewActivity = new Intent(MainActivity.this, ProfileViewActivity.class);
-                intentToProfileViewActivity.putExtra("CURRENT_USER", currentUserDisplayname);
+                intentToProfileViewActivity.putExtra("CURRENT_USER", currentUserId);
                 startActivity(intentToProfileViewActivity);
             }
         });
@@ -78,12 +103,18 @@ public class MainActivity extends AppCompatActivity {
                                                                          return true;
                                                                      case R.id.nav_drawer_shared_games:
                                                                          Intent intentToSharedGames = new Intent(MainActivity.this, SharedGamesActivity.class);
-                                                                         intentToSharedGames.putExtra("CURRENT_USER", currentUserDisplayname);
+                                                                         intentToSharedGames.putExtra("CURRENT_USER", currentUserId);
                                                                          startActivity(intentToSharedGames);
                                                                          return true;
                                                                      case R.id.nav_drawer_friends:
                                                                          Intent intentToFriends = new Intent(MainActivity.this, FriendsListActivity.class);
                                                                          startActivity(intentToFriends);
+                                                                         return true;
+                                                                     case R.id.nav_drawer_sign_out:
+                                                                         firebaseAuth.signOut();
+                                                                         Intent intentToStartSignInPage = new Intent(MainActivity.this, AuthorizeUserActivity.class);
+                                                                         startActivity(intentToStartSignInPage);
+                                                                         return true;
                                                                  }
                                                                  return true;
                                                              }
@@ -142,10 +173,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        FirebaseFirestore.getInstance().document("users/" + currentUserDisplayname).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        FirebaseFirestore.getInstance().document("users/" + currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                Picasso.get().load(task.getResult().getString("profilePhotoURL")).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
+                Picasso.get().load(task.getResult().get(FieldPath.of("allAppData", "profilePhotoURL")).toString()).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
             }
         });
     }
@@ -157,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.navbar_menu, menu);
         TextView displayNameTextView = findViewById(R.id.current_user_displayname);
         if (displayNameTextView != null) { displayNameTextView.setText("Welcome, " + currentUserDisplayname); }
+        Toast.makeText(this, currentUserDisplayname, Toast.LENGTH_SHORT).show();
 
         return super.onCreateOptionsMenu(menu);
     }

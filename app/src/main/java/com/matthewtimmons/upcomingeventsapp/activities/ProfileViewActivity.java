@@ -12,14 +12,18 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
-import com.matthewtimmons.upcomingeventsapp.fragments.FriendInfoFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.FriendSelectorFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.RecyclerViewWithHeaderFragment;
+import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
 import com.squareup.picasso.Picasso;
 
@@ -65,9 +69,18 @@ public class ProfileViewActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot currentUserDocumentSnapshot = task.getResult();
-                Picasso.get().load(currentUserDocumentSnapshot.getString("profilePhotoURL")).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
-                displayNameTextView.setText(currentUserDocumentSnapshot.getString("displayName"));
+                Picasso.get().load(currentUserDocumentSnapshot.get(FieldPath.of("allAppData", "profilePhotoURL")).toString()).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
+                displayNameTextView.setText(currentUserDocumentSnapshot.get(FieldPath.of("allAppData", "displayName")).toString());
             }
         });
+//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+//                .setDisplayName("Matthew").build();
+//        user.updateProfile(profileUpdates);
+//        String userName = user.getUid();
+//        Firestore.collection("users").document(userName).set(user);
+
+//        Toast.makeText(this, userName, Toast.LENGTH_SHORT).show();
+
     }
 }
