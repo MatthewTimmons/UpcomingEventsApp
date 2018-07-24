@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intentToProfileViewActivity = new Intent(MainActivity.this, ProfileViewActivity.class);
+                intentToProfileViewActivity.putExtra("CURRENT_USER", currentUserDisplayname);
                 startActivity(intentToProfileViewActivity);
             }
         });
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
                                                                          return true;
                                                                      case R.id.nav_drawer_shared_games:
                                                                          Intent intentToSharedGames = new Intent(MainActivity.this, SharedGamesActivity.class);
+                                                                         intentToSharedGames.putExtra("CURRENT_USER", currentUserDisplayname);
                                                                          startActivity(intentToSharedGames);
                                                                          return true;
                                                                      case R.id.nav_drawer_friends:

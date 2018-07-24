@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SharedGamesActivity extends AppCompatActivity {
+    String currentUser;
     ArrayList<String> friendsChecked = new ArrayList<>();
     Button nextButton;
     Button backButton;
@@ -40,7 +41,9 @@ public class SharedGamesActivity extends AppCompatActivity {
         nextButton = findViewById(R.id.nextButton);
         backButton = findViewById(R.id.backButton);
 
-        FriendSelectorFragment fragment = FriendSelectorFragment.newInstance(friendsChecked);
+        currentUser = getIntent().getStringExtra("CURRENT_USER");
+
+        FriendSelectorFragment fragment = FriendSelectorFragment.newInstance(friendsChecked, "Matt", true, false);
         getSupportFragmentManager().beginTransaction().add(R.id.friend_selector_fragment_container, fragment).commit();
 
 
@@ -60,7 +63,7 @@ public class SharedGamesActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 friendsChecked.clear();
-                Fragment newFragment = FriendSelectorFragment.newInstance(friendsChecked);
+                Fragment newFragment = FriendSelectorFragment.newInstance(friendsChecked, currentUser, true, false);
                 getSupportFragmentManager().beginTransaction().replace(R.id.friend_selector_fragment_container, newFragment).commit();
                 backButton.setVisibility(View.GONE);
                 nextButton.setVisibility(View.VISIBLE);

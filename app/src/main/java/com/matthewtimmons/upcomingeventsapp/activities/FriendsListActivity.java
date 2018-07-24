@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,24 +35,12 @@ public class FriendsListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
 
+        // Find number of columns based on phone screen dimensions
+        int numberOfColumns = UserHelper.calculateNumberOfColumns(this, 200);
+
         recyclerView = findViewById(R.id.list_of_friends_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
 
-        FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                final List<DocumentSnapshot> allUsers = task.getResult().getDocuments();
-                FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(CURRENT_USER).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get("friends");
-                        List<DocumentSnapshot> friends = UserHelper.fetchFilteredUsersList(allUsers, allFriendIds);
-
-                        FriendListAdapter recyclerAdapter = new FriendListAdapter(friends);
-                        recyclerView.setAdapter(recyclerAdapter);
-                    }
-                });
-            }
-        });
+        UserHelper.setFriendsListAdapter(recyclerView, "Matt");
     }
 }

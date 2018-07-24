@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -16,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventListAdapter;
+import com.matthewtimmons.upcomingeventsapp.adapters.FriendListAdapter;
 import com.matthewtimmons.upcomingeventsapp.adapters.RecyclerViewWithHeaderListAdapter;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.fragments.SharedGamesFragment;
@@ -28,6 +30,31 @@ import java.util.Map;
 public class UserHelper {
     //TODO: Implement method to get the current user
     public static final String CURRENT_USER = "Matt";
+
+    public static void setFriendsListAdapter(final RecyclerView recyclerView, final String currentUser) {
+        FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                final List<DocumentSnapshot> allUsers = task.getResult().getDocuments();
+                FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(currentUser).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get("friends");
+                        List<DocumentSnapshot> friends = UserHelper.fetchFilteredUsersList(allUsers, allFriendIds);
+
+                        FriendListAdapter recyclerAdapter = new FriendListAdapter(friends);
+                        recyclerView.setAdapter(recyclerAdapter);
+                    }
+                });
+            }
+        });
+    }
+
+    public static int calculateNumberOfColumns(Context context, int itemWidth) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        return (int) (dpWidth / itemWidth);
+    }
 
     public static String convertArrayOfStringsToString (ArrayList<String> arrayOfStrings) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -48,9 +75,9 @@ public class UserHelper {
         return friends;
     }
 
-    public static ArrayList<DocumentSnapshot> fetchFilteredUsersList(List<DocumentSnapshot> allUsers, ArrayList<String> namesToSearchFor, String includeCurrentUser) {
+    public static ArrayList<DocumentSnapshot> fetchFilteredUsersList(List<DocumentSnapshot> allUsers, ArrayList<String> namesToSearchFor, String currentUser, boolean includeCurrentUser) {
         ArrayList<DocumentSnapshot> friends = new ArrayList<>();
-        namesToSearchFor.add(includeCurrentUser);
+        if (includeCurrentUser) { namesToSearchFor.add(currentUser); }
         for (DocumentSnapshot user : allUsers) {
             if (namesToSearchFor.contains(user.getId())) {
                 friends.add(user);
@@ -153,4 +180,6 @@ public class UserHelper {
             }
         });
     }
+
+
 }

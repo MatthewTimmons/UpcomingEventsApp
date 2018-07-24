@@ -3,6 +3,7 @@ package com.matthewtimmons.upcomingeventsapp.activities;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,36 +16,48 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.R;
+import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
+import com.matthewtimmons.upcomingeventsapp.fragments.FriendInfoFragment;
+import com.matthewtimmons.upcomingeventsapp.fragments.FriendSelectorFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.RecyclerViewWithHeaderFragment;
 import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 public class ProfileViewActivity extends AppCompatActivity {
-    public static final String CURRENT_USER_KEY = "Matt";
-    RecyclerView recyclerView;
+    String currentUserId;
+    DocumentReference currentUserReference;
+    RecyclerView friendsRecyclerView;
+    RecyclerView favoritesRecyclerView;
     ImageView profilePhotoImageView;
     TextView displayNameTextView;
-
-    private DocumentReference currentUserReference = FirebaseFirestore.getInstance().document("users/Matt");
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_view);
-
         profilePhotoImageView = findViewById(R.id.profile_photo);
         displayNameTextView = findViewById(R.id.display_name);
+
+        currentUserId = getIntent().getStringExtra("CURRENT_USER");
+        currentUserReference = FirebaseFirestore.getInstance().document(FirebaseConstants.COLLECTION_USERS + "/" + currentUserId);
 
 //        TODO
 //        Set profile photo
 //        Set display name
+//        Set Friends recycler view
 //        Set Favorites recycler view
 
-        recyclerView = findViewById(R.id.profile_favorite_events_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        UserHelper.setFavoritesRecyclerViewAdapter(currentUserReference, recyclerView, true);
+        Fragment friendInfoFragment = FriendSelectorFragment.newInstance(new ArrayList<String>(), currentUserId, false, true);
+        getSupportFragmentManager().beginTransaction().add(R.id.profile_friends_recycler_view_container, friendInfoFragment).commit();
 
-        RecyclerViewWithHeaderFragment recyclerViewWithHeaderFragment = RecyclerViewWithHeaderFragment.newInstance(CURRENT_USER_KEY);
+
+        favoritesRecyclerView = findViewById(R.id.profile_favorite_events_recycler_view);
+        favoritesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        UserHelper.setFavoritesRecyclerViewAdapter(currentUserReference, favoritesRecyclerView, true);
+
+        RecyclerViewWithHeaderFragment recyclerViewWithHeaderFragment = RecyclerViewWithHeaderFragment.newInstance(currentUserId);
         getSupportFragmentManager().beginTransaction().add(R.id.profile_favorite_events_recycler_view_container, recyclerViewWithHeaderFragment).commit();
 
 
@@ -56,14 +69,5 @@ public class ProfileViewActivity extends AppCompatActivity {
                 displayNameTextView.setText(currentUserDocumentSnapshot.getString("displayName"));
             }
         });
-
-
-
-
-
-//        FirebaseConstants.COLLECTION_CONCERTS;
-
-//        Fragment friendRecyclerViewFragment = FriendInfoFragment.newInstance(eventType, eventId);
-
     }
 }

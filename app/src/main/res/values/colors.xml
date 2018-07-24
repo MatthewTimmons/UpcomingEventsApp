@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorPrimaryLight">#0066FF</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="pastel_green">#ACD2A4</color>
     <color name="pastel_blue">#B3D1FF</color>
     <color name="light_gray">#B3B3B3</color>
     <color name="light_gray_tint">#80B3B3B3</color>

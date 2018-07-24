@@ -19,11 +19,7 @@ import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
 
 public class RecyclerViewWithHeaderFragment extends Fragment {
-    private static final String KEY_EVENT_TYPE = "keyEventType";
     private static final String KEY_CURRENT_USER_ID = "keyEventId";
-    private static final String CURRENT_USER = "Matt";
-    DocumentReference currentUserReference = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(CURRENT_USER);
-    RecyclerView recyclerView;
     TextView firstColumnName;
     TextView secondColumnName;
     TextView thirdColumnName;

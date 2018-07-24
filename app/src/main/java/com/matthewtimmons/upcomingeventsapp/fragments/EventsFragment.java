@@ -56,7 +56,7 @@ public class EventsFragment extends Fragment {
                 view.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.stripes);
                 break;
             case FirebaseConstants.COLLECTION_MOVIES:
-                view.findViewById(R.id.events_recycler_view).setBackgroundColor(Color.parseColor("#ACD2A4"));
+                view.findViewById(R.id.events_recycler_view).setBackgroundColor(getResources().getColor(R.color.pastel_green));
                 break;
         }
 
