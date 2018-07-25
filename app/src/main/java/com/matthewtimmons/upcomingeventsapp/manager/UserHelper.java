@@ -38,7 +38,7 @@ public class UserHelper {
                 FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(currentUser).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get(FieldPath.of("allAppData", "friends"));
+                        ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get("friends");
                         List<DocumentSnapshot> friends = UserHelper.fetchFilteredUsersList(allUsers, allFriendIds);
 
                         FriendListAdapter recyclerAdapter = new FriendListAdapter(friends);
@@ -109,7 +109,7 @@ public class UserHelper {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 final HashMap<String, Object> allEventsMap = new HashMap<>();
-                Map<String, Object> allDataForUser = (Map<String, Object>) task.getResult().get(FieldPath.of("allAppData", "myFavorites"));
+                Map<String, Object> allDataForUser = (Map<String, Object>) task.getResult().get("myFavorites");
 
                 allEventsMap.putAll(fetchSharedValues(allDataForUser, "concerts"));
                 allEventsMap.putAll(fetchSharedValues(allDataForUser, "games"));
@@ -149,7 +149,6 @@ public class UserHelper {
                                             for (DocumentSnapshot doc : allFavoriteDocumentSnapshots) {
                                                 stringBuilder.append(doc.getString("title"));
                                             }
-                                            Toast.makeText(recyclerView.getContext(), stringBuilder, Toast.LENGTH_SHORT).show();
                                             recyclerView.setAdapter(recyclerViewWithHeaderListAdapter);
                                         } else {
                                             EventListAdapter eventListAdapter = new EventListAdapter(allFavoriteDocumentSnapshots);

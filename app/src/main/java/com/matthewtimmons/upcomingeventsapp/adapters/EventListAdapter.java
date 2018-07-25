@@ -88,7 +88,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         FirebaseFirestore.getInstance().collection("users").document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                HashMap<String, Object> allData = (HashMap<String, Object>) task.getResult().get(FieldPath.of("allAppData", "myFavorites"));
+                HashMap<String, Object> allData = (HashMap<String, Object>) task.getResult().get("myFavorites");
                 ArrayList<String> allFavorites = new ArrayList<>();
                 allFavorites.addAll((ArrayList<String>) allData.get("concerts"));
                 allFavorites.addAll((ArrayList<String>) allData.get("games"));

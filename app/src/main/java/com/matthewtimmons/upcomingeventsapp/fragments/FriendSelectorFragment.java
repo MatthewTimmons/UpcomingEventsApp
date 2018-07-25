@@ -78,7 +78,7 @@ public class FriendSelectorFragment extends Fragment {
                 currentUserDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get(FieldPath.of("allAppData", "friends"));
+                        ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get("friends");
                         ArrayList<DocumentSnapshot> friendDocumentSnapshots = UserHelper.fetchFilteredUsersList(allUsers, allFriendIds, currentUser, includeCheckmarks);
 
                     friendSelectorListAdapter = new FriendSelectorListAdapter(friendDocumentSnapshots, friendsChecked, includeCheckmarks, usersClickable);

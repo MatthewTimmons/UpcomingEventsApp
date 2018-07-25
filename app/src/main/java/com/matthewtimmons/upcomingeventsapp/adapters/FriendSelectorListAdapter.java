@@ -53,16 +53,16 @@ public class FriendSelectorListAdapter extends RecyclerView.Adapter<FriendSelect
             friendSelectorViewHolder.friendCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if (friendsChecked.size() > 1) {
-                        Toast.makeText(friendSelectorViewHolder.itemView.getContext(), "Cannot select more than two people", Toast.LENGTH_LONG).show();
-                        compoundButton.setChecked(false);
-                        friendsChecked.remove(userDocumentSnapshot.getId());
-                    } else if (friendsChecked.size() <= 1) {
-                        if (b) {
+                    if (b) {
+                        if (friendsChecked.size() <= 1) {
                             friendsChecked.add(userDocumentSnapshot.getId());
-                        } else if (!b) {
+                        } else {
+                            Toast.makeText(friendSelectorViewHolder.itemView.getContext(), "Cannot select more than two people", Toast.LENGTH_SHORT).show();
+                            compoundButton.setChecked(false);
                             friendsChecked.remove(userDocumentSnapshot.getId());
                         }
+                    } else if (!b) {
+                            friendsChecked.remove(userDocumentSnapshot.getId());
                     }
                 }
             });

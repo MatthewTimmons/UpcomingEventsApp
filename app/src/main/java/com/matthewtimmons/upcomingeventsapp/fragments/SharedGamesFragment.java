@@ -77,11 +77,11 @@ public class SharedGamesFragment extends Fragment {
             currentUserDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    final ArrayList<String> listOfGames1 = (ArrayList<String>) task.getResult().get(FieldPath.of("allAppData", FirebaseConstants.KEY_GAMES_OWNED));
+                    final ArrayList<String> listOfGames1 = (ArrayList<String>) task.getResult().get(FirebaseConstants.KEY_GAMES_OWNED);
                     friendsDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            ArrayList<String> listOfGames2 = (ArrayList<String>) task.getResult().get(FieldPath.of("allAppData", FirebaseConstants.KEY_GAMES_OWNED));
+                            ArrayList<String> listOfGames2 = (ArrayList<String>) task.getResult().get(FirebaseConstants.KEY_GAMES_OWNED);
                             allSharedGames.addAll(UserHelper.fetchListOfMatchingItems(listOfGames1, listOfGames2));
 
                             allGamesCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

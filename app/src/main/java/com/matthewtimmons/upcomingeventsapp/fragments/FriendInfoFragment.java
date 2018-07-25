@@ -70,7 +70,7 @@ public class FriendInfoFragment extends Fragment {
                 FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                       @Override
                       public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                          ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get(FieldPath.of("allAppData", "friends"));
+                          ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get("friends");
                           List<DocumentSnapshot> friends = UserHelper.fetchFilteredUsersList(allUsers, allFriendIds);
 
                           friendsListAdapter = new FriendInfoListAdapter(friends, eventType, eventId);

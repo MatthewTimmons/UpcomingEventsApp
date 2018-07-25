@@ -44,7 +44,6 @@ public class InterestLevelSeekbarFragment extends Fragment {
 
     private static final String EVENT_TYPE = "eventType";
     public static final String EVENT_ID = "eventId";
-    private static final String MY_NAME = "Matt";
     public static final int INTEREST_LEVEL_LOW = 0;
     public static final int INTEREST_LEVEL_MEDIUM = 1;
     public static final int INTEREST_LEVEL_HIGH = 2;
@@ -148,7 +147,7 @@ public class InterestLevelSeekbarFragment extends Fragment {
                                                  final String eventTypeKey,
                                                  CollectionReference userCollectionReference) {
 
-        userCollectionReference.document(MY_NAME).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        userCollectionReference.document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 task.getResult().getReference().update(FieldPath.of(FirebaseConstants.KEY_INTEREST_LEVELS_USER, eventTypeKey, eventId), newInterestLevel);
@@ -163,7 +162,7 @@ public class InterestLevelSeekbarFragment extends Fragment {
                     try {
                         // TODO: Change this get(2) to get the current user
                         DocumentSnapshot userDocumentSnapshot = task.getResult();
-                        Map<String, Object> interestLevels = (Map<String, Object>) userDocumentSnapshot.get(FieldPath.of("allAppData", FirebaseConstants.KEY_INTEREST_LEVELS_USER));
+                        Map<String, Object> interestLevels = (Map<String, Object>) userDocumentSnapshot.get(FirebaseConstants.KEY_INTEREST_LEVELS_USER);
                         Map<String, Object> events = (Map<String, Object>) interestLevels.get(eventType);
                         Integer interestLevelValue = ((Long) events.get(eventId)).intValue();
                         interestLevelSeekbar.setProgress(interestLevelValue);

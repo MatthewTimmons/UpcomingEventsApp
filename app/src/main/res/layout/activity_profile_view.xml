@@ -9,7 +9,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/profile_view_constraint_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/profile_photo"
@@ -23,15 +23,16 @@
 
         <TextView
             android:id="@+id/display_name"
-            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_width="0dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:text="Display Name"
             android:textSize="40sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profile_photo" />
+            app:layout_constraintTop_toBottomOf="@id/profile_photo"/>
+
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/profile_friends_recycler_view_container"

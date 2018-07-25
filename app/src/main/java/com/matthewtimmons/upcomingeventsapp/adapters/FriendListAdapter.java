@@ -39,8 +39,8 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
     public void onBindViewHolder(@NonNull final FriendListAdapter.FriendListViewholder friendListViewholder, int i) {
         final DocumentSnapshot currentFriendDocumentSnapshot = friendDocumentSnapshots.get(i);
 
-        friendListViewholder.displayName.setText(currentFriendDocumentSnapshot.get(FieldPath.of("allAppData", "displayName")).toString());
-        Picasso.get().load(currentFriendDocumentSnapshot.get(FieldPath.of("allAppData", "profilePhotoURL")).toString()).error(R.drawable.ic_default_profile_photo).into(friendListViewholder.profilePhoto);
+        friendListViewholder.displayName.setText(currentFriendDocumentSnapshot.get("displayName").toString());
+        Picasso.get().load(currentFriendDocumentSnapshot.get("profilePhotoURL").toString()).error(R.drawable.ic_default_profile_photo).into(friendListViewholder.profilePhoto);
 
         friendListViewholder.friendSquareIcon.setOnClickListener(new View.OnClickListener() {
             @Override

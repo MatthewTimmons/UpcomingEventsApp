@@ -21,8 +21,6 @@ public class DetailsActivity extends AppCompatActivity {
     String eventId;
     String eventType;
 
-    //TODO: Fix later
-
     public static Intent newIntent(Context context, String eventId, String eventType) {
         Intent intent = new Intent(context, DetailsActivity.class);
         intent.putExtra(EXTRA_EVENT_ID, eventId);

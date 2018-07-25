@@ -16,18 +16,5 @@ public class FirebaseAuthHelper {
     public static void createAccountByEmail(String email, String password) {
 
     }
-    public static void startSignIn(Context context, final FirebaseAuth firebaseAuth, String email, String password) {
-        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            Toast.makeText(context, "Email address and password cannot be empty", Toast.LENGTH_SHORT).show();
-        } else {
-            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (!task.isSuccessful()) {
 
-                    }
-                }
-            });
-        }
-    }
 }

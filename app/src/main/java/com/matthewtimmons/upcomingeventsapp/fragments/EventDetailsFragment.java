@@ -109,7 +109,7 @@ public class EventDetailsFragment extends Fragment {
                         fourthTextView.setText(releaseConsolesAsString);
                         optionalCheckbox.setVisibility(View.VISIBLE);
                         optionalCheckbox.setText("Owned");
-                        setCheckmarkFunctionality(eventDocumentSnapshot.getId(), FieldPath.of("allAppData", FirebaseConstants.KEY_GAMES_OWNED), optionalCheckbox, false);
+                        setCheckmarkFunctionality(eventDocumentSnapshot.getId(), FieldPath.of(FirebaseConstants.KEY_GAMES_OWNED), optionalCheckbox, false);
                         break;
                     case FirebaseConstants.COLLECTION_MOVIES:
                         setAllSharedFields(eventDocumentSnapshot, R.drawable.ic_movies_blue,"movieGenre");
@@ -119,10 +119,10 @@ public class EventDetailsFragment extends Fragment {
                         optionalSecondSubtitleTextView.setText(formattedRating);
                         optionalCheckbox.setVisibility(View.VISIBLE);
                         optionalCheckbox.setText("Seen");
-                        setCheckmarkFunctionality(eventDocumentSnapshot.getId(), FieldPath.of("allAppData", FirebaseConstants.KEY_MOVIES_SEEN), optionalCheckbox, false);
+                        setCheckmarkFunctionality(eventDocumentSnapshot.getId(), FieldPath.of(FirebaseConstants.KEY_MOVIES_SEEN), optionalCheckbox, false);
                         break;
                 }
-                setCheckmarkFunctionality(eventId, FieldPath.of("allAppData", "myFavorites", eventKey), favoritesCheckbox, true);
+                setCheckmarkFunctionality(eventId, FieldPath.of("myFavorites", eventKey), favoritesCheckbox, true);
             }
         });
     }

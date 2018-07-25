@@ -7,8 +7,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -32,7 +37,6 @@ import java.util.ArrayList;
 public class ProfileViewActivity extends AppCompatActivity {
     String currentUserId;
     DocumentReference currentUserReference;
-    RecyclerView friendsRecyclerView;
     RecyclerView favoritesRecyclerView;
     ImageView profilePhotoImageView;
     TextView displayNameTextView;
@@ -69,10 +73,16 @@ public class ProfileViewActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot currentUserDocumentSnapshot = task.getResult();
-                Picasso.get().load(currentUserDocumentSnapshot.get(FieldPath.of("allAppData", "profilePhotoURL")).toString()).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
-                displayNameTextView.setText(currentUserDocumentSnapshot.get(FieldPath.of("allAppData", "displayName")).toString());
+                displayNameTextView.setText(currentUserDocumentSnapshot.get("displayName").toString());
+                try {
+                    Picasso.get().load(currentUserDocumentSnapshot.get("profilePhotoURL").toString()).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
+                } catch (NullPointerException e) {
+                }
+
             }
         });
+    }
+
 //        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 //        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
 //                .setDisplayName("Matthew").build();
@@ -82,5 +92,12 @@ public class ProfileViewActivity extends AppCompatActivity {
 
 //        Toast.makeText(this, userName, Toast.LENGTH_SHORT).show();
 
+
+    private void updateUserDisplayName() {
+        String updatedDisplayName = displayNameTextView.getText().toString().trim();
+        Firestore.collection("users").document(currentUserId).update("displayName", updatedDisplayName);
+        Firestore.collection("usersAuth").document(currentUserId).update("displayName", updatedDisplayName);
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(updatedDisplayName).build();
+        FirebaseAuth.getInstance().getCurrentUser().updateProfile(profileUpdates);
     }
 }

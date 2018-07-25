@@ -41,7 +41,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
-    FirebaseUser currentFirebaseUser;
     ViewPager viewPager;
     FragmentPagerAdapter pagerAdapter;
     BottomNavigationView bottomNavigationView;
@@ -54,13 +53,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         firebaseAuth = FirebaseAuth.getInstance();
-
-        currentFirebaseUser = firebaseAuth.getCurrentUser();
-        if (currentFirebaseUser == null) {
-            Toast.makeText(this, "You are not signed in", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, AuthorizeUserActivity.class);
-            startActivity(intent);
-        }
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         viewPager = findViewById(R.id.pager);
@@ -176,7 +168,11 @@ public class MainActivity extends AppCompatActivity {
         FirebaseFirestore.getInstance().document("users/" + currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                Picasso.get().load(task.getResult().get(FieldPath.of("allAppData", "profilePhotoURL")).toString()).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
+                try {
+                    Picasso.get().load(task.getResult().get("profilePhotoURL").toString()).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
+                } catch (NullPointerException e) {
+
+                }
             }
         });
     }
@@ -188,7 +184,6 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.navbar_menu, menu);
         TextView displayNameTextView = findViewById(R.id.current_user_displayname);
         if (displayNameTextView != null) { displayNameTextView.setText("Welcome, " + currentUserDisplayname); }
-        Toast.makeText(this, currentUserDisplayname, Toast.LENGTH_SHORT).show();
 
         return super.onCreateOptionsMenu(menu);
     }
