@@ -51,6 +51,7 @@ public class SignInFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         firebaseAuth = FirebaseAuth.getInstance();
 
+        getActivity().findViewById(R.id.authorization_activity).setBackgroundColor(getResources().getColor(R.color.pastel_blue));
         emailEditTextView = view.findViewById(R.id.sign_in_email_edittext);
         passwordEditTextView = view.findViewById(R.id.sign_in_password_edittext);
         signInButton = view.findViewById(R.id.sign_in_button);

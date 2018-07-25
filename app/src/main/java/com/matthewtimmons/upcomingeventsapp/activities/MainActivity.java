@@ -8,12 +8,16 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +41,8 @@ import com.squareup.picasso.Picasso;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -103,9 +109,32 @@ public class MainActivity extends AppCompatActivity {
                                                                          startActivity(intentToFriends);
                                                                          return true;
                                                                      case R.id.nav_drawer_sign_out:
-                                                                         firebaseAuth.signOut();
-                                                                         Intent intentToStartSignInPage = new Intent(MainActivity.this, AuthorizeUserActivity.class);
-                                                                         startActivity(intentToStartSignInPage);
+                                                                         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                                                                         View dialogView = getLayoutInflater().inflate(R.layout.dialog_confirm, null);
+                                                                         Button confirmButton = dialogView.findViewById(R.id.confirm_button);
+                                                                         Button cancelButton = dialogView.findViewById(R.id.cancel_button);
+
+                                                                         dialogBuilder.setView(dialogView);
+                                                                         final AlertDialog alertDialog = dialogBuilder.create();
+                                                                         alertDialog.show();
+
+                                                                         cancelButton.setOnClickListener(new View.OnClickListener() {
+                                                                             @Override
+                                                                             public void onClick(View view) {
+                                                                                 alertDialog.cancel();
+                                                                             }
+                                                                         });
+
+                                                                         confirmButton.setOnClickListener(new View.OnClickListener() {
+                                                                             @Override
+                                                                             public void onClick(View view) {
+                                                                             firebaseAuth.signOut();
+                                                                             Intent intentToStartSignInPage = new Intent(MainActivity.this, AuthorizeUserActivity.class);
+                                                                             intentToStartSignInPage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                                             startActivity(intentToStartSignInPage);
+                                                                             finish();
+                                                                             }
+                                                                         });
                                                                          return true;
                                                                  }
                                                                  return true;

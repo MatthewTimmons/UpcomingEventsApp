@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="40dp"
+    android:background="@color/pastel_blue"
+    >
+
+    <TextView
+        android:id="@+id/question_confirmation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Are you sure?"
+        android:textSize="30sp"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/user_input_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:inputType="textVisiblePassword|textNoSuggestions"
+        app:layout_constraintTop_toBottomOf="@id/question_confirmation"
+        android:layout_marginTop="16dp"
+        tools:visibility="visible"/>
+
+    <Button
+        android:id="@+id/cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/confirm_button"
+        app:layout_constraintTop_toBottomOf="@+id/user_input_edittext"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/confirm_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Confirm"
+        app:layout_constraintStart_toEndOf="@id/cancel_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/user_input_edittext"
+        android:layout_marginTop="16dp"/>
+</android.support.constraint.ConstraintLayout>

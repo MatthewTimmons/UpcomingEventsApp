@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
@@ -29,6 +30,7 @@ import java.util.List;
 
 public class AuthorizeUserActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
+    ConstraintLayout activityConstraintLayout;
 
     FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
         @Override
@@ -49,8 +51,13 @@ public class AuthorizeUserActivity extends AppCompatActivity {
                 startActivity(intent);
         }
 
-        Fragment signUpFragment = new SignUpFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.authorization_fragment_container, signUpFragment).commit();
+        activityConstraintLayout = findViewById(R.id.authorization_activity);
+
+//        Fragment signUpFragment = new SignUpFragment();
+//        getSupportFragmentManager().beginTransaction().add(R.id.authorization_fragment_container, signUpFragment).commit();
+
+        Fragment signInFragment = new SignInFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.authorization_fragment_container, signInFragment).commit();
     }
 
     @Override
