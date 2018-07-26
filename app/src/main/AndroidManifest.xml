@@ -11,32 +11,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name="com.matthewtimmons.upcomingeventsapp.activities.MainActivity">
-
-        </activity>
-        <activity android:name=".activities.DetailsActivity">
-
-        </activity>
-        <activity android:name=".activities.FavoritesActivity">
-
-        </activity>
-        <activity android:name=".activities.SharedGamesActivity">
-
-        </activity>
-
-        <activity android:name=".activities.ProfileViewActivity">
-
-        </activity>
-        <activity android:name=".activities.FriendsListActivity">
-
-        </activity>
-        <activity android:name=".authorization.AuthorizeUserActivity">
+        <activity android:name="com.matthewtimmons.upcomingeventsapp.activities.MainActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.DetailsActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.FavoritesActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.SharedGamesActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.ProfileViewActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.FriendsListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".authorization.AuthorizeUserActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
 
+
 </manifest>
+

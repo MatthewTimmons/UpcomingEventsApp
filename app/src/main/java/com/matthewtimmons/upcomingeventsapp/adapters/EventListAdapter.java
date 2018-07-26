@@ -20,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.activities.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
+import com.matthewtimmons.upcomingeventsapp.models.Event;
 import com.matthewtimmons.upcomingeventsapp.models.Game;
 import com.squareup.picasso.Picasso;
 
@@ -49,7 +50,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     @Override
     public void onBindViewHolder(@NonNull final EventViewHolder viewHolder, int position) {
         final DocumentSnapshot eventDocumentSnapshot = events.get(position);
-            eventType = eventDocumentSnapshot.getString("eventType");
+        eventType = eventDocumentSnapshot.getString("eventType");
 
         // Set the text and image for all views
         switch (eventType) {
@@ -60,6 +61,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                 viewHolder.thirdEventInfoTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_CONCERT_LOCATION));
                 break;
             case FirebaseConstants.COLLECTION_GAMES:
+                Game game = new Game(eventDocumentSnapshot);
                 backupImage = R.drawable.ic_games_blue;
                 String releaseConsolesAsString = Game.fetchGamesAsString(eventDocumentSnapshot);
                 setAllSharedFields(eventDocumentSnapshot, viewHolder);

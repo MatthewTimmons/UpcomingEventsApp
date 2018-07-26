@@ -1,6 +1,8 @@
 package com.matthewtimmons.upcomingeventsapp.fragments;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,22 +21,25 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
+import com.matthewtimmons.upcomingeventsapp.controllers.ConcertsController;
+import com.matthewtimmons.upcomingeventsapp.controllers.GamesController;
+import com.matthewtimmons.upcomingeventsapp.controllers.MoviesController;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
-import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
+import com.matthewtimmons.upcomingeventsapp.models.Concert;
+import com.matthewtimmons.upcomingeventsapp.models.Event;
 import com.matthewtimmons.upcomingeventsapp.models.Game;
+import com.matthewtimmons.upcomingeventsapp.models.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 
 public class EventDetailsFragment extends Fragment {
-    private static final String ARGS_CONCERT_ID = "ARGS_CONCERT_ID";
+    private static final String ARGS_EVENT_ID = "ARGS_EVENT_ID";
     private static final String ARGS_EVENT_TYPE = "ARGS_EVENT_TYPE";
     String currentUserId;
     String eventId;
@@ -52,7 +57,7 @@ public class EventDetailsFragment extends Fragment {
     public static EventDetailsFragment newInstance(String eventId, String eventKey) {
         EventDetailsFragment instance = new EventDetailsFragment();
         Bundle args = new Bundle();
-        args.putString(ARGS_CONCERT_ID, eventId);
+        args.putString(ARGS_EVENT_ID, eventId);
         args.putString(ARGS_EVENT_TYPE, eventKey);
         instance.setArguments(args);
         return instance;
@@ -77,7 +82,7 @@ public class EventDetailsFragment extends Fragment {
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            eventId = bundle.getString(ARGS_CONCERT_ID);
+            eventId = bundle.getString(ARGS_EVENT_ID);
             eventKey = bundle.getString(ARGS_EVENT_TYPE);
         }
 
@@ -91,62 +96,31 @@ public class EventDetailsFragment extends Fragment {
         optionalCheckbox = view.findViewById(R.id.optional_checkbox);
         favoritesCheckbox = view.findViewById(R.id.favorite_checkbox);
 
-        CollectionReference eventsCollectionReference = Firestore.collection(eventKey);
-        eventsCollectionReference.document(eventId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot eventDocumentSnapshot = task.getResult();
-
-                // Assign values to each view
-                switch (eventKey) {
-                    case FirebaseConstants.COLLECTION_CONCERTS:
-                        setAllSharedFields(eventDocumentSnapshot, R.drawable.ic_concerts_blue,"concertLocation");
-                        setConditionalBandTextViews(eventDocumentSnapshot);
-                        break;
-                    case FirebaseConstants.COLLECTION_GAMES:
-                        String releaseConsolesAsString = Game.fetchGamesAsString(eventDocumentSnapshot);
-                        setAllSharedFields(eventDocumentSnapshot, R.drawable.ic_games_blue, "NA");
-                        fourthTextView.setText(releaseConsolesAsString);
-                        optionalCheckbox.setVisibility(View.VISIBLE);
-                        optionalCheckbox.setText("Owned");
-                        setCheckmarkFunctionality(eventDocumentSnapshot.getId(), FieldPath.of(FirebaseConstants.KEY_GAMES_OWNED), optionalCheckbox, false);
-                        break;
-                    case FirebaseConstants.COLLECTION_MOVIES:
-                        setAllSharedFields(eventDocumentSnapshot, R.drawable.ic_movies_blue,"movieGenre");
-                        optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);
-                        String formattedRating = getResources()
-                                .getString(R.string.formatted_rating, eventDocumentSnapshot.getString(FirebaseConstants.KEY_MOVIE_RATING));
-                        optionalSecondSubtitleTextView.setText(formattedRating);
-                        optionalCheckbox.setVisibility(View.VISIBLE);
-                        optionalCheckbox.setText("Seen");
-                        setCheckmarkFunctionality(eventDocumentSnapshot.getId(), FieldPath.of(FirebaseConstants.KEY_MOVIES_SEEN), optionalCheckbox, false);
-                        break;
-                }
-                setCheckmarkFunctionality(eventId, FieldPath.of("myFavorites", eventKey), favoritesCheckbox, true);
-            }
-        });
-    }
-
-    public void setAllSharedFields(DocumentSnapshot eventDocumentSnapshot, int backupImageId,
-                                   String secondEventInfoText) {
-        Picasso.get().load(eventDocumentSnapshot.getString(FirebaseConstants.KEY_IMAGE_URL)).error(backupImageId).into(eventPictureImageView);
-        titleTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_TITLE));
-        fourthTextView.setText(eventDocumentSnapshot.getString(secondEventInfoText));
-        fifthTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_DATE));
-    }
-
-    public void setConditionalBandTextViews(DocumentSnapshot eventDocumentSnapshot) {
-        List<String> listOfBandsAtConcert = (List<String>) eventDocumentSnapshot.get(FirebaseConstants.KEY_CONCERT_BANDS_ARRAY);
-        titleTextView.setText(listOfBandsAtConcert.get(0));
-        if (listOfBandsAtConcert.size() > 1) {
-            subtitleTextView.setVisibility(View.VISIBLE);
-            subtitleTextView.setText(listOfBandsAtConcert.get(1));
-            if (listOfBandsAtConcert.size() > 2) {
-                List<String> remainingBandsList = listOfBandsAtConcert.subList(2, listOfBandsAtConcert.size());
-                String remainingBandsDisplayText = TextUtils.join(", ", remainingBandsList);
-                optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);
-                optionalSecondSubtitleTextView.setText(remainingBandsDisplayText);
-            }
+        switch (eventKey) {
+            case FirebaseConstants.COLLECTION_CONCERTS:
+                ConcertsController.getConcert(eventId, new ConcertsController.GetConcertListener() {
+                    @Override
+                    public void onConcertRetrieved(Concert concert) {
+                        presentConcert(concert);
+                    }
+                });
+                break;
+            case FirebaseConstants.COLLECTION_GAMES:
+                GamesController.getGame(eventId, new GamesController.GetGameListener() {
+                    @Override
+                    public void onGameRetrieved(Game game) {
+                        presentGame(game);
+                    }
+                });
+                break;
+            case FirebaseConstants.COLLECTION_MOVIES:
+                MoviesController.getMovie(eventId, new MoviesController.GetMovieListener() {
+                    @Override
+                    public void onMovieRetrieved(Movie movie) {
+                        presentMovie(movie);
+                    }
+                });
+                break;
         }
     }
 
@@ -181,5 +155,48 @@ public class EventDetailsFragment extends Fragment {
                 }
             }
         });
+    }
+
+    void presentEvent(Event event, @DrawableRes int backupImageId) {
+        Picasso.get().load(event.getImageUrl()).error(backupImageId).into(eventPictureImageView);
+        titleTextView.setText(event.getTitle());
+        fifthTextView.setText(event.getDate());
+        setCheckmarkFunctionality(event.getId(), FieldPath.of("myFavorites", eventKey), favoritesCheckbox, true);
+    }
+
+    void presentConcert(Concert concert) {
+        presentEvent(concert, R.drawable.ic_concerts_blue);
+        List<String> listOfBandsAtConcert = concert.getBands();
+        titleTextView.setText(listOfBandsAtConcert.get(0));
+        if (listOfBandsAtConcert.size() > 1) {
+            subtitleTextView.setVisibility(View.VISIBLE);
+            subtitleTextView.setText(listOfBandsAtConcert.get(1));
+            if (listOfBandsAtConcert.size() > 2) {
+                List<String> remainingBandsList = listOfBandsAtConcert.subList(2, listOfBandsAtConcert.size());
+                String remainingBandsDisplayText = TextUtils.join(", ", remainingBandsList);
+                optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);
+                optionalSecondSubtitleTextView.setText(remainingBandsDisplayText);
+            }
+        }
+    }
+
+    void presentGame(Game game) {
+        presentEvent(game, R.drawable.ic_games_blue);
+        fourthTextView.setText(game.getReleaseConsolesAsString());
+        optionalCheckbox.setVisibility(View.VISIBLE);
+        optionalCheckbox.setText("Owned");
+        setCheckmarkFunctionality(game.getId(), FieldPath.of(FirebaseConstants.KEY_GAMES_OWNED), optionalCheckbox, false);
+    }
+
+    void presentMovie(Movie movie) {
+        presentEvent(movie, R.drawable.ic_movies_blue);
+        optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);
+        String formattedRating = getResources()
+                .getString(R.string.formatted_rating, movie.getRating());
+        optionalSecondSubtitleTextView.setText(formattedRating);
+        optionalCheckbox.setVisibility(View.VISIBLE);
+        optionalCheckbox.setText("Seen");
+        fourthTextView.setText(movie.getGenre());
+        setCheckmarkFunctionality(movie.getId(), FieldPath.of(FirebaseConstants.KEY_MOVIES_SEEN), optionalCheckbox, false);
     }
 }

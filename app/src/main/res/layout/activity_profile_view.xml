@@ -21,6 +21,17 @@
             app:srcCompat="@drawable/ic_default_profile_photo"
             tools:src="@drawable/ic_default_profile_photo"/>
 
+        <Button
+            android:id="@+id/confirm_photo_change_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="Confirm?"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/profile_photo"
+            tools:visibility="visible"/>
+
         <TextView
             android:id="@+id/display_name"
             android:layout_height="wrap_content"

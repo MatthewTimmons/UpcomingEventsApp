@@ -3,17 +3,19 @@ package com.matthewtimmons.upcomingeventsapp.models;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class User implements Serializable {
     String displayName, profilePhotoURL;
-    ArrayList<String> friends, gamesOwnedById, moviesSeenByMovieId;
-    HashMap<String, Object> interestLevels, myFavorites;
+    List<String> friends, gamesOwnedById, moviesSeenByMovieId;
+    Map<String, Object> interestLevels, myFavorites;
 
-    public static HashMap<String, Object> getBlankUserValues() {
-        HashMap<String, Object> emptyHashMapStringObject = new HashMap<>();
-        HashMap<String, Object> myFavoritesObject= new HashMap<>();
-        HashMap<String, Integer> emptyHashMapStringInteger = new HashMap<>();
-        ArrayList<String> emptyArrayList = new ArrayList<>();
+    public static Map<String, Object> getBlankUserValues() {
+        Map<String, Object> emptyHashMapStringObject = new HashMap<>();
+        Map<String, Object> myFavoritesObject= new HashMap<>();
+        Map<String, Integer> emptyHashMapStringInteger = new HashMap<>();
+        List<String> emptyArrayList = new ArrayList<>();
         emptyHashMapStringObject.put("concerts", emptyHashMapStringInteger);
         emptyHashMapStringObject.put("games", emptyHashMapStringInteger);
         emptyHashMapStringObject.put("movies", emptyHashMapStringInteger);
@@ -21,7 +23,7 @@ public class User implements Serializable {
         myFavoritesObject.put("games", emptyArrayList);
         myFavoritesObject.put("movies", emptyArrayList);
 
-        HashMap<String, Object> blankUser = new HashMap<>();
+        Map<String, Object> blankUser = new HashMap<>();
         blankUser.put("displayName", null);
         blankUser.put("friends", emptyArrayList);
         blankUser.put("gamesOwnedByGameId", emptyArrayList);
@@ -63,7 +65,7 @@ public class User implements Serializable {
         this.profilePhotoURL = profilePhotoURL;
     }
 
-    public ArrayList<String> getFriends() {
+    public List<String> getFriends() {
         return friends;
     }
 
@@ -71,7 +73,7 @@ public class User implements Serializable {
         this.friends = friends;
     }
 
-    public ArrayList<String> getGamesOwnedById() {
+    public List<String> getGamesOwnedById() {
         return gamesOwnedById;
     }
 
@@ -79,7 +81,7 @@ public class User implements Serializable {
         this.gamesOwnedById = gamesOwnedById;
     }
 
-    public ArrayList<String> getMoviesSeenByMovieId() {
+    public List<String> getMoviesSeenByMovieId() {
         return moviesSeenByMovieId;
     }
 
@@ -87,7 +89,7 @@ public class User implements Serializable {
         this.moviesSeenByMovieId = moviesSeenByMovieId;
     }
 
-    public HashMap<String, Object> getInterestLevels() {
+    public Map<String, Object> getInterestLevels() {
         return interestLevels;
     }
 
@@ -95,7 +97,7 @@ public class User implements Serializable {
         this.interestLevels = interestLevels;
     }
 
-    public HashMap<String, Object> getMyFavorites() {
+    public Map<String, Object> getMyFavorites() {
         return myFavorites;
     }
 

@@ -28,6 +28,7 @@ import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
@@ -125,7 +126,7 @@ public class SignUpFragment extends Fragment {
             currentUser.updateProfile(profileUpdates);
 
             String currentUserId = currentUser.getUid();
-            HashMap<String, Object> blankUser = User.getBlankUserValues();
+            Map<String, Object> blankUser = User.getBlankUserValues();
             blankUser.put("displayName", displayName);
 //                currentUser.put("metadata", currentUser);
             CollectionReference currentUserDocRef = Firestore.collection("users");

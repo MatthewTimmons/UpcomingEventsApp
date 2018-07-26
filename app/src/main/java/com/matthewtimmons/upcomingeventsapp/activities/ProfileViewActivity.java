@@ -1,5 +1,8 @@
 package com.matthewtimmons.upcomingeventsapp.activities;
 
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -16,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,6 +29,10 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.fragments.FriendSelectorFragment;
@@ -34,7 +44,11 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 public class ProfileViewActivity extends AppCompatActivity {
+    private StorageReference uploadsStorageReference;
+    int PICK_IMAGE_REQUEST = 1;
+    FirebaseUser currentUser;
     String profileUserId;
+    Uri imageUri;
     DocumentReference profileUserReference;
     RecyclerView favoritesRecyclerView;
     ImageView profilePhotoImageView;
@@ -51,9 +65,10 @@ public class ProfileViewActivity extends AppCompatActivity {
         profileUserId = getIntent().getStringExtra("CURRENT_USER");
         profileUserReference = FirebaseFirestore.getInstance().document(FirebaseConstants.COLLECTION_USERS + "/" + profileUserId);
 
-        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
         isCurrentUserViewer = currentUser.getUid().equals(profileUserId);
 
+        uploadsStorageReference = FirebaseStorage.getInstance().getReference("uploads");
 //        TODO
 //        Set profile photo
 //        Set display name
@@ -76,11 +91,25 @@ public class ProfileViewActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot currentUserDocumentSnapshot = task.getResult();
-                displayNameTextView.setText(currentUserDocumentSnapshot.get("displayName").toString());
+                displayNameTextView.setText(currentUserDocumentSnapshot.getString("displayName"));
                 try {
-                    Picasso.get().load(currentUserDocumentSnapshot.get("profilePhotoURL").toString()).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
+                    Picasso.get().load(currentUserDocumentSnapshot.getString("profilePhotoURL")).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
                 } catch (NullPointerException e) { }
 
+            }
+        });
+
+        profilePhotoImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isCurrentUserViewer) { openFileChooser(); }
+
+                findViewById(R.id.confirm_photo_change_button).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        uploadImageFile();
+                    }
+                });
             }
         });
 
@@ -134,5 +163,64 @@ public class ProfileViewActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private String getFileExtension(Uri uri) {
+        ContentResolver cr = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cr.getType(uri));
+    }
+
+    private void uploadImageFile() {
+        if (imageUri != null) {
+            final StorageReference fileStorageReference = uploadsStorageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
+            fileStorageReference.putFile(imageUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    String url = uri.toString();
+                                    profileUserReference.update("profilePhotoURL", url);
+                                    findViewById(R.id.confirm_photo_change_button).setVisibility(View.GONE);
+                                }
+                            });
+                            Toast.makeText(ProfileViewActivity.this, "Your profile photo has been uploaded and set.", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        }
+                    });
+        } else {
+            Toast.makeText(this, "You image selected", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void openFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
+            imageUri = data.getData();
+
+            Picasso.get().load(imageUri).error(getResources().getDrawable(R.drawable.ic_default_profile_photo)).into(profilePhotoImageView);
+            findViewById(R.id.confirm_photo_change_button).setVisibility(View.VISIBLE);
+        }
     }
 }
