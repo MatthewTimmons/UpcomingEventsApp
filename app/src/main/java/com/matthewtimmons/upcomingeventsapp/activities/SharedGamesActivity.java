@@ -4,33 +4,23 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.R;
-import com.matthewtimmons.upcomingeventsapp.adapters.EventListAdapter;
 import com.matthewtimmons.upcomingeventsapp.fragments.FriendSelectorFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.SharedGamesFragment;
+import com.matthewtimmons.upcomingeventsapp.models.User;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SharedGamesActivity extends AppCompatActivity {
-    String currentUser;
-    ArrayList<String> friendsChecked = new ArrayList<>();
+    String currentUserId;
+    String firstUserId;
+    String secondUserId;
     Button nextButton;
     Button backButton;
-
-    // TODO Get these values from the checked items
-    public static String currentUserId = "Matt";
-    public static String friendUserId = "Ryan";
-
-
+    ArrayList<String> friendsChecked = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,36 +29,32 @@ public class SharedGamesActivity extends AppCompatActivity {
         nextButton = findViewById(R.id.nextButton);
         backButton = findViewById(R.id.backButton);
 
-        currentUser = getIntent().getStringExtra("CURRENT_USER");
+        currentUserId = getIntent().getStringExtra(User.CURRENT_USER_ID);
 
-        FriendSelectorFragment fragment = FriendSelectorFragment.newInstance(friendsChecked, currentUser, true, false);
+        FriendSelectorFragment fragment = FriendSelectorFragment.newInstance(friendsChecked, currentUserId, true, false);
         getSupportFragmentManager().beginTransaction().add(R.id.friend_selector_fragment_container, fragment).commit();
-
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                currentUserId = friendsChecked.get(0);
-                friendUserId = friendsChecked.get(1);
-                Fragment newFragment = SharedGamesFragment.newInstance(currentUserId, friendUserId, friendsChecked);
-                getSupportFragmentManager().beginTransaction().replace(R.id.friend_selector_fragment_container, newFragment).commit();
                 backButton.setVisibility(View.VISIBLE);
                 nextButton.setVisibility(View.GONE);
+                firstUserId = friendsChecked.get(0);
+                secondUserId = friendsChecked.get(1);
+                Fragment newFragment = SharedGamesFragment.newInstance(firstUserId, secondUserId, friendsChecked);
+                getSupportFragmentManager().beginTransaction().replace(R.id.friend_selector_fragment_container, newFragment).commit();
             }
         });
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                friendsChecked.clear();
-                Fragment newFragment = FriendSelectorFragment.newInstance(friendsChecked, currentUser, true, false);
-                getSupportFragmentManager().beginTransaction().replace(R.id.friend_selector_fragment_container, newFragment).commit();
                 backButton.setVisibility(View.GONE);
                 nextButton.setVisibility(View.VISIBLE);
+                friendsChecked.clear();
+                Fragment newFragment = FriendSelectorFragment.newInstance(friendsChecked, currentUserId, true, false);
+                getSupportFragmentManager().beginTransaction().replace(R.id.friend_selector_fragment_container, newFragment).commit();
             }
         });
-
-
     }
-
 }

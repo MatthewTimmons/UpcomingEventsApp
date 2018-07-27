@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.ProfileViewActivity;
+import com.matthewtimmons.upcomingeventsapp.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +44,9 @@ public class FriendSelectorListAdapter extends RecyclerView.Adapter<FriendSelect
     @Override
     public void onBindViewHolder(@NonNull final FriendSelectorListAdapter.FriendSelectorViewHolder friendSelectorViewHolder, int i) {
         final DocumentSnapshot userDocumentSnapshot = friends.get(i);
+        final User user = new User(userDocumentSnapshot);
 
-        friendSelectorViewHolder.friendUsername.setText(userDocumentSnapshot.getString("displayName"));
+        friendSelectorViewHolder.friendUsername.setText(user.getDisplayName());
 
         friendSelectorViewHolder.numberOfSharedGames.setText("Number of shared games");
         friendSelectorViewHolder.numberOfSharedGames.setVisibility(View.GONE);
@@ -55,14 +57,14 @@ public class FriendSelectorListAdapter extends RecyclerView.Adapter<FriendSelect
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     if (b) {
                         if (friendsChecked.size() <= 1) {
-                            friendsChecked.add(userDocumentSnapshot.getId());
+                            friendsChecked.add(user.getId());
                         } else {
                             Toast.makeText(friendSelectorViewHolder.itemView.getContext(), "Cannot select more than two people", Toast.LENGTH_SHORT).show();
                             compoundButton.setChecked(false);
-                            friendsChecked.remove(userDocumentSnapshot.getId());
+                            friendsChecked.remove(user.getId());
                         }
                     } else if (!b) {
-                            friendsChecked.remove(userDocumentSnapshot.getId());
+                            friendsChecked.remove(user.getId());
                     }
                 }
             });
@@ -76,7 +78,7 @@ public class FriendSelectorListAdapter extends RecyclerView.Adapter<FriendSelect
                 public void onClick(View view) {
                     Context context =friendSelectorViewHolder.friendUsername.getContext();
                     Intent intent = new Intent(context, ProfileViewActivity.class);
-                    intent.putExtra("CURRENT_USER", userDocumentSnapshot.getId());
+                    intent.putExtra(User.CURRENT_USER_ID, user.getId());
                     context.startActivity(intent);
                 }
             });

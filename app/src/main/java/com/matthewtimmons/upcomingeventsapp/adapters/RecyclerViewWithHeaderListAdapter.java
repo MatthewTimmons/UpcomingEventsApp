@@ -50,15 +50,13 @@ public class RecyclerViewWithHeaderListAdapter extends RecyclerView.Adapter<Recy
 
 //      TextView firstColumnNameTextView;
         recyclerViewWithHeaderViewHolder.firstColumnNameTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_TITLE));
-        if (eventType.equals("concerts")) {
-            ArrayList<String> allBandNames = (ArrayList<String>) eventDocumentSnapshot.get(FirebaseConstants.KEY_CONCERT_BANDS_ARRAY);
-            recyclerViewWithHeaderViewHolder.firstColumnNameTextView.setText(UserHelper.convertArrayOfStringsToString(allBandNames));
-        }
 
 //      ImageView thirdColumnImageView;
         switch (eventType) {
             case FirebaseConstants.COLLECTION_CONCERTS:
                 eventTypeIcon = R.drawable.ic_concerts;
+                ArrayList<String> allBandNames = (ArrayList<String>) eventDocumentSnapshot.get(FirebaseConstants.KEY_CONCERT_BANDS_ARRAY);
+                recyclerViewWithHeaderViewHolder.firstColumnNameTextView.setText(UserHelper.convertArrayOfStringsToString(allBandNames));
                 break;
             case FirebaseConstants.COLLECTION_GAMES:
                 eventTypeIcon = R.drawable.ic_games;

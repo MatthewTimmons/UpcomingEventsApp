@@ -97,7 +97,6 @@ public class InterestLevelSeekbarFragment extends Fragment {
 
 
         public void updateText(int i) {
-        interestLevelTextView.setTypeface(null, Typeface.NORMAL);
         interestLevelTextView.setTextColor(getResources().getColor(R.color.white));
             switch(i) {
                 case INTEREST_LEVEL_LOW:
@@ -178,7 +177,6 @@ public class InterestLevelSeekbarFragment extends Fragment {
         }
 
         public void resetFontAndColorForTextView() {
-            interestLevelTextView.setTypeface(null, Typeface.ITALIC);
             interestLevelTextView.setTextColor(getResources().getColor(R.color.darker_gray));
             interestLevelTextView.setBackgroundColor(getResources().getColor(R.color.light_gray_tint));
         }

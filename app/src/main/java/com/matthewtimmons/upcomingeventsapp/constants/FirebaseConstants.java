@@ -1,5 +1,8 @@
 package com.matthewtimmons.upcomingeventsapp.constants;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 public class FirebaseConstants {
     // Collections
     public static final String COLLECTION_USERS = "users";
@@ -23,4 +26,8 @@ public class FirebaseConstants {
 
     public static final String KEY_MOVIE_RATING = "movieRating";
     public static final String KEY_MOVIE_GENRE = "movieGenre";
+
+    public static StorageReference getStorageReference(String path) {
+        return FirebaseStorage.getInstance().getReference(path);
+    }
 }

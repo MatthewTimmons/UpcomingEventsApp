@@ -1,7 +1,6 @@
 package com.matthewtimmons.upcomingeventsapp.adapters;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -15,13 +14,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.activities.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
+import com.matthewtimmons.upcomingeventsapp.models.Concert;
 import com.matthewtimmons.upcomingeventsapp.models.Event;
 import com.matthewtimmons.upcomingeventsapp.models.Game;
+import com.matthewtimmons.upcomingeventsapp.models.Movie;
+import com.matthewtimmons.upcomingeventsapp.models.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.viewholder_event, viewGroup, false);
-        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        currentUserId = User.getCurrentUserId(FirebaseAuth.getInstance());
         return new EventViewHolder(view);
     }
 
@@ -56,25 +57,26 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         switch (eventType) {
             case FirebaseConstants.COLLECTION_CONCERTS:
                 backupImage = R.drawable.ic_concerts_blue;
-                setAllSharedFields(eventDocumentSnapshot, viewHolder);
-                setBandNameValues(eventDocumentSnapshot, viewHolder);
-                viewHolder.thirdEventInfoTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_CONCERT_LOCATION));
+                Concert concert = new Concert(eventDocumentSnapshot);
+                setAllSharedFields(concert, viewHolder);
+                setBandNameValues(concert, viewHolder);
+                viewHolder.thirdEventInfoTextView.setText(concert.getConcertLocation());
                 break;
             case FirebaseConstants.COLLECTION_GAMES:
-                Game game = new Game(eventDocumentSnapshot);
                 backupImage = R.drawable.ic_games_blue;
+                Game game = new Game(eventDocumentSnapshot);
                 String releaseConsolesAsString = Game.fetchGamesAsString(eventDocumentSnapshot);
-                setAllSharedFields(eventDocumentSnapshot, viewHolder);
+                setAllSharedFields(game, viewHolder);
                 viewHolder.thirdEventInfoTextView.setText(releaseConsolesAsString);
                 break;
             case FirebaseConstants.COLLECTION_MOVIES:
                 backupImage = R.drawable.ic_movies_blue;
-                setAllSharedFields(eventDocumentSnapshot, viewHolder);
+                Movie movie = new Movie(eventDocumentSnapshot);
+                setAllSharedFields(movie, viewHolder);
                 viewHolder.optionalSecondEventInfoTextView.setVisibility(View.VISIBLE);
-                String formattedRating = viewHolder.itemView.getResources()
-                        .getString(R.string.formatted_rating, eventDocumentSnapshot.getString(FirebaseConstants.KEY_MOVIE_RATING));
+                String formattedRating = viewHolder.itemView.getResources().getString(R.string.formatted_rating, movie.getRating());
                 viewHolder.optionalSecondEventInfoTextView.setText(formattedRating);
-                viewHolder.thirdEventInfoTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_MOVIE_GENRE));
+                viewHolder.thirdEventInfoTextView.setText(movie.getGenre());
                 break;
         }
 
@@ -98,19 +100,20 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
                 if (allFavorites.contains(eventDocumentSnapshot.getId())) {
                    viewHolder.favoriteStarImageView.setVisibility(View.VISIBLE);
+                   viewHolder.favoriteStarTransparentImageView.setVisibility(View.VISIBLE);
                 };
             }
         });
     }
 
-    public void setAllSharedFields(DocumentSnapshot eventDocumentSnapshot, EventViewHolder viewHolder) {
-        Picasso.get().load(eventDocumentSnapshot.getString(FirebaseConstants.KEY_IMAGE_URL)).error(backupImage).into(viewHolder.eventPictureImageView);
-        viewHolder.titleTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_TITLE));
-        viewHolder.fourthEventInfoTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_DATE));
+    public void setAllSharedFields(Event event, EventViewHolder viewHolder) {
+        Picasso.get().load(event.getImageUrl()).error(backupImage).into(viewHolder.eventPictureImageView);
+        viewHolder.titleTextView.setText(event.getTitle());
+        viewHolder.fourthEventInfoTextView.setText(event.getDate());
     }
 
-    public void setBandNameValues(DocumentSnapshot concertDocumentSnapshot, EventViewHolder viewHolder) {
-        ArrayList<String> listOfBandsAtConcert = (ArrayList<String>) concertDocumentSnapshot.get("concertBandsArray");
+    public void setBandNameValues(Concert concert, EventViewHolder viewHolder) {
+        ArrayList<String> listOfBandsAtConcert = (ArrayList<String>) concert.getBands();
         viewHolder.titleTextView.setText(listOfBandsAtConcert.get(0));
         // Rules for second and third bands at concert
         if (listOfBandsAtConcert.size() > 1) {
@@ -135,6 +138,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         private CardView cardView;
         private ImageView eventPictureImageView;
         private ImageView favoriteStarImageView;
+        private ImageView favoriteStarTransparentImageView;
         private TextView titleTextView;
         private TextView subtitleTextView;
         private TextView optionalSecondSubtitle;
@@ -146,7 +150,8 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             super(itemView);
             cardView = itemView.findViewById(R.id.event_card_view);
             eventPictureImageView = itemView.findViewById(R.id.event_picture);
-            favoriteStarImageView = itemView.findViewById(R.id.event_view_favorite_star);
+            favoriteStarImageView = itemView.findViewById(R.id.event_view_favorite_ribbon);
+            favoriteStarTransparentImageView = itemView.findViewById(R.id.event_view_favorite_ribbon_transparent);
             titleTextView = itemView.findViewById(R.id.title);
             subtitleTextView = itemView.findViewById(R.id.optional_subtitle);
             optionalSecondSubtitle = itemView.findViewById(R.id.optional_second_subtitle);

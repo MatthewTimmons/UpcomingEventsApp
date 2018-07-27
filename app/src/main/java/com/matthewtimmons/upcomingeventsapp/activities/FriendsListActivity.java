@@ -22,28 +22,28 @@ import com.matthewtimmons.upcomingeventsapp.adapters.FriendInfoListAdapter;
 import com.matthewtimmons.upcomingeventsapp.adapters.FriendListAdapter;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
+import com.matthewtimmons.upcomingeventsapp.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class FriendsListActivity extends AppCompatActivity {
-    RecyclerView recyclerView;
     String currentUserId;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
 
-        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        currentUserId = User.getCurrentUserId(FirebaseAuth.getInstance());
 
         // Find number of columns based on phone screen dimensions
         int numberOfColumns = UserHelper.calculateNumberOfColumns(this, 200);
 
         recyclerView = findViewById(R.id.list_of_friends_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
-
         UserHelper.setFriendsListAdapter(recyclerView, currentUserId);
     }
 }

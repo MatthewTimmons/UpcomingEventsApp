@@ -14,24 +14,23 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.adapters.FriendSelectorListAdapter;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
+import com.matthewtimmons.upcomingeventsapp.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FriendSelectorFragment extends Fragment {
-    private static final String CURRENT_USER = "CURRENT_USER";
     private static final String FRIENDS_CHECKED = "FRIENDS_CHECKED";
     private static final String INCLUDE_CHECKMARKS = "INCLUDE_CHECKMARKS";
     private static final String USERS_CLICKABLE = "USERS_CLICKABLE";
     FriendSelectorListAdapter friendSelectorListAdapter;
     RecyclerView recyclerView;
-    String currentUser;
+    String currentUserId;
     DocumentReference currentUserDocRef;
     ArrayList<String> friendsChecked;
     boolean includeCheckmarks;
@@ -40,7 +39,7 @@ public class FriendSelectorFragment extends Fragment {
     public static FriendSelectorFragment newInstance(ArrayList<String> friendsChecked, String currentUser, boolean includeCheckmarks, boolean usersClickable) {
         FriendSelectorFragment friendSelectorFragment = new FriendSelectorFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(CURRENT_USER, currentUser);
+        bundle.putString(User.CURRENT_USER_ID, currentUser);
         bundle.putStringArrayList(FRIENDS_CHECKED, friendsChecked);
         bundle.putBoolean(INCLUDE_CHECKMARKS, includeCheckmarks);
         bundle.putBoolean(USERS_CLICKABLE, usersClickable);
@@ -58,13 +57,12 @@ public class FriendSelectorFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        currentUser = getArguments().getString(CURRENT_USER);
+        currentUserId = getArguments().getString(User.CURRENT_USER_ID);
         friendsChecked = getArguments().getStringArrayList(FRIENDS_CHECKED);
         includeCheckmarks = getArguments().getBoolean(INCLUDE_CHECKMARKS);
         usersClickable = getArguments().getBoolean(USERS_CLICKABLE);
 
-        currentUserDocRef = FirebaseFirestore.getInstance().collection("users").document(currentUser);
+        currentUserDocRef = User.getUserReference(currentUserId);
 
         view.findViewById(R.id.second_column_name).setVisibility(View.INVISIBLE);
 
@@ -78,12 +76,11 @@ public class FriendSelectorFragment extends Fragment {
                 currentUserDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get("friends");
-                        ArrayList<DocumentSnapshot> friendDocumentSnapshots = UserHelper.fetchFilteredUsersList(allUsers, allFriendIds, currentUser, includeCheckmarks);
+                    ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get("friends");
+                    ArrayList<DocumentSnapshot> friendDocumentSnapshots = UserHelper.fetchFilteredUsersList(allUsers, allFriendIds, currentUserId, includeCheckmarks);
 
                     friendSelectorListAdapter = new FriendSelectorListAdapter(friendDocumentSnapshots, friendsChecked, includeCheckmarks, usersClickable);
                     recyclerView.setAdapter(friendSelectorListAdapter);
-
                     }
                 });
             }

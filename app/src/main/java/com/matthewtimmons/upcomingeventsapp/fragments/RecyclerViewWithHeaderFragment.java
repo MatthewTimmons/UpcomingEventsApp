@@ -4,22 +4,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.matthewtimmons.upcomingeventsapp.CustomLinearLayoutManager;
 import com.matthewtimmons.upcomingeventsapp.R;
-import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
-import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
 
 public class RecyclerViewWithHeaderFragment extends Fragment {
-    private static final String KEY_CURRENT_USER_ID = "keyEventId";
+    private static final String CURRENT_OBJECT_ID = "CURRENT_OBJECT_ID";
     TextView firstColumnName;
     TextView secondColumnName;
     TextView thirdColumnName;
@@ -28,7 +21,7 @@ public class RecyclerViewWithHeaderFragment extends Fragment {
     public static RecyclerViewWithHeaderFragment newInstance(String currentUser) {
         RecyclerViewWithHeaderFragment recyclerViewWithHeaderFragment = new RecyclerViewWithHeaderFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(KEY_CURRENT_USER_ID, currentUser);
+        bundle.putString(CURRENT_OBJECT_ID, currentUser);
         recyclerViewWithHeaderFragment.setArguments(bundle);
         return recyclerViewWithHeaderFragment;
     }
@@ -44,7 +37,7 @@ public class RecyclerViewWithHeaderFragment extends Fragment {
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        eventId = getArguments().getString(KEY_CURRENT_USER_ID);
+        eventId = getArguments().getString(CURRENT_OBJECT_ID);
         firstColumnName = view.findViewById(R.id.first_column_name);
         secondColumnName = view.findViewById(R.id.second_column_name);
         thirdColumnName = view.findViewById(R.id.third_column_name);

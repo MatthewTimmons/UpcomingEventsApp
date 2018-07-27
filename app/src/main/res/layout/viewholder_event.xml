@@ -12,11 +12,34 @@
     android:layout_marginRight="16dp"
     android:layout_marginTop="8dp">
 
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/card_contents"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/pastel_blue">
+
+        <ImageView
+            android:id="@+id/event_view_favorite_ribbon"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="matrix"
+            android:visibility="gone"
+            android:src="@drawable/favorite_ribbon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/event_view_favorite_ribbon_transparent"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:scaleType="matrix"
+            android:src="@drawable/favorite_ribbon_transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
 
         <android.support.constraint.Guideline
             android:id="@+id/left_gutter"
@@ -123,18 +146,22 @@
             app:layout_constraintTop_toBottomOf="@+id/third_info_field"
             tools:text="Optonal Fourth Info Field" />
 
-        <ImageView
-            android:id="@+id/event_view_favorite_star"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/right_gutter"
-            app:srcCompat="@drawable/ic_star"
-            tools:visibility="visible" />
+
+
+
+
+        <!--<ImageView-->
+            <!--android:id="@+id/event_view_favorite_star"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="16dp"-->
+            <!--android:ellipsize="end"-->
+            <!--android:maxLines="1"-->
+            <!--android:visibility="gone"-->
+            <!--app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--app:layout_constraintEnd_toEndOf="@id/right_gutter"-->
+            <!--app:srcCompat="@drawable/ic_star"-->
+            <!--tools:visibility="visible" />-->
 
 
     </android.support.constraint.ConstraintLayout>

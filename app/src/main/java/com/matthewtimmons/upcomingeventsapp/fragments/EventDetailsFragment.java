@@ -165,6 +165,7 @@ public class EventDetailsFragment extends Fragment {
     }
 
     void presentConcert(Concert concert) {
+        fourthTextView.setText(concert.getConcertLocation());
         presentEvent(concert, R.drawable.ic_concerts_blue);
         List<String> listOfBandsAtConcert = concert.getBands();
         titleTextView.setText(listOfBandsAtConcert.get(0));

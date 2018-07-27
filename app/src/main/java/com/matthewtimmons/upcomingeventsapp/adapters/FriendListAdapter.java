@@ -16,6 +16,7 @@ import com.google.firebase.firestore.FieldPath;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.FriendsListActivity;
 import com.matthewtimmons.upcomingeventsapp.activities.ProfileViewActivity;
+import com.matthewtimmons.upcomingeventsapp.models.User;
 import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Field;
@@ -38,16 +39,17 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
     @Override
     public void onBindViewHolder(@NonNull final FriendListAdapter.FriendListViewholder friendListViewholder, int i) {
         final DocumentSnapshot currentFriendDocumentSnapshot = friendDocumentSnapshots.get(i);
+        User user = new User(currentFriendDocumentSnapshot);
 
-        friendListViewholder.displayName.setText(currentFriendDocumentSnapshot.get("displayName").toString());
-        Picasso.get().load(currentFriendDocumentSnapshot.get("profilePhotoURL").toString()).error(R.drawable.ic_default_profile_photo).into(friendListViewholder.profilePhoto);
+        friendListViewholder.displayName.setText(user.getDisplayName());
+        Picasso.get().load(user.getProfilePhotoURL()).error(R.drawable.ic_default_profile_photo).into(friendListViewholder.profilePhoto);
 
         friendListViewholder.friendSquareIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Context context = friendListViewholder.friendSquareIcon.getContext();
                 Intent intent = new Intent(context, ProfileViewActivity.class);
-                intent.putExtra("CURRENT_USER", currentFriendDocumentSnapshot.getString("displayName"));
+                intent.putExtra(User.CURRENT_USER_ID, currentFriendDocumentSnapshot.getString("displayName"));
                 context.startActivity(intent);
             }
         });

@@ -12,12 +12,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
+import com.matthewtimmons.upcomingeventsapp.models.User;
 
 public class FavoritesActivity extends AppCompatActivity {
-    RecyclerView recyclerView;
-
     private DocumentReference currentUserReference;
     private String currentUserId;
+    RecyclerView recyclerView;
 
 
     @Override
@@ -25,12 +25,11 @@ public class FavoritesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
 
-        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        currentUserReference = FirebaseFirestore.getInstance().document(FirebaseConstants.COLLECTION_USERS + "/" + currentUserId);
+        currentUserId = User.getCurrentUserId(FirebaseAuth.getInstance());
+        currentUserReference = User.getUserReference(currentUserId);
 
         recyclerView = findViewById(R.id.favorites_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-
         UserHelper.setFavoritesRecyclerViewAdapter(currentUserReference, recyclerView, false);
     }
 }

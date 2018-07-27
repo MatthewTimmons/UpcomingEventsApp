@@ -39,6 +39,7 @@ import com.matthewtimmons.upcomingeventsapp.fragments.FriendSelectorFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.RecyclerViewWithHeaderFragment;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
+import com.matthewtimmons.upcomingeventsapp.models.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -61,25 +62,20 @@ public class ProfileViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile_view);
         profilePhotoImageView = findViewById(R.id.profile_photo);
         displayNameTextView = findViewById(R.id.display_name);
+        favoritesRecyclerView = findViewById(R.id.profile_favorite_events_recycler_view);
 
-        profileUserId = getIntent().getStringExtra("CURRENT_USER");
-        profileUserReference = FirebaseFirestore.getInstance().document(FirebaseConstants.COLLECTION_USERS + "/" + profileUserId);
+        // Get profile data
+        profileUserId = getIntent().getStringExtra(User.CURRENT_USER_ID);
+        profileUserReference = User.getUserReference(profileUserId);
 
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        // Get signed in user data
+        currentUser = User.getCurrentUser();
         isCurrentUserViewer = currentUser.getUid().equals(profileUserId);
-
-        uploadsStorageReference = FirebaseStorage.getInstance().getReference("uploads");
-//        TODO
-//        Set profile photo
-//        Set display name
-//        Set Friends recycler view
-//        Set Favorites recycler view
+        uploadsStorageReference = FirebaseConstants.getStorageReference("uploads");
 
         Fragment friendInfoFragment = FriendSelectorFragment.newInstance(new ArrayList<String>(), profileUserId, false, true);
         getSupportFragmentManager().beginTransaction().add(R.id.profile_friends_recycler_view_container, friendInfoFragment).commit();
 
-
-        favoritesRecyclerView = findViewById(R.id.profile_favorite_events_recycler_view);
         favoritesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         UserHelper.setFavoritesRecyclerViewAdapter(profileUserReference, favoritesRecyclerView, true);
 
@@ -146,12 +142,11 @@ public class ProfileViewActivity extends AppCompatActivity {
                             displayNameTextView.setText(updatedDisplayName);
 
                             // Update FirebaseAuth account's display name
-                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(updatedDisplayName).build();
-                            currentUser.updateProfile(profileUpdates);
+                            User.updateFirebaseUserDisplayName(currentUser, updatedDisplayName);
 
                             // Update user's display name in database
-                            Firestore.collection("users").document(profileUserId).update("displayName", updatedDisplayName);
-                            Firestore.collection("usersAuth").document(profileUserId).update("displayName", updatedDisplayName);
+                            User.updateDisplayName(profileUserId, updatedDisplayName);
+                            User.updateAuthDisplayName(profileUserId, updatedDisplayName);
 
                             Toast.makeText(ProfileViewActivity.this, "Display name has been changed to \"" + updatedDisplayName + "\"", Toast.LENGTH_SHORT).show();
                             alertDialog.cancel();
@@ -202,7 +197,7 @@ public class ProfileViewActivity extends AppCompatActivity {
                         }
                     });
         } else {
-            Toast.makeText(this, "You image selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show();
         }
     }
 

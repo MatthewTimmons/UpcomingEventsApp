@@ -7,11 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.firestore.FieldPath;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
+import com.matthewtimmons.upcomingeventsapp.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +38,9 @@ public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAd
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FriendInfoViewHolder friendInfoViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final FriendInfoViewHolder friendInfoViewHolder, int i) {
         DocumentSnapshot userDocumentSnapshot = friends.get(i);
-
+        final User user = new User(userDocumentSnapshot);
         try {
             friendsInterestLevel = (userDocumentSnapshot.get(FieldPath.of(FirebaseConstants.KEY_INTEREST_LEVELS_USER, eventType, eventId))).toString();
             friendInfoViewHolder.friendInterestLevel.setText(friendsInterestLevel);
@@ -47,11 +49,11 @@ public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAd
             friendInfoViewHolder.friendInterestLevel.setTextSize(24);
             friendInfoViewHolder.friendInterestLevel.setText(friendsInterestLevel);
         }
-        friendInfoViewHolder.friendUsername.setText(userDocumentSnapshot.getId());
+        friendInfoViewHolder.friendUsername.setText(user.getDisplayName());
 
         // Check checkbox if movie has been seen
         if (eventType.equals(FirebaseConstants.COLLECTION_MOVIES)) {
-            ArrayList<String> moviesSeen = (ArrayList<String>) userDocumentSnapshot.get(FirebaseConstants.KEY_MOVIES_SEEN);
+            ArrayList<String> moviesSeen = (ArrayList<String>) user.getMoviesSeenByMovieId();
             if (moviesSeen.contains(eventId)) {
                 friendInfoViewHolder.friendCheckbox.setVisibility(View.VISIBLE);
                 friendInfoViewHolder.friendCheckbox.setImageResource(R.drawable.ic_checked_checkbox);
