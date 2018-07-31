@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">upcomingeventsapp</string>
+    <string name="app_name">Horizon Events</string>
     <string name="interest_level_display_name_low">Not interested</string>
     <string name="interest_level_display_name_medium">Somewhat Interested</string>
     <string name="interest_level_display_name_high">Very interested</string>
