@@ -44,7 +44,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.viewholder_event, viewGroup, false);
-        currentUserId = User.getCurrentUserId(FirebaseAuth.getInstance());
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         return new EventViewHolder(view);
     }
 

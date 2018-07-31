@@ -6,13 +6,18 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
 import com.matthewtimmons.upcomingeventsapp.fragments.FriendInfoFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.InterestLevelSeekbarFragment;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.EventConstants;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.fragments.EventDetailsFragment;
+import com.matthewtimmons.upcomingeventsapp.models.User;
 
 public class DetailsActivity extends AppCompatActivity {
     private static final String EXTRA_EVENT_ID = "extraEventId";

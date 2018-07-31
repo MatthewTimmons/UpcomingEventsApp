@@ -27,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventPagerAdapter;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.authorization.AuthorizeUserActivity;
+import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 import com.squareup.picasso.Picasso;
 
@@ -47,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         firebaseAuth = FirebaseAuth.getInstance();
-        currentUserId = User.getCurrentUserId(firebaseAuth);
-        currentUserDisplayname = User.getCurrentUserDisplayName(firebaseAuth);
+        currentUserId = firebaseAuth.getCurrentUser().getUid();
+        currentUserDisplayname = firebaseAuth.getCurrentUser().getDisplayName();
 
         NavigationView navigationView = findViewById(R.id.navigation_view);
         navigationDrawerView = findViewById(R.id.nav_drawer);
@@ -173,11 +174,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        User.getUserReference(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        UserController.getUser(currentUserId, new UserController.GetUserListener() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+            public void onUserRetrieved(User user) {
                 try {
-                    Picasso.get().load(task.getResult().get("profilePhotoURL").toString()).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
+                    Picasso.get().load(user.getProfilePhotoURL()).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
                 } catch (NullPointerException e) {
                 }
             }

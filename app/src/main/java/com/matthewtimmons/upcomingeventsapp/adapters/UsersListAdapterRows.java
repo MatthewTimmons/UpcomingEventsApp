@@ -20,38 +20,40 @@ import com.matthewtimmons.upcomingeventsapp.models.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FriendSelectorListAdapter extends RecyclerView.Adapter<FriendSelectorListAdapter.FriendSelectorViewHolder> {
+public class UsersListAdapterRows extends RecyclerView.Adapter<UsersListAdapterRows.FriendSelectorViewHolder> {
     List<DocumentSnapshot> friends;
     List<String> friendsChecked;
     boolean includeCheckboxes;
-    boolean friendsClickable;
     String numberOfSharedGames = "0";
 
-    public FriendSelectorListAdapter(List<DocumentSnapshot> friends, ArrayList<String> friendsChecked, boolean includeCheckboxes, boolean friendsClickable) {
+    public UsersListAdapterRows(List<DocumentSnapshot> friends) {
+        this.friends = friends;
+        this.includeCheckboxes = false;
+    }
+
+    public UsersListAdapterRows(List<DocumentSnapshot> friends, ArrayList<String> friendsChecked) {
         this.friends = friends;
         this.friendsChecked = friendsChecked;
-        this.includeCheckboxes = includeCheckboxes;
-        this.friendsClickable = friendsClickable;
+        this.includeCheckboxes = true;
     }
 
     @NonNull
     @Override
-    public FriendSelectorListAdapter.FriendSelectorViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public UsersListAdapterRows.FriendSelectorViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.viewholder_friend_information, viewGroup, false);
         return new FriendSelectorViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final FriendSelectorListAdapter.FriendSelectorViewHolder friendSelectorViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final UsersListAdapterRows.FriendSelectorViewHolder friendSelectorViewHolder, int i) {
         final DocumentSnapshot userDocumentSnapshot = friends.get(i);
         final User user = new User(userDocumentSnapshot);
 
+        // Set users displayname
         friendSelectorViewHolder.friendUsername.setText(user.getDisplayName());
 
-        friendSelectorViewHolder.numberOfSharedGames.setText("Number of shared games");
-        friendSelectorViewHolder.numberOfSharedGames.setVisibility(View.GONE);
-
         if (includeCheckboxes) {
+            // Set rules for checkboxes
             friendSelectorViewHolder.friendCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -68,11 +70,9 @@ public class FriendSelectorListAdapter extends RecyclerView.Adapter<FriendSelect
                     }
                 }
             });
-        } else if (!includeCheckboxes) {
+        } else {
+            // Make checkbox invisible and make friends clickable
             friendSelectorViewHolder.friendCheckbox.setVisibility(View.GONE);
-        }
-
-        if (friendsClickable) {
             friendSelectorViewHolder.friendUsername.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -92,14 +92,11 @@ public class FriendSelectorListAdapter extends RecyclerView.Adapter<FriendSelect
 
     public class FriendSelectorViewHolder extends RecyclerView.ViewHolder {
         TextView friendUsername;
-        TextView numberOfSharedGames;
         CheckBox friendCheckbox;
-
 
         public FriendSelectorViewHolder(@NonNull View itemView) {
             super(itemView);
             friendUsername = itemView.findViewById(R.id.friend_user_name);
-            numberOfSharedGames = itemView.findViewById(R.id.number_of_shared_games);
             friendCheckbox = itemView.findViewById(R.id.event_type_icon);
         }
     }

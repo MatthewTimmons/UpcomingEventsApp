@@ -18,12 +18,7 @@ public class Game extends Event implements Serializable {
 
     public static String fetchGamesAsString(DocumentSnapshot gameDocumentSnapshot) {
         List<String> listOfGames = (List<String>) gameDocumentSnapshot.get("releaseConsoles");
-        StringBuilder output = new StringBuilder();
-        for (int i = 0; i < listOfGames.size() -1; i++) {
-            output = output.append(listOfGames.get(i) + ", ");
-        }
-        output = output.append(listOfGames.get(listOfGames.size() -1));
-        return output.toString();
+        return TextUtils.join(", ", listOfGames);
     }
 
     public List<String> getReleaseConsoles() {
@@ -37,14 +32,6 @@ public class Game extends Event implements Serializable {
     public String getReleaseConsolesAsString() {
         return TextUtils.join(", ", releaseConsoles);
     }
-
-//    Method used for
-//    public Game(String gameTitle, String releaseConsoles, String gameReleaseDate, String gameImageUrl) {
-//        this.title = gameTitle;
-//        this.releaseConsoles = releaseConsoles;
-//        this.date = gameReleaseDate;
-//        this.imageUrl = gameImageUrl;
-//    }
 
 
 //

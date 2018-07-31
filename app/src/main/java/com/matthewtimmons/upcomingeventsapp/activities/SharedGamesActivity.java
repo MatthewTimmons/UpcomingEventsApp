@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.matthewtimmons.upcomingeventsapp.R;
-import com.matthewtimmons.upcomingeventsapp.fragments.FriendSelectorFragment;
+import com.matthewtimmons.upcomingeventsapp.fragments.ListOfUsersFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.SharedGamesFragment;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 
@@ -31,18 +31,20 @@ public class SharedGamesActivity extends AppCompatActivity {
 
         currentUserId = getIntent().getStringExtra(User.CURRENT_USER_ID);
 
-        FriendSelectorFragment fragment = FriendSelectorFragment.newInstance(friendsChecked, currentUserId, true, false);
-        getSupportFragmentManager().beginTransaction().add(R.id.friend_selector_fragment_container, fragment).commit();
+        final Fragment friendsSelector = ListOfUsersFragment.newInstance(currentUserId, friendsChecked);
+        getSupportFragmentManager().beginTransaction().add(R.id.friend_selector_fragment_container, friendsSelector).commit();
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                backButton.setVisibility(View.VISIBLE);
-                nextButton.setVisibility(View.GONE);
-                firstUserId = friendsChecked.get(0);
-                secondUserId = friendsChecked.get(1);
-                Fragment newFragment = SharedGamesFragment.newInstance(firstUserId, secondUserId, friendsChecked);
-                getSupportFragmentManager().beginTransaction().replace(R.id.friend_selector_fragment_container, newFragment).commit();
+                if (friendsChecked.size() == 2) {
+                    backButton.setVisibility(View.VISIBLE);
+                    nextButton.setVisibility(View.GONE);
+                    firstUserId = friendsChecked.get(0);
+                    secondUserId = friendsChecked.get(1);
+                    Fragment newFragment = SharedGamesFragment.newInstance(firstUserId, secondUserId);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.friend_selector_fragment_container, newFragment).commit();
+                }
             }
         });
 
@@ -52,7 +54,7 @@ public class SharedGamesActivity extends AppCompatActivity {
                 backButton.setVisibility(View.GONE);
                 nextButton.setVisibility(View.VISIBLE);
                 friendsChecked.clear();
-                Fragment newFragment = FriendSelectorFragment.newInstance(friendsChecked, currentUserId, true, false);
+                Fragment newFragment = ListOfUsersFragment.newInstance(currentUserId, friendsChecked);
                 getSupportFragmentManager().beginTransaction().replace(R.id.friend_selector_fragment_container, newFragment).commit();
             }
         });

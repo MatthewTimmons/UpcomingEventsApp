@@ -12,20 +12,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.matthewtimmons.upcomingeventsapp.R;
-import com.matthewtimmons.upcomingeventsapp.activities.FriendsListActivity;
 import com.matthewtimmons.upcomingeventsapp.activities.ProfileViewActivity;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 import com.squareup.picasso.Picasso;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
-public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.FriendListViewholder> {
+public class UsersListAdapterSquare extends RecyclerView.Adapter<UsersListAdapterSquare.FriendListViewholder> {
     List<DocumentSnapshot> friendDocumentSnapshots;
 
-    public FriendListAdapter(List<DocumentSnapshot> friendDocumentSnapshots) {
+    public UsersListAdapterSquare(List<DocumentSnapshot> friendDocumentSnapshots) {
         this.friendDocumentSnapshots = friendDocumentSnapshots;
     }
 
@@ -37,10 +34,11 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final FriendListAdapter.FriendListViewholder friendListViewholder, int i) {
+    public void onBindViewHolder(@NonNull final UsersListAdapterSquare.FriendListViewholder friendListViewholder, int i) {
         final DocumentSnapshot currentFriendDocumentSnapshot = friendDocumentSnapshots.get(i);
         User user = new User(currentFriendDocumentSnapshot);
 
+        // Set image and displayname
         friendListViewholder.displayName.setText(user.getDisplayName());
         Picasso.get().load(user.getProfilePhotoURL()).error(R.drawable.ic_default_profile_photo).into(friendListViewholder.profilePhoto);
 
@@ -64,7 +62,6 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Fr
         ConstraintLayout friendSquareIcon;
         ImageView profilePhoto;
         TextView displayName;
-
 
         public FriendListViewholder(@NonNull View itemView) {
             super(itemView);

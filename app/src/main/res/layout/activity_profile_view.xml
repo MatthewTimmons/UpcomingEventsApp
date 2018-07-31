@@ -25,6 +25,7 @@
             android:id="@+id/confirm_photo_change_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/pastel_blue"
             android:visibility="gone"
             android:text="Confirm?"
             app:layout_constraintStart_toStartOf="parent"
@@ -40,13 +41,24 @@
             android:layout_marginRight="16dp"
             android:text="Display Name"
             android:textSize="40sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/edit_icon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profile_photo"/>
 
+        <ImageView
+            android:id="@+id/edit_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_edit_icon"
+            android:visibility="gone"
+            android:layout_marginRight="32dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profile_photo"
+            app:layout_constraintBottom_toTopOf="@id/profile_friends_header_container"
+            tools:visibility="visible"/>
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/profile_friends_recycler_view_container"
+            android:id="@+id/profile_friends_header_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/display_name"
@@ -58,7 +70,7 @@
             android:id="@+id/profile_favorite_events_recycler_view_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/profile_friends_recycler_view_container"
+            app:layout_constraintTop_toBottomOf="@id/profile_friends_header_container"
             tools:background="@color/colorPrimary"
             tools:layout_height="40dp"
             />
@@ -71,6 +83,16 @@
             android:scrollbars="vertical"
             app:layout_constraintTop_toBottomOf="@id/profile_favorite_events_recycler_view_container"
             tools:layout_height="200dp"/>
+
+        <Button
+            android:id="@+id/send_friend_request_button"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Send friend request"
+            android:visibility="gone"
+            android:background="@color/pastel_green"
+            app:layout_constraintTop_toBottomOf="@id/profile_favorite_events_recycler_view"
+            />
 
 
     </android.support.constraint.ConstraintLayout>

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +57,7 @@ public class RecyclerViewWithHeaderListAdapter extends RecyclerView.Adapter<Recy
             case FirebaseConstants.COLLECTION_CONCERTS:
                 eventTypeIcon = R.drawable.ic_concerts;
                 ArrayList<String> allBandNames = (ArrayList<String>) eventDocumentSnapshot.get(FirebaseConstants.KEY_CONCERT_BANDS_ARRAY);
-                recyclerViewWithHeaderViewHolder.firstColumnNameTextView.setText(UserHelper.convertArrayOfStringsToString(allBandNames));
+                recyclerViewWithHeaderViewHolder.firstColumnNameTextView.setText(TextUtils.join(", ", allBandNames));
                 break;
             case FirebaseConstants.COLLECTION_GAMES:
                 eventTypeIcon = R.drawable.ic_games;

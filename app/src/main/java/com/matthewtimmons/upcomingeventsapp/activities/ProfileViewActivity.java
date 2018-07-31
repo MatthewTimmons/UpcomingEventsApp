@@ -25,62 +25,71 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
-import com.matthewtimmons.upcomingeventsapp.fragments.FriendSelectorFragment;
-import com.matthewtimmons.upcomingeventsapp.fragments.RecyclerViewWithHeaderFragment;
-import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
+import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
+import com.matthewtimmons.upcomingeventsapp.fragments.ListOfUsersFragment;
+import com.matthewtimmons.upcomingeventsapp.fragments.RecyclerViewHeaderFragment;
 import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileViewActivity extends AppCompatActivity {
     private StorageReference uploadsStorageReference;
     int PICK_IMAGE_REQUEST = 1;
-    FirebaseUser currentUser;
+    FirebaseUser currentFirebaseUser;
+    String currentUserId;
     String profileUserId;
+    User currentUser;
+    boolean isCurrentUserViewer;
     Uri imageUri;
     DocumentReference profileUserReference;
     RecyclerView favoritesRecyclerView;
     ImageView profilePhotoImageView;
     TextView displayNameTextView;
-    boolean isCurrentUserViewer;
+    ImageView editIconImageView;
+    Button sendFriendRequestButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_profile_view);
         profilePhotoImageView = findViewById(R.id.profile_photo);
         displayNameTextView = findViewById(R.id.display_name);
+        editIconImageView = findViewById(R.id.edit_icon);
         favoritesRecyclerView = findViewById(R.id.profile_favorite_events_recycler_view);
+        sendFriendRequestButton = findViewById(R.id.send_friend_request_button);
 
         // Get profile data
         profileUserId = getIntent().getStringExtra(User.CURRENT_USER_ID);
-        profileUserReference = User.getUserReference(profileUserId);
+        profileUserReference = UserController.getUserReference(profileUserId);
 
         // Get signed in user data
-        currentUser = User.getCurrentUser();
-        isCurrentUserViewer = currentUser.getUid().equals(profileUserId);
+        currentFirebaseUser = firebaseAuth.getCurrentUser();
+        currentUserId = currentFirebaseUser.getUid();
+        isCurrentUserViewer = currentUserId.equals(profileUserId);
         uploadsStorageReference = FirebaseConstants.getStorageReference("uploads");
 
-        Fragment friendInfoFragment = FriendSelectorFragment.newInstance(new ArrayList<String>(), profileUserId, false, true);
-        getSupportFragmentManager().beginTransaction().add(R.id.profile_friends_recycler_view_container, friendInfoFragment).commit();
+        // Set Friends header and recycler view
+        Fragment friends = ListOfUsersFragment.newInstance(currentUserId);
+        getSupportFragmentManager().beginTransaction().add(R.id.profile_friends_header_container, friends).commit();
 
+        //Set Favorite Events header
+        RecyclerViewHeaderFragment recyclerViewHeaderFragment = RecyclerViewHeaderFragment.newInstance(profileUserId, "Favorite Events");
+        getSupportFragmentManager().beginTransaction().add(R.id.profile_favorite_events_recycler_view_container, recyclerViewHeaderFragment).commit();
+
+        //Set Favorite Events Recycler View
         favoritesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         UserHelper.setFavoritesRecyclerViewAdapter(profileUserReference, favoritesRecyclerView, true);
-
-        RecyclerViewWithHeaderFragment recyclerViewWithHeaderFragment = RecyclerViewWithHeaderFragment.newInstance(profileUserId);
-        getSupportFragmentManager().beginTransaction().add(R.id.profile_favorite_events_recycler_view_container, recyclerViewWithHeaderFragment).commit();
 
 
         profileUserReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -109,9 +118,11 @@ public class ProfileViewActivity extends AppCompatActivity {
             }
         });
 
-        displayNameTextView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
+        if (isCurrentUserViewer) {
+            editIconImageView.setVisibility(View.VISIBLE);
+            editIconImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
                 if (isCurrentUserViewer) {
                     View dialogView = getLayoutInflater().inflate(R.layout.dialog_confirm, null);
                     TextView titleMessageTextView = dialogView.findViewById(R.id.question_confirmation);
@@ -142,11 +153,11 @@ public class ProfileViewActivity extends AppCompatActivity {
                             displayNameTextView.setText(updatedDisplayName);
 
                             // Update FirebaseAuth account's display name
-                            User.updateFirebaseUserDisplayName(currentUser, updatedDisplayName);
+                            UserController.updateFirebaseUserDisplayName(currentFirebaseUser, updatedDisplayName);
 
                             // Update user's display name in database
-                            User.updateDisplayName(profileUserId, updatedDisplayName);
-                            User.updateAuthDisplayName(profileUserId, updatedDisplayName);
+                            UserController.updateDisplayName(profileUserId, updatedDisplayName);
+                            UserController.updateAuthDisplayName(profileUserId, updatedDisplayName);
 
                             Toast.makeText(ProfileViewActivity.this, "Display name has been changed to \"" + updatedDisplayName + "\"", Toast.LENGTH_SHORT).show();
                             alertDialog.cancel();
@@ -155,9 +166,25 @@ public class ProfileViewActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(ProfileViewActivity.this, "You do not have permission to change someone else's display name", Toast.LENGTH_SHORT).show();
                 }
-                return true;
-            }
-        });
+                }
+            });
+        }
+
+        if(!isCurrentUserViewer) {
+            UserController.getUser(currentUserId, new UserController.GetUserListener() {
+                @Override
+                public void onUserRetrieved(User user) {
+                    List<String> allFriendIds = user.getFriends();
+                    if (!allFriendIds.contains(profileUserId)) {
+                        sendFriendRequestButton.setVisibility(View.VISIBLE);
+                    } else {
+                        sendFriendRequestButton.setVisibility(View.VISIBLE);
+                        sendFriendRequestButton.setText("Remove friend");
+                        sendFriendRequestButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    }
+                }
+            });
+        }
     }
 
     private String getFileExtension(Uri uri) {

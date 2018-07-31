@@ -2,7 +2,6 @@ package com.matthewtimmons.upcomingeventsapp.manager;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
@@ -12,15 +11,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventListAdapter;
-import com.matthewtimmons.upcomingeventsapp.adapters.FriendListAdapter;
+import com.matthewtimmons.upcomingeventsapp.adapters.UsersListAdapterRows;
 import com.matthewtimmons.upcomingeventsapp.adapters.RecyclerViewWithHeaderListAdapter;
+import com.matthewtimmons.upcomingeventsapp.adapters.UsersListAdapterSquare;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
-import com.matthewtimmons.upcomingeventsapp.fragments.SharedGamesFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,18 +27,69 @@ import java.util.Map;
 public class UserHelper {
     //TODO: Implement method to get the current user
 
-    public static void setFriendsListAdapter(final RecyclerView recyclerView, final String currentUser) {
+    public static void setUsersListAdapter(final RecyclerView recyclerView, final String firestoreBranchName, final String currentUserId, final boolean includeCurrentUser, final boolean square) {
         FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 final List<DocumentSnapshot> allUsers = task.getResult().getDocuments();
-                FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(currentUser).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get("friends");
-                        List<DocumentSnapshot> friends = UserHelper.fetchFilteredUsersList(allUsers, allFriendIds);
+                        RecyclerView.Adapter recyclerAdapter;
+                        ArrayList<String> allSearchResults = (ArrayList<String>) task.getResult().get(firestoreBranchName);
+                        List<DocumentSnapshot> searchResultsDocumentSnapshots = UserHelper.fetchFilteredUsersList(allUsers, allSearchResults, currentUserId, includeCurrentUser);
 
-                        FriendListAdapter recyclerAdapter = new FriendListAdapter(friends);
+                        if (!square) {
+                            recyclerAdapter = new UsersListAdapterRows(searchResultsDocumentSnapshots);
+                        } else {
+                            recyclerAdapter = new UsersListAdapterSquare(searchResultsDocumentSnapshots);
+                        }
+                        recyclerView.setAdapter(recyclerAdapter);
+                    }
+                });
+            }
+        });
+    }
+
+    public static void setPendingRequestsListAdapter(final RecyclerView recyclerView, final String currentUserId) {
+        Firestore.collection(FirebaseConstants.COLLECTION_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                final List<DocumentSnapshot> allUsers = task.getResult().getDocuments();
+                Firestore.collection(FirebaseConstants.COLLECTION_USERS).document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        ArrayList<String> allSearchResults = new ArrayList<String>();
+                        HashMap<String, Boolean> pendingFriendRequests = (HashMap<String, Boolean>) task.getResult().get("pendingFriendRequests");
+                        allSearchResults.addAll(pendingFriendRequests.keySet());
+                        List<DocumentSnapshot> searchResultsDocumentSnapshots = UserHelper.fetchFilteredUsersList(allUsers, allSearchResults, currentUserId, false);
+
+                        // Update all pending requests to say they have been shown
+                        for (Map.Entry<String, Boolean> entry : pendingFriendRequests.entrySet()) {
+                            pendingFriendRequests.put(entry.getKey(), true);
+                        }
+                        Firestore.collection("users").document(currentUserId).update("pendingFriendRequests", pendingFriendRequests);
+
+                        UsersListAdapterRows recyclerAdapter = new UsersListAdapterRows(searchResultsDocumentSnapshots);
+                        recyclerView.setAdapter(recyclerAdapter);
+                    }
+                });
+            }
+        });
+    }
+
+    public static void setCheckableUsersListAdapter(final RecyclerView recyclerView, final String firestoreBranchName, final String currentUserId, final boolean includeCurrentUser, final ArrayList<String> friendsChecked) {
+        FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                final List<DocumentSnapshot> allUsers = task.getResult().getDocuments();
+                FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        ArrayList<String> allSearchResults = (ArrayList<String>) task.getResult().get(firestoreBranchName);
+                        List<DocumentSnapshot> searchResultsDocumentSnapshots = UserHelper.fetchFilteredUsersList(allUsers, allSearchResults, currentUserId, includeCurrentUser);
+
+                        UsersListAdapterRows recyclerAdapter = new UsersListAdapterRows(searchResultsDocumentSnapshots, friendsChecked);
                         recyclerView.setAdapter(recyclerAdapter);
                     }
                 });
@@ -53,15 +101,6 @@ public class UserHelper {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         return (int) (dpWidth / itemWidth);
-    }
-
-    public static String convertArrayOfStringsToString (ArrayList<String> arrayOfStrings) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < arrayOfStrings.size() -1; i++) {
-            stringBuilder.append(arrayOfStrings.get(i) + ", ");
-        }
-        stringBuilder.append(arrayOfStrings.get(arrayOfStrings.size() -1));
-        return stringBuilder.toString();
     }
 
     public static ArrayList<DocumentSnapshot> fetchFilteredUsersList(List<DocumentSnapshot> allUsers, ArrayList<String> namesToSearchFor) {
@@ -165,6 +204,4 @@ public class UserHelper {
             }
         });
     }
-
-
 }

@@ -14,7 +14,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -29,6 +28,7 @@ import java.util.List;
 public class FriendInfoFragment extends Fragment {
     private static final String KEY_EVENT_TYPE = "keyEventType";
     private static final String KEY_EVENT_ID = "keyEventId";
+    Fragment friendsHeader;
     FriendInfoListAdapter friendsListAdapter;
     RecyclerView recyclerView;
     String currentUserId;
@@ -59,6 +59,13 @@ public class FriendInfoFragment extends Fragment {
         eventId = getArguments().getString(KEY_EVENT_ID);
         eventType = getArguments().getString(KEY_EVENT_TYPE);
 
+        if (eventType.equals(FirebaseConstants.COLLECTION_MOVIES)) {
+            friendsHeader = RecyclerViewHeaderFragment.newInstance(currentUserId, "Friends", "Interest Level", "Seen");
+        } else {
+            friendsHeader = RecyclerViewHeaderFragment.newInstance(currentUserId, "Friends", "Interest Level", "");
+        }
+        getActivity().getSupportFragmentManager().beginTransaction().add(R.id.column_names_constraint_layout, friendsHeader).commit();
+
         recyclerView = view.findViewById(R.id.friends_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -80,8 +87,8 @@ public class FriendInfoFragment extends Fragment {
             }
         });
 
-        if (eventType.equals(FirebaseConstants.COLLECTION_MOVIES)) {
-            view.findViewById(R.id.third_column_name).setVisibility(View.VISIBLE);
-        }
+
+
+
     }
 }

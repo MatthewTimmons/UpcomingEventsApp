@@ -16,12 +16,6 @@ public class Movie extends Event implements Serializable {
         this.genre = documentSnapshot.getString("movieGenre");
     }
 
-    //    public Movie(String rating, String genre, ) {
-//        this.rating = rating;
-//        this.genre = genre;
-//        this.hasBeenSeen = false;
-//    }
-
     public String getRating() {
         return rating;
     }

@@ -89,35 +89,6 @@ public class User implements Serializable {
 //        userDocmuentSnapshot.getString(FieldPath.of(FirebaseConstants.KEY_INTEREST_LEVELS_USER, eventType, eventId).toString());
 //    }
 
-    public static DocumentReference getUserReference(String userId) {
-        return FirebaseFirestore.getInstance().document(FirebaseConstants.COLLECTION_USERS + "/" + userId);
-    }
-
-    public static FirebaseUser getCurrentUser() {
-        return FirebaseAuth.getInstance().getCurrentUser();
-    }
-
-    public static String getCurrentUserId(FirebaseAuth firebaseAuth) {
-        return firebaseAuth.getCurrentUser().getUid();
-    }
-
-    public static String getCurrentUserDisplayName(FirebaseAuth firebaseAuth) {
-        return firebaseAuth.getCurrentUser().getDisplayName();
-    }
-
-    public static void updateDisplayName(String userId, String updatedDisplayName) {
-        Firestore.collection("users").document(userId).update("displayName", updatedDisplayName);
-    }
-
-    public static void updateAuthDisplayName(String userId, String updatedDisplayName) {
-        Firestore.collection("usersAuth").document(userId).update("displayName", updatedDisplayName);
-    }
-
-    public static void updateFirebaseUserDisplayName(FirebaseUser currentUser, String updatedDisplayName) {
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(updatedDisplayName).build();
-        currentUser.updateProfile(profileUpdates);
-    }
-
     public String getId() {
         return id;
     }
