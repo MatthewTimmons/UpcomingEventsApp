@@ -20,7 +20,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.adapters.FriendInfoListAdapter;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
-import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
+import com.matthewtimmons.upcomingeventsapp.manager.DevHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +78,7 @@ public class FriendInfoFragment extends Fragment {
                       @Override
                       public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                           ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get("friends");
-                          List<DocumentSnapshot> friends = UserHelper.fetchFilteredUsersList(allUsers, allFriendIds);
+                          List<DocumentSnapshot> friends = DevHelper.fetchFilteredUsersList(allUsers, allFriendIds);
 
                           friendsListAdapter = new FriendInfoListAdapter(friends, eventType, eventId);
                           recyclerView.setAdapter(friendsListAdapter);

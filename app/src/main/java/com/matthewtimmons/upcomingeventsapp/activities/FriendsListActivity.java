@@ -33,7 +33,7 @@ public class FriendsListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
 
-        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        currentUserId = getIntent().getStringExtra(User.CURRENT_USER_ID);
 
         // Set friends header and recycler view
         Fragment listOfUsersHeader = RecyclerViewHeaderFragment.newInstance(currentUserId, "Friends");

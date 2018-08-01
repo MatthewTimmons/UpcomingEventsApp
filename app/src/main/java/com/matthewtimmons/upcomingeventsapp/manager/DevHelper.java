@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -18,13 +17,14 @@ import com.matthewtimmons.upcomingeventsapp.adapters.UsersListAdapterRows;
 import com.matthewtimmons.upcomingeventsapp.adapters.RecyclerViewWithHeaderListAdapter;
 import com.matthewtimmons.upcomingeventsapp.adapters.UsersListAdapterSquare;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
+import com.matthewtimmons.upcomingeventsapp.models.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UserHelper {
+public class DevHelper {
     //TODO: Implement method to get the current user
 
     public static void setUsersListAdapter(final RecyclerView recyclerView, final String firestoreBranchName, final String currentUserId, final boolean includeCurrentUser, final boolean square) {
@@ -37,7 +37,7 @@ public class UserHelper {
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         RecyclerView.Adapter recyclerAdapter;
                         ArrayList<String> allSearchResults = (ArrayList<String>) task.getResult().get(firestoreBranchName);
-                        List<DocumentSnapshot> searchResultsDocumentSnapshots = UserHelper.fetchFilteredUsersList(allUsers, allSearchResults, currentUserId, includeCurrentUser);
+                        List<DocumentSnapshot> searchResultsDocumentSnapshots = DevHelper.fetchFilteredUsersList(allUsers, allSearchResults, currentUserId, includeCurrentUser);
 
                         if (!square) {
                             recyclerAdapter = new UsersListAdapterRows(searchResultsDocumentSnapshots);
@@ -62,7 +62,7 @@ public class UserHelper {
                         ArrayList<String> allSearchResults = new ArrayList<String>();
                         HashMap<String, Boolean> pendingFriendRequests = (HashMap<String, Boolean>) task.getResult().get("pendingFriendRequests");
                         allSearchResults.addAll(pendingFriendRequests.keySet());
-                        List<DocumentSnapshot> searchResultsDocumentSnapshots = UserHelper.fetchFilteredUsersList(allUsers, allSearchResults, currentUserId, false);
+                        List<DocumentSnapshot> searchResultsDocumentSnapshots = DevHelper.fetchFilteredUsersList(allUsers, allSearchResults, currentUserId, false);
 
                         // Update all pending requests to say they have been shown
                         for (Map.Entry<String, Boolean> entry : pendingFriendRequests.entrySet()) {
@@ -87,7 +87,7 @@ public class UserHelper {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         ArrayList<String> allSearchResults = (ArrayList<String>) task.getResult().get(firestoreBranchName);
-                        List<DocumentSnapshot> searchResultsDocumentSnapshots = UserHelper.fetchFilteredUsersList(allUsers, allSearchResults, currentUserId, includeCurrentUser);
+                        List<DocumentSnapshot> searchResultsDocumentSnapshots = DevHelper.fetchFilteredUsersList(allUsers, allSearchResults, currentUserId, includeCurrentUser);
 
                         UsersListAdapterRows recyclerAdapter = new UsersListAdapterRows(searchResultsDocumentSnapshots, friendsChecked);
                         recyclerView.setAdapter(recyclerAdapter);
@@ -135,6 +135,15 @@ public class UserHelper {
     }
 
     public static HashMap<String, String> fetchSharedValues(Map<String, Object> allDataForUser, String eventType) {
+        HashMap<String, String> allEventValues = new HashMap<>();
+        ArrayList<String> allEvents = (ArrayList<String>) allDataForUser.get(eventType);
+        for (String id : allEvents) {
+            allEventValues.put(id, eventType);
+        }
+        return allEventValues;
+    }
+
+    public static HashMap<String, String> fetchSharedValues(HashMap<String, Map<String, ArrayList<String>>> allDataForUser, String eventType) {
         HashMap<String, String> allEventValues = new HashMap<>();
         ArrayList<String> allEvents = (ArrayList<String>) allDataForUser.get(eventType);
         for (String id : allEvents) {
@@ -197,6 +206,61 @@ public class UserHelper {
 
                                     }
                                 });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    public static void setFavoritesRecyclerViewAdapter(User user, final RecyclerView recyclerView, final boolean collapsed) {
+        final HashMap<String, Object> allEventsMap = new HashMap<>();
+        Map<String, Object> allDataForUser = user.getMyFavorites();
+
+        allEventsMap.putAll(fetchSharedValues(allDataForUser, "concerts"));
+        allEventsMap.putAll(fetchSharedValues(allDataForUser, "games"));
+        allEventsMap.putAll(fetchSharedValues(allDataForUser, "movies"));
+
+        //Temp
+        final List<DocumentSnapshot> allDocumentSnapshots = new ArrayList<>();
+        final List<DocumentSnapshot> allFavoriteDocumentSnapshots = new ArrayList<>();
+
+        final CollectionReference collectionReferenceConcerts = FirebaseFirestore.getInstance().collection("concerts");
+        final CollectionReference collectionReferenceGames = FirebaseFirestore.getInstance().collection("games");
+        final CollectionReference collectionReferenceMovies = FirebaseFirestore.getInstance().collection("movies");
+
+        collectionReferenceConcerts.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                allDocumentSnapshots.addAll(task.getResult().getDocuments());
+                collectionReferenceGames.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        allDocumentSnapshots.addAll(task.getResult().getDocuments());
+                        collectionReferenceMovies.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                allDocumentSnapshots.addAll(task.getResult().getDocuments());
+
+                                // Extract only items that are favorited by the user
+                                for (DocumentSnapshot documentSnapshot : allDocumentSnapshots) {
+                                    if (allEventsMap.keySet().contains(documentSnapshot.getId())) {
+                                        allFavoriteDocumentSnapshots.add(documentSnapshot);
+                                    }
+                                }
+                                if (collapsed) {
+                                    RecyclerViewWithHeaderListAdapter recyclerViewWithHeaderListAdapter =
+                                            new RecyclerViewWithHeaderListAdapter(allFavoriteDocumentSnapshots);
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    for (DocumentSnapshot doc : allFavoriteDocumentSnapshots) {
+                                        stringBuilder.append(doc.getString("title"));
+                                    }
+                                    recyclerView.setAdapter(recyclerViewWithHeaderListAdapter);
+                                } else {
+                                    EventListAdapter eventListAdapter = new EventListAdapter(allFavoriteDocumentSnapshots);
+                                    recyclerView.setAdapter(eventListAdapter);
+                                }
                             }
                         });
                     }

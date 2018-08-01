@@ -47,7 +47,7 @@ public class UsersListAdapterRows extends RecyclerView.Adapter<UsersListAdapterR
     @Override
     public void onBindViewHolder(@NonNull final UsersListAdapterRows.FriendSelectorViewHolder friendSelectorViewHolder, int i) {
         final DocumentSnapshot userDocumentSnapshot = friends.get(i);
-        final User user = new User(userDocumentSnapshot);
+        final User user = userDocumentSnapshot.toObject(User.class);
 
         // Set users displayname
         friendSelectorViewHolder.friendUsername.setText(user.getDisplayName());
@@ -59,14 +59,14 @@ public class UsersListAdapterRows extends RecyclerView.Adapter<UsersListAdapterR
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     if (b) {
                         if (friendsChecked.size() <= 1) {
-                            friendsChecked.add(user.getId());
+                            friendsChecked.add(userDocumentSnapshot.getId());
                         } else {
                             Toast.makeText(friendSelectorViewHolder.itemView.getContext(), "Cannot select more than two people", Toast.LENGTH_SHORT).show();
                             compoundButton.setChecked(false);
-                            friendsChecked.remove(user.getId());
+                            friendsChecked.remove(userDocumentSnapshot.getId());
                         }
                     } else if (!b) {
-                            friendsChecked.remove(user.getId());
+                            friendsChecked.remove(userDocumentSnapshot.getId());
                     }
                 }
             });
@@ -76,9 +76,10 @@ public class UsersListAdapterRows extends RecyclerView.Adapter<UsersListAdapterR
             friendSelectorViewHolder.friendUsername.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Context context =friendSelectorViewHolder.friendUsername.getContext();
+                    Context context = friendSelectorViewHolder.friendUsername.getContext();
                     Intent intent = new Intent(context, ProfileViewActivity.class);
-                    intent.putExtra(User.CURRENT_USER_ID, user.getId());
+                    intent.putExtra(User.CURRENT_USER_ID, userDocumentSnapshot.getId());
+                    intent.putExtra(User.CURRENT_USER_OBJECT, user);
                     context.startActivity(intent);
                 }
             });

@@ -26,7 +26,7 @@ public class UserController {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot documentSnapshot = task.getResult();
-                User user = new User(documentSnapshot);
+                User user = documentSnapshot.toObject(User.class);
                 userListener.onUserRetrieved(user);
             }
         });

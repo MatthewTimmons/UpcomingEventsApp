@@ -19,14 +19,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -35,17 +32,19 @@ import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
 import com.matthewtimmons.upcomingeventsapp.fragments.ListOfUsersFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.RecyclerViewHeaderFragment;
-import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
+import com.matthewtimmons.upcomingeventsapp.manager.DevHelper;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ProfileViewActivity extends AppCompatActivity {
     private StorageReference uploadsStorageReference;
     int PICK_IMAGE_REQUEST = 1;
     FirebaseUser currentFirebaseUser;
+    User profileUserObject;
+    List<String> allFriendIds;
     String currentUserId;
     String profileUserId;
     User currentUser;
@@ -72,6 +71,7 @@ public class ProfileViewActivity extends AppCompatActivity {
         // Get profile data
         profileUserId = getIntent().getStringExtra(User.CURRENT_USER_ID);
         profileUserReference = UserController.getUserReference(profileUserId);
+        profileUserObject = getIntent().getParcelableExtra(User.CURRENT_USER_OBJECT);
 
         // Get signed in user data
         currentFirebaseUser = firebaseAuth.getCurrentUser();
@@ -80,7 +80,7 @@ public class ProfileViewActivity extends AppCompatActivity {
         uploadsStorageReference = FirebaseConstants.getStorageReference("uploads");
 
         // Set Friends header and recycler view
-        Fragment friends = ListOfUsersFragment.newInstance(currentUserId);
+        Fragment friends = ListOfUsersFragment.newInstance(profileUserId);
         getSupportFragmentManager().beginTransaction().add(R.id.profile_friends_header_container, friends).commit();
 
         //Set Favorite Events header
@@ -89,20 +89,12 @@ public class ProfileViewActivity extends AppCompatActivity {
 
         //Set Favorite Events Recycler View
         favoritesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        UserHelper.setFavoritesRecyclerViewAdapter(profileUserReference, favoritesRecyclerView, true);
+        DevHelper.setFavoritesRecyclerViewAdapter(profileUserObject, favoritesRecyclerView, true);
 
-
-        profileUserReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot currentUserDocumentSnapshot = task.getResult();
-                displayNameTextView.setText(currentUserDocumentSnapshot.getString("displayName"));
-                try {
-                    Picasso.get().load(currentUserDocumentSnapshot.getString("profilePhotoURL")).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
-                } catch (NullPointerException e) { }
-
-            }
-        });
+        displayNameTextView.setText(profileUserObject.getDisplayName());
+        try {
+            Picasso.get().load(profileUserObject.getProfilePhotoURL()).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
+        } catch (NullPointerException e) { }
 
         profilePhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,18 +162,14 @@ public class ProfileViewActivity extends AppCompatActivity {
             });
         }
 
+        // Set all rules for the button at the bottom of the screen when the current user is looking at another user's profile
         if(!isCurrentUserViewer) {
+            sendFriendRequestButton.setVisibility(View.VISIBLE);
             UserController.getUser(currentUserId, new UserController.GetUserListener() {
                 @Override
-                public void onUserRetrieved(User user) {
-                    List<String> allFriendIds = user.getFriends();
-                    if (!allFriendIds.contains(profileUserId)) {
-                        sendFriendRequestButton.setVisibility(View.VISIBLE);
-                    } else {
-                        sendFriendRequestButton.setVisibility(View.VISIBLE);
-                        sendFriendRequestButton.setText("Remove friend");
-                        sendFriendRequestButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                    }
+                public void onUserRetrieved(final User currentUserObject) {
+                    allFriendIds = currentUserObject.getFriends();
+                    setFriendRequestButtonFunctionality(currentUserObject);
                 }
             });
         }
@@ -244,5 +232,65 @@ public class ProfileViewActivity extends AppCompatActivity {
             Picasso.get().load(imageUri).error(getResources().getDrawable(R.drawable.ic_default_profile_photo)).into(profilePhotoImageView);
             findViewById(R.id.confirm_photo_change_button).setVisibility(View.VISIBLE);
         }
+    }
+
+    // All friend request button functionality
+    void setFriendRequestButtonFunctionality(User currentUserObject) {
+        if (!allFriendIds.contains(profileUserId)) {
+            if (currentUserObject.getPendingFriendRequests().containsKey(profileUserId)) {
+                setAcceptFriendRequestFunctionality(currentUserObject);
+            } else if (!profileUserObject.getPendingFriendRequests().containsKey(currentUserId)) {
+                setSendFriendRequestFunctionality(currentUserObject);
+            } else if (profileUserObject.getPendingFriendRequests().containsKey(currentUserId)) {
+                sendFriendRequestButton.setText("Your friend request has been sent");
+                //TODO Set Dialog to confirm the user wishes to revoke their friend request
+            }
+        } else {
+            setRemoveFunctionality(currentUserObject);
+        }
+    }
+    void setSendFriendRequestFunctionality(final User currentUserObject) {
+        sendFriendRequestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String, Object> profileUserFriends = profileUserObject.getPendingFriendRequests();
+                profileUserFriends.put(currentUserId, false);
+                profileUserReference.update("pendingFriendRequests", profileUserFriends);
+                sendFriendRequestButton.setText("Your friend request has been sent");
+                Toast.makeText(ProfileViewActivity.this, "Your friend request has been sent", Toast.LENGTH_SHORT).show();
+                setFriendRequestButtonFunctionality(currentUserObject);
+            }
+        });
+    }
+    void setAcceptFriendRequestFunctionality(final User currentUserObject) {
+        sendFriendRequestButton.setText("Accept friend request");
+        sendFriendRequestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<String> friends = currentUserObject.getFriends();
+                Map<String, Object> pendingRequests = currentUserObject.getPendingFriendRequests();
+                friends.add(profileUserId);
+                pendingRequests.remove(profileUserId);
+                UserController.getUserReference(currentUserId).update("friends", friends);
+                UserController.getUserReference(currentUserId).update("pendingFriendRequests", pendingRequests);
+                Toast.makeText(ProfileViewActivity.this, profileUserObject.getDisplayName() + " has been added to your friends list", Toast.LENGTH_SHORT).show();
+                setFriendRequestButtonFunctionality(currentUserObject);
+            }
+        });
+    }
+    void setRemoveFunctionality(final User currentUserObject) {
+        sendFriendRequestButton.setVisibility(View.VISIBLE);
+        sendFriendRequestButton.setText("Remove friend");
+        sendFriendRequestButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        sendFriendRequestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<String> friends = currentUserObject.getFriends();
+                friends.remove(profileUserId);
+                UserController.getUserReference(currentUserId).update("friends", friends);
+                Toast.makeText(ProfileViewActivity.this, profileUserObject.getDisplayName() + " has been removed from your friends list", Toast.LENGTH_SHORT).show();
+                setFriendRequestButtonFunctionality(currentUserObject);
+            }
+        });
     }
 }

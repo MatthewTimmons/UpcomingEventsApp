@@ -1,100 +1,94 @@
 package com.matthewtimmons.upcomingeventsapp.models;
 
-import android.support.annotation.NonNull;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
-import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class User implements Serializable {
+public class User implements Parcelable {
     public static String CURRENT_USER_ID = "CURRENT_USER_ID";
+    public static String CURRENT_USER_OBJECT = "CURRENT_USER_OBJECT";
+    String displayName, profilePhotoURL;
+    List<String> friends, gamesOwnedByGameId, moviesSeenByMovieId;
+    Map<String, Object> interestLevels;
+    Map<String, Object> myFavorites;
+    Map<String, Object> pendingFriendRequests;
 
-    String id, displayName, profilePhotoURL;
-    List<String> friends, gamesOwnedById, moviesSeenByMovieId;
-    Map<String, Object> interestLevels, myFavorites;
+    public User() {}
+
+    // ---------------------------- Parcelable methods (start) ---------------------------- //
+
+    protected User(Parcel in) {
+        interestLevels = new HashMap<>();
+        myFavorites = new HashMap<>();
+        pendingFriendRequests = new HashMap<>();
+
+        displayName = in.readString();
+        profilePhotoURL = in.readString();
+        friends = in.createStringArrayList();
+        gamesOwnedByGameId = in.createStringArrayList();
+        moviesSeenByMovieId = in.createStringArrayList();
+        in.readMap(interestLevels, ClassLoader.getSystemClassLoader());
+        in.readMap(myFavorites, ClassLoader.getSystemClassLoader());
+        in.readMap(pendingFriendRequests, ClassLoader.getSystemClassLoader());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(displayName);
+        dest.writeString(profilePhotoURL);
+        dest.writeStringList(friends);
+        dest.writeStringList(gamesOwnedByGameId);
+        dest.writeStringList(moviesSeenByMovieId);
+        dest.writeMap(interestLevels);
+        dest.writeMap(myFavorites);
+        dest.writeMap(pendingFriendRequests);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
+
+    // ---------------------------- Parcelable methods (end) ---------------------------- //
 
     public static Map<String, Object> getBlankUserValues() {
-        Map<String, Object> emptyHashMapStringObject = new HashMap<>();
-        Map<String, Object> myFavoritesObject= new HashMap<>();
-        Map<String, Integer> emptyHashMapStringInteger = new HashMap<>();
-        List<String> emptyArrayList = new ArrayList<>();
-        emptyHashMapStringObject.put("concerts", emptyHashMapStringInteger);
-        emptyHashMapStringObject.put("games", emptyHashMapStringInteger);
-        emptyHashMapStringObject.put("movies", emptyHashMapStringInteger);
-        myFavoritesObject.put("concerts", emptyArrayList);
-        myFavoritesObject.put("games", emptyArrayList);
-        myFavoritesObject.put("movies", emptyArrayList);
+        Map<String, Object> allData = new HashMap<>();
+        HashMap<String, Object> emptyHashMapStringObject= new HashMap<>();
+        ArrayList<String> emptyArrayList = new ArrayList<>();
 
-        Map<String, Object> blankUser = new HashMap<>();
-        blankUser.put("displayName", null);
-        blankUser.put("friends", emptyArrayList);
-        blankUser.put("gamesOwnedByGameId", emptyArrayList);
-        blankUser.put("interestLevels", emptyHashMapStringObject);
-        blankUser.put("moviesSeenByMovieId", emptyArrayList);
-        blankUser.put("myFavorites", myFavoritesObject);
-        blankUser.put("profilePhotoURL", null);
-
-        return blankUser;
+        allData.put("displayName", "");
+        allData.put("profilePhotoURL", "");
+        allData.put("friends", emptyArrayList);
+        allData.put("gamesOwnedByGameId", emptyArrayList);
+        allData.put("moviesSeenByMovieId", emptyArrayList);
+        allData.put("favorites", emptyHashMapStringObject);
+        allData.put("interestLevels", emptyHashMapStringObject);
+        allData.put("pendingFriendRequests", emptyHashMapStringObject);
+        return allData;
     }
 
-    public User(FirebaseUser firebaseUser) {
-        DocumentReference userDocumentReference = FirebaseFirestore.getInstance().collection("users").document(firebaseUser.getUid());
-        userDocumentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot val = task.getResult();
-                User user = new User(val);
-            }
-        });
+    public static String getCurrentUserId() {
+        return CURRENT_USER_ID;
     }
 
-    public User(DocumentSnapshot userDocumentSnapshot) {
-        this.id = userDocumentSnapshot.getId();
-        this.displayName = userDocumentSnapshot.getString("displayName");
-        this.profilePhotoURL = userDocumentSnapshot.getString("profilePhotoURL");
-        this.friends = (List<String>) userDocumentSnapshot.get("friends");
-        this.gamesOwnedById = (List<String>) userDocumentSnapshot.get("gamesOwnedByGameId");
-        this.moviesSeenByMovieId = (List<String>) userDocumentSnapshot.get("moviesSeenByMovieId");
-        this.interestLevels = (Map<String, Object>) userDocumentSnapshot.get("interestLevels");
-        this.myFavorites = (Map<String, Object>) userDocumentSnapshot.get("myFavorites");
-    }
-
-
-    public User(String id, String displayName, String profilePhotoURL, ArrayList<String> friends, ArrayList<String> gamesOwnedById, ArrayList<String> moviesSeenByMovieId, HashMap<String, Object> interestLevels, HashMap<String, Object> myFavorites) {
-        this.id = id;
-        this.displayName = displayName;
-        this.profilePhotoURL = profilePhotoURL;
-        this.friends = friends;
-        this.gamesOwnedById = gamesOwnedById;
-        this.moviesSeenByMovieId = moviesSeenByMovieId;
-        this.interestLevels = interestLevels;
-        this.myFavorites = myFavorites;
-    }
-
-//    public static String getInterestLevelInEvent(DocumentSnapshot userDocmuentSnapshot, String eventType, String eventId) {
-//        userDocmuentSnapshot.getString(FieldPath.of(FirebaseConstants.KEY_INTEREST_LEVELS_USER, eventType, eventId).toString());
-//    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public static void setCurrentUserId(String currentUserId) {
+        CURRENT_USER_ID = currentUserId;
     }
 
     public String getDisplayName() {
@@ -117,23 +111,23 @@ public class User implements Serializable {
         return friends;
     }
 
-    public void setFriends(ArrayList<String> friends) {
+    public void setFriends(List<String> friends) {
         this.friends = friends;
     }
 
-    public List<String> getGamesOwnedById() {
-        return gamesOwnedById;
+    public List<String> getGamesOwnedByGameId() {
+        return gamesOwnedByGameId;
     }
 
-    public void setGamesOwnedById(ArrayList<String> gamesOwnedById) {
-        this.gamesOwnedById = gamesOwnedById;
+    public void setGamesOwnedByGameId(List<String> gamesOwnedByGameId) {
+        this.gamesOwnedByGameId = gamesOwnedByGameId;
     }
 
     public List<String> getMoviesSeenByMovieId() {
         return moviesSeenByMovieId;
     }
 
-    public void setMoviesSeenByMovieId(ArrayList<String> moviesSeenByMovieId) {
+    public void setMoviesSeenByMovieId(List<String> moviesSeenByMovieId) {
         this.moviesSeenByMovieId = moviesSeenByMovieId;
     }
 
@@ -141,7 +135,7 @@ public class User implements Serializable {
         return interestLevels;
     }
 
-    public void setInterestLevels(HashMap<String, Object> interestLevels) {
+    public void setInterestLevels(Map<String, Object> interestLevels) {
         this.interestLevels = interestLevels;
     }
 
@@ -149,7 +143,19 @@ public class User implements Serializable {
         return myFavorites;
     }
 
-    public void setMyFavorites(HashMap<String, Object> myFavorites) {
+    public void setMyFavorites(Map<String, Object> myFavorites) {
         this.myFavorites = myFavorites;
+    }
+
+    public Map<String, Object> getPendingFriendRequests() {
+        return pendingFriendRequests;
+    }
+
+    public void setPendingFriendRequests(Map<String, Object> pendingFriendRequests) {
+        this.pendingFriendRequests = pendingFriendRequests;
+    }
+
+    public static Creator<User> getCREATOR() {
+        return CREATOR;
     }
 }

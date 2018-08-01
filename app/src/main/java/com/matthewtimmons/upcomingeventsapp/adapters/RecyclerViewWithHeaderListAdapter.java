@@ -1,7 +1,6 @@
 package com.matthewtimmons.upcomingeventsapp.adapters;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -11,19 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
-import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 //This is an entirely generic RecyclerView that binds data to a list of events with the ViewHolder, RecyclerViewWithHeaderViewHolder //TODO: Change this to generic also

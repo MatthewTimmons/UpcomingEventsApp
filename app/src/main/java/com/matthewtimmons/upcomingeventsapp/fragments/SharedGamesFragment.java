@@ -9,20 +9,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventListAdapter;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
-import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
+import com.matthewtimmons.upcomingeventsapp.manager.DevHelper;
 
 import java.util.ArrayList;
 
@@ -74,7 +72,7 @@ public class SharedGamesFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         ArrayList<String> listOfGames2 = (ArrayList<String>) task.getResult().get(FirebaseConstants.KEY_GAMES_OWNED);
-                        allSharedGames.addAll(UserHelper.fetchListOfMatchingItems(listOfGames1, listOfGames2));
+                        allSharedGames.addAll(DevHelper.fetchListOfMatchingItems(listOfGames1, listOfGames2));
 
                         allGamesCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override

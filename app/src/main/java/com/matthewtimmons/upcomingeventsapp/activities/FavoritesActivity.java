@@ -8,11 +8,9 @@ import android.support.v7.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.R;
-import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
-import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
+import com.matthewtimmons.upcomingeventsapp.manager.DevHelper;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 
 public class FavoritesActivity extends AppCompatActivity {
@@ -26,11 +24,11 @@ public class FavoritesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
 
-        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        currentUserId = getIntent().getStringExtra(User.CURRENT_USER_ID);
         currentUserReference = UserController.getUserReference(currentUserId);
 
         recyclerView = findViewById(R.id.favorites_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        UserHelper.setFavoritesRecyclerViewAdapter(currentUserReference, recyclerView, false);
+        DevHelper.setFavoritesRecyclerViewAdapter(currentUserReference, recyclerView, false);
     }
 }

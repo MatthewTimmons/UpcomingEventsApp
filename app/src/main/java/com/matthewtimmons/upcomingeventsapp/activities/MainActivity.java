@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -31,9 +32,14 @@ import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 import com.squareup.picasso.Picasso;
 
+import java.util.Map;
+
 
 public class MainActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
+    FirebaseFirestore firebaseFirestore;
+    User currentUser;
+    NavigationView navigationView;
     String currentUserId;
     String currentUserDisplayname;
     ImageView profilePhotoImageView;
@@ -47,11 +53,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         currentUserId = firebaseAuth.getCurrentUser().getUid();
         currentUserDisplayname = firebaseAuth.getCurrentUser().getDisplayName();
 
-        NavigationView navigationView = findViewById(R.id.navigation_view);
+        navigationView = findViewById(R.id.navigation_view);
         navigationDrawerView = findViewById(R.id.nav_drawer);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         viewPager = findViewById(R.id.pager);
@@ -63,22 +70,34 @@ public class MainActivity extends AppCompatActivity {
         View navHeader = navigationView.getHeaderView(0);
         profilePhotoImageView = navHeader.findViewById(R.id.nav_bar_profile_photo);
 
+        // TODO DO I need to make the call to the signed in user now and then wrap everything else in that?
+        // Or maybe just move that as far down as possible, so I only wrap what's necessary?
+
         profilePhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intentToProfileViewActivity = new Intent(MainActivity.this, ProfileViewActivity.class);
-                intentToProfileViewActivity.putExtra(User.CURRENT_USER_ID, currentUserId);
-                startActivity(intentToProfileViewActivity);
+                firebaseFirestore.document("users/" + currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    User user = task.getResult().toObject(User.class);
+                    Intent intentToProfileViewActivity = new Intent(MainActivity.this, ProfileViewActivity.class);
+                    intentToProfileViewActivity.putExtra(User.CURRENT_USER_ID, currentUserId);
+                    intentToProfileViewActivity.putExtra(User.CURRENT_USER_OBJECT, user);
+                    startActivity(intentToProfileViewActivity);
+                    }
+                });
             }
         });
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                                                              @Override
                                                              public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-//                                                                 Toast.makeText(MainActivity.this, menuItem.toString(), Toast.LENGTH_SHORT).show();
                                                                  switch (menuItem.getItemId()) {
                                                                      case R.id.nav_drawer_favorites:
                                                                          Intent intentToDrawersFavorites = new Intent(MainActivity.this, FavoritesActivity.class);
+                                                                         // TODO Pass in the current User object if possible. Otherwise, the favorites will have to make the call again
+//                                                                         intentToDrawersFavorites.putExtra();
+                                                                         intentToDrawersFavorites.putExtra(User.CURRENT_USER_ID, currentUserId);
                                                                          startActivity(intentToDrawersFavorites);
                                                                          return true;
                                                                      case R.id.nav_drawer_shared_games:
@@ -88,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
                                                                          return true;
                                                                      case R.id.nav_drawer_friends:
                                                                          Intent intentToFriends = new Intent(MainActivity.this, FriendsListActivity.class);
+                                                                         intentToFriends.putExtra(User.CURRENT_USER_ID, currentUserId);
                                                                          startActivity(intentToFriends);
                                                                          return true;
                                                                      case R.id.nav_drawer_sign_out:

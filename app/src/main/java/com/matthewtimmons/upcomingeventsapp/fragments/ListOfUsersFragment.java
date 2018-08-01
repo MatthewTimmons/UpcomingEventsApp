@@ -10,16 +10,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
-import com.matthewtimmons.upcomingeventsapp.manager.UserHelper;
+import com.matthewtimmons.upcomingeventsapp.manager.DevHelper;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ListOfUsersFragment extends Fragment {
     private static final String FRIENDS_CHECKED = "FRIENDS_CHECKED";
@@ -95,18 +93,18 @@ public class ListOfUsersFragment extends Fragment {
         if (flag == null || !flag.equals("Grid")) {
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         } else if (flag.equals("Grid")){
-            int numberOfColumns = UserHelper.calculateNumberOfColumns(getContext(), 200);
+            int numberOfColumns = DevHelper.calculateNumberOfColumns(getContext(), 200);
             recyclerView.setLayoutManager(new GridLayoutManager(getContext(), numberOfColumns));
             square = true;
         }
 
         // Set list adapter
         if (flag == null || flag.equals("Grid")) {
-            UserHelper.setUsersListAdapter(recyclerView, "friends", currentUserId, false, square);
+            DevHelper.setUsersListAdapter(recyclerView, "friends", currentUserId, false, square);
         } else if (flag.equals("pendingFriendRequests")) {
-            UserHelper.setPendingRequestsListAdapter(recyclerView, currentUserId);
+            DevHelper.setPendingRequestsListAdapter(recyclerView, currentUserId);
         } else if (flag.equals("checkable")) {
-            UserHelper.setCheckableUsersListAdapter(recyclerView, "friends", currentUserId, true, friendsChecked);
+            DevHelper.setCheckableUsersListAdapter(recyclerView, "friends", currentUserId, true, friendsChecked);
         }
     }
 }

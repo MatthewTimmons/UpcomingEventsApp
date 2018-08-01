@@ -36,7 +36,7 @@ public class UsersListAdapterSquare extends RecyclerView.Adapter<UsersListAdapte
     @Override
     public void onBindViewHolder(@NonNull final UsersListAdapterSquare.FriendListViewholder friendListViewholder, int i) {
         final DocumentSnapshot currentFriendDocumentSnapshot = friendDocumentSnapshots.get(i);
-        User user = new User(currentFriendDocumentSnapshot);
+        final User user = currentFriendDocumentSnapshot.toObject(User.class);
 
         // Set image and displayname
         friendListViewholder.displayName.setText(user.getDisplayName());
@@ -48,6 +48,7 @@ public class UsersListAdapterSquare extends RecyclerView.Adapter<UsersListAdapte
                 Context context = friendListViewholder.friendSquareIcon.getContext();
                 Intent intent = new Intent(context, ProfileViewActivity.class);
                 intent.putExtra(User.CURRENT_USER_ID, currentFriendDocumentSnapshot.getString("displayName"));
+                intent.putExtra(User.CURRENT_USER_OBJECT, user);
                 context.startActivity(intent);
             }
         });

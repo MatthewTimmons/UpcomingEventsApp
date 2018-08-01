@@ -40,7 +40,7 @@ public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAd
     @Override
     public void onBindViewHolder(@NonNull final FriendInfoViewHolder friendInfoViewHolder, int i) {
         DocumentSnapshot userDocumentSnapshot = friends.get(i);
-        final User user = new User(userDocumentSnapshot);
+        final User user = userDocumentSnapshot.toObject(User.class);
         try {
             friendsInterestLevel = (userDocumentSnapshot.get(FieldPath.of(FirebaseConstants.KEY_INTEREST_LEVELS_USER, eventType, eventId))).toString();
             friendInfoViewHolder.friendInterestLevel.setText(friendsInterestLevel);
