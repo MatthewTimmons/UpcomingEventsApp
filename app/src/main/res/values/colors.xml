@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#E26B51</color>
+    <!--<color name="colorPrimary">#E26B51</color>-->
+    <color name="colorPrimary">#B3B3B3</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorPrimaryLight">#0066FF</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="pastel_green">#ACD2A4</color>
-    <color name="pastel_blue">#B3D1FF</color>
+    <color name="pastel_green">#B3B3B3</color>
+    <color name="pastel_blue">#FFFFFF</color>
     <color name="light_gray">#B3B3B3</color>
     <color name="light_gray_tint">#80B3B3B3</color>
     <color name="darker_gray">#999999</color>

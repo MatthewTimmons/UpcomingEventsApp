@@ -48,17 +48,17 @@ public class EventsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         eventType = getArguments().getString(KEY_EVENT_TYPE);
 
-        switch (eventType) {
-            case FirebaseConstants.COLLECTION_CONCERTS:
-                view.findViewById(R.id.events_recycler_view).setBackgroundColor(Color.parseColor("#FDEEB7"));
-                break;
-            case FirebaseConstants.COLLECTION_GAMES:
-                view.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.stripes);
-                break;
-            case FirebaseConstants.COLLECTION_MOVIES:
-                view.findViewById(R.id.events_recycler_view).setBackgroundColor(getResources().getColor(R.color.pastel_green));
-                break;
-        }
+//        switch (eventType) {
+//            case FirebaseConstants.COLLECTION_CONCERTS:
+//                view.findViewById(R.id.events_recycler_view).setBackgroundColor(Color.parseColor("#FDEEB7"));
+//                break;
+//            case FirebaseConstants.COLLECTION_GAMES:
+//                view.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.stripes);
+//                break;
+//            case FirebaseConstants.COLLECTION_MOVIES:
+//                view.findViewById(R.id.events_recycler_view).setBackgroundColor(getResources().getColor(R.color.pastel_green));
+//                break;
+//        }
 
         Query eventQuery = FirebaseFirestore.getInstance().collection(eventType).orderBy(FirebaseConstants.KEY_DATE);
         eventQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

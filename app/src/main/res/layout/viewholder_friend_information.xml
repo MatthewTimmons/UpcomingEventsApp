@@ -5,7 +5,7 @@
     android:id="@+id/friend_row"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@color/pastel_blue">
+    android:background="@color/colorPrimaryLight">
 
     <TextView
         android:id="@+id/friend_user_name"
