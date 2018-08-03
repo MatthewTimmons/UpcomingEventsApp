@@ -49,6 +49,9 @@ dependencies {
 
     implementation 'com.android.support:multidex:1.0.3'
 
+    // Add Volley to handle network calls
+    implementation 'com.android.volley:volley:1.1.1'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

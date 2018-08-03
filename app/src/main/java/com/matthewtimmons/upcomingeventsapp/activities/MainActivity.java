@@ -25,15 +25,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.matthewtimmons.upcomingeventsapp.CircleTransform;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventPagerAdapter;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.authorization.AuthorizeUserActivity;
 import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 import com.squareup.picasso.Picasso;
-
-import java.util.Map;
-
 
 public class MainActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
@@ -138,6 +136,10 @@ public class MainActivity extends AppCompatActivity {
                                                                              }
                                                                          });
                                                                          return true;
+                                                                     case R.id.nav_drawer_foresight:
+                                                                         Intent intentToForesight = new Intent(MainActivity.this, ForesightActivity.class);
+                                                                         startActivity(intentToForesight);
+                                                                         return true;
                                                                  }
                                                                  return true;
                                                              }
@@ -198,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onUserRetrieved(User user) {
                 try {
-                    Picasso.get().load(user.getProfilePhotoURL()).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
+                    Picasso.get().load(user.getProfilePhotoURL()).transform(new CircleTransform()).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
                 } catch (NullPointerException e) {
                 }
             }
