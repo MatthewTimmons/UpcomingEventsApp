@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activities.MainActivity">
@@ -8,32 +9,35 @@
         <item
             android:id="@+id/nav_drawer_favorites"
             android:icon="@drawable/ic_star"
-            android:iconTint="@android:color/darker_gray"
+            android:iconTint="@android:color/white"
             android:title="My Favorites"
             app:showAsAction="always"
             />
         <item
             android:id="@+id/nav_drawer_shared_games"
             android:icon="@drawable/ic_shared_games"
-            android:iconTint="@android:color/darker_gray"
+            android:iconTint="@android:color/white"
             android:title="Shared Games"
             app:showAsAction="always"
             />
         <item
             android:id="@+id/nav_drawer_friends"
             android:icon="@drawable/ic_friends"
+            android:iconTint="@android:color/white"
             android:title="Friends"
             app:showAsAction="always"
             />
         <item
             android:id="@+id/nav_drawer_foresight"
             android:icon="@drawable/ic_eye_drawable"
+            android:iconTint="@android:color/white"
             android:title="Foresight"
             app:showAsAction="always"
             />
         <item
             android:id="@+id/nav_drawer_sign_out"
             android:icon="@drawable/ic_sign_out"
+            android:iconTint="@android:color/white"
             android:title="Sign out"
             app:showAsAction="always"
             />

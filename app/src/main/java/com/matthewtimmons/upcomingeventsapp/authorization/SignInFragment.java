@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,9 +21,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.matthewtimmons.upcomingeventsapp.CircleTransform;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.MainActivity;
 import com.matthewtimmons.upcomingeventsapp.manager.FirebaseAuthHelper;
+import com.squareup.picasso.Picasso;
 
 public class SignInFragment extends Fragment {
     FirebaseAuth.AuthStateListener authStateListener;
@@ -51,7 +54,7 @@ public class SignInFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         firebaseAuth = FirebaseAuth.getInstance();
 
-        getActivity().findViewById(R.id.authorization_activity).setBackgroundColor(getResources().getColor(R.color.pastel_blue));
+        getActivity().findViewById(R.id.authorization_activity).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         emailEditTextView = view.findViewById(R.id.sign_in_email_edittext);
         passwordEditTextView = view.findViewById(R.id.sign_in_password_edittext);
         signInButton = view.findViewById(R.id.sign_in_button);

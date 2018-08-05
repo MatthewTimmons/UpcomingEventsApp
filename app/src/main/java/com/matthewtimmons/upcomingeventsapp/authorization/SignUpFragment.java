@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,10 +23,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.matthewtimmons.upcomingeventsapp.CircleTransform;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.MainActivity;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.matthewtimmons.upcomingeventsapp.models.User;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,12 +57,13 @@ public class SignUpFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         firebaseAuth = FirebaseAuth.getInstance();
-        getActivity().findViewById(R.id.authorization_activity).setBackgroundColor(getResources().getColor(R.color.pastel_green));
+        getActivity().findViewById(R.id.authorization_activity).setBackgroundColor(getResources().getColor(R.color.colorAccent));
         displayNameEditTextView = view.findViewById(R.id.sign_up_displayname_edittext);
         emailEditTextView = view.findViewById(R.id.sign_up_email_edittext);
         passwordEditTextView = view.findViewById(R.id.sign_up_password_edittext);
         signUpButton = view.findViewById(R.id.sign_up_button);
         signInLinkTextView = view.findViewById(R.id.sign_in_link);
+
 
         signUpButton.setOnClickListener(new View.OnClickListener() {
                                             @Override

@@ -1,15 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--<color name="colorPrimary">#E26B51</color>-->
-    <color name="colorPrimary">#B3B3B3</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorPrimaryLight">#0066FF</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#00B0FF</color>
+    <color name="colorPrimaryDark">#0091EA</color>
+    <color name="colorPrimaryLight">#40C4FF</color>
+    <color name="colorAccent">#FFC107</color>
     <color name="pastel_green">#B3B3B3</color>
+    <color name="green">#00E676</color>
+    <color name="red">#FF3D00</color>
     <color name="pastel_blue">#FFFFFF</color>
     <color name="light_gray">#B3B3B3</color>
     <color name="light_gray_tint">#80B3B3B3</color>
     <color name="darker_gray">#999999</color>
     <color name="transparent">#80000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="LB100">#B3E5FC</color>
+    <color name="LB200">#81D4FA</color>
+    <color name="LB300">#4FC3F7</color>
+    <color name="LB400">#29B6F6</color>
+    <color name="LB500">#03A9F4</color>
+    <color name="LB600">#039BE5</color>
+    <color name="LB700">#0288D1</color>
+    <color name="LB800">#0277BD</color>
+    <color name="LB900">#01579B</color>
+    <color name="A100">#80D8FF</color>
+    <color name="A200">#40C4FF</color>
+    <color name="A400">#00B0FF</color>
+    <color name="A700">#0091EA</color>
 </resources>

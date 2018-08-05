@@ -9,6 +9,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -18,11 +19,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
+import com.matthewtimmons.upcomingeventsapp.CircleTransform;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.MainActivity;
 import com.matthewtimmons.upcomingeventsapp.manager.FirebaseAuthHelper;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.matthewtimmons.upcomingeventsapp.models.User;
+import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,6 +33,7 @@ import java.util.List;
 
 public class AuthorizeUserActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
+    ImageView appLogoImageView;
     ConstraintLayout activityConstraintLayout;
 
     FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -51,10 +55,14 @@ public class AuthorizeUserActivity extends AppCompatActivity {
                 startActivity(intent);
         }
 
+        appLogoImageView = findViewById(R.id.horizon_events_logo);
         activityConstraintLayout = findViewById(R.id.authorization_activity);
 
-//        Fragment signUpFragment = new SignUpFragment();
-//        getSupportFragmentManager().beginTransaction().add(R.id.authorization_fragment_container, signUpFragment).commit();
+        try {
+            Picasso.get().load(R.drawable.horizion).transform(new CircleTransform()).into(appLogoImageView);
+        } catch (NullPointerException e) {
+            Toast.makeText(this, "Could not present logo", Toast.LENGTH_SHORT).show();
+        }
 
         Fragment signInFragment = new SignInFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.authorization_fragment_container, signInFragment).commit();

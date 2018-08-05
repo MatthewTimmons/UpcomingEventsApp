@@ -281,7 +281,7 @@ public class ProfileViewActivity extends AppCompatActivity {
     void setRemoveFunctionality(final User currentUserObject) {
         sendFriendRequestButton.setVisibility(View.VISIBLE);
         sendFriendRequestButton.setText("Remove friend");
-        sendFriendRequestButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        sendFriendRequestButton.setBackgroundColor(getResources().getColor(R.color.red));
         sendFriendRequestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

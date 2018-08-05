@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:layout_editor_absoluteY="25dp">
+    android:layout_height="wrap_content"
+    tools:background="@color/colorAccent">
 
     <EditText
         android:id="@+id/sign_up_displayname_edittext"
@@ -48,9 +48,15 @@
         android:id="@+id/sign_in_link"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:text="Already have an account? Click here to sign in."
-        android:textColor="@android:color/holo_blue_dark"
+        android:autoSizeTextType="uniform"
+        android:maxLines="1"
+        android:textColor="@android:color/white"
+        android:shadowColor="@android:color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sign_up_button" />
 

@@ -4,16 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/pastel_blue"
+    android:background="@color/colorAccent"
     android:paddingBottom="16dp">
 
     <ImageView
         android:id="@+id/wide_image"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="@color/pastel_blue"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_concerts_blue" />
+        android:src="@drawable/ic_concerts_blue"/>
 
 
     <android.support.constraint.Guideline
