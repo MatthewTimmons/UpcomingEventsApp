@@ -22,14 +22,25 @@ import com.matthewtimmons.upcomingeventsapp.models.User;
 public class DetailsActivity extends AppCompatActivity {
     private static final String EXTRA_EVENT_ID = "extraEventId";
     private static final String EXTRA_EVENT_TYPE = "extraEventType";
+    private static final String EXTRA_IS_CUSTOM_EVENT = "EXTRA_IS_CUSTOM_EVENT";
 
     String eventId;
     String eventType;
+    Boolean isCustomEvent;
+
+    public static Intent newIntent(Context context, String eventId, String eventType, Boolean isCustomEvent) {
+        Intent intent = new Intent(context, DetailsActivity.class);
+        intent.putExtra(EXTRA_EVENT_ID, eventId);
+        intent.putExtra(EXTRA_EVENT_TYPE, eventType);
+        intent.putExtra(EXTRA_IS_CUSTOM_EVENT, isCustomEvent);
+        return intent;
+    }
 
     public static Intent newIntent(Context context, String eventId, String eventType) {
         Intent intent = new Intent(context, DetailsActivity.class);
         intent.putExtra(EXTRA_EVENT_ID, eventId);
         intent.putExtra(EXTRA_EVENT_TYPE, eventType);
+        intent.putExtra(EXTRA_IS_CUSTOM_EVENT, false);
         return intent;
     }
 
@@ -41,6 +52,7 @@ public class DetailsActivity extends AppCompatActivity {
         if (getIntent() != null) {
            eventId = getIntent().getStringExtra(EXTRA_EVENT_ID);
            eventType = getIntent().getStringExtra(EXTRA_EVENT_TYPE);
+           isCustomEvent = getIntent().getBooleanExtra(EXTRA_IS_CUSTOM_EVENT, false);
         }
 
         Fragment eventDetailsFragment = null;
@@ -49,7 +61,11 @@ public class DetailsActivity extends AppCompatActivity {
         } else if (eventType.equals(EventConstants.EVENT_TYPE_GAME)) {
             eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.COLLECTION_GAMES);
         } else if (eventType.equals(EventConstants.EVENT_TYPE_MOVIE)) {
-            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.COLLECTION_MOVIES);
+            if (!isCustomEvent) {
+                eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.COLLECTION_MOVIES);
+            } else {
+                eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.COLLECTION_MOVIES, true);
+            }
         }
 
         Fragment interestLevelSeekbarFragment = InterestLevelSeekbarFragment.newInstance(eventType, eventId);

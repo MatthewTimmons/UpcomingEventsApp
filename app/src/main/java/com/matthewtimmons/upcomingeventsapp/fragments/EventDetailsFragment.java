@@ -41,9 +41,11 @@ import java.util.List;
 public class EventDetailsFragment extends Fragment {
     private static final String ARGS_EVENT_ID = "ARGS_EVENT_ID";
     private static final String ARGS_EVENT_TYPE = "ARGS_EVENT_TYPE";
+    private static final String ARGS_IS_CUSTOM_EVENT = "ARGS_IS_CUSTOM_EVENT";
     String currentUserId;
     String eventId;
     String eventKey;
+    Boolean isCustomEvent;
     ImageView eventPictureImageView;
     TextView titleTextView;
     TextView subtitleTextView;
@@ -59,6 +61,17 @@ public class EventDetailsFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString(ARGS_EVENT_ID, eventId);
         args.putString(ARGS_EVENT_TYPE, eventKey);
+        args.putBoolean(ARGS_IS_CUSTOM_EVENT, false);
+        instance.setArguments(args);
+        return instance;
+    }
+
+    public static EventDetailsFragment newInstance(String eventId, String eventKey, Boolean isCustomEvent) {
+        EventDetailsFragment instance = new EventDetailsFragment();
+        Bundle args = new Bundle();
+        args.putString(ARGS_EVENT_ID, eventId);
+        args.putString(ARGS_EVENT_TYPE, eventKey);
+        args.putBoolean(ARGS_IS_CUSTOM_EVENT, true);
         instance.setArguments(args);
         return instance;
     }
@@ -84,6 +97,7 @@ public class EventDetailsFragment extends Fragment {
         if (bundle != null) {
             eventId = bundle.getString(ARGS_EVENT_ID);
             eventKey = bundle.getString(ARGS_EVENT_TYPE);
+            isCustomEvent = bundle.getBoolean(ARGS_IS_CUSTOM_EVENT);
         }
 
         // Assign all views to variables
@@ -114,12 +128,21 @@ public class EventDetailsFragment extends Fragment {
                 });
                 break;
             case FirebaseConstants.COLLECTION_MOVIES:
-                MoviesController.getMovie(eventId, new MoviesController.GetMovieListener() {
-                    @Override
-                    public void onMovieRetrieved(Movie movie) {
-                        presentMovie(movie);
-                    }
-                });
+                if (!isCustomEvent) {
+                    MoviesController.getMovie(eventId, new MoviesController.GetMovieListener() {
+                        @Override
+                        public void onMovieRetrieved(Movie movie) {
+                            presentMovie(movie);
+                        }
+                    });
+                } else {
+                    MoviesController.getCustomMovie(eventId, currentUserId, new MoviesController.GetMovieListener() {
+                        @Override
+                        public void onMovieRetrieved(Movie movie) {
+                            presentMovie(movie);
+                        }
+                    });
+                }
                 break;
         }
     }

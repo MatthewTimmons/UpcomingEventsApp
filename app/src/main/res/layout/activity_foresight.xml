@@ -70,5 +70,18 @@
             android:inputType="textVisiblePassword"
             app:layout_constraintTop_toBottomOf="@id/movie_rating_text_view"
             android:layout_marginTop="16dp" />
+        <Button
+            android:id="@+id/add_to_my_movies_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add to my movies"
+            app:layout_constraintTop_toBottomOf="@id/movie_genre_text_view"/>
+        <Button
+            android:id="@+id/add_to_all_movies_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Suggest for global adoption"
+            app:layout_constraintTop_toBottomOf="@id/add_to_my_movies_button"/>
     </android.support.constraint.ConstraintLayout>
+
 </ScrollView>

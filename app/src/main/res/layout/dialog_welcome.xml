@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="30sp"
-        android:text="Welcome to the Foresight view. Here you can see upcoming events that will be added to the app."
+        android:text="Welcome to Foresight. Here you can add movies to your list and recommend movies to be added for all users."
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

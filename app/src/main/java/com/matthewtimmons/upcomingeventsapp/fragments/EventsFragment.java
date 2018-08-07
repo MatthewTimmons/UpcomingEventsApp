@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventListAdapter;
+import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 
 import java.util.List;
 
@@ -48,6 +50,8 @@ public class EventsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         eventType = getArguments().getString(KEY_EVENT_TYPE);
 
+        final String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
 //        switch (eventType) {
 //            case FirebaseConstants.COLLECTION_CONCERTS:
 //                view.findViewById(R.id.events_recycler_view).setBackgroundColor(Color.parseColor("#FDEEB7"));
@@ -64,11 +68,24 @@ public class EventsFragment extends Fragment {
         eventQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<DocumentSnapshot> eventDocumentSnapshots = task.getResult().getDocuments();
+                final List<DocumentSnapshot> eventDocumentSnapshots = task.getResult().getDocuments();
                 recyclerView = view.findViewById(R.id.events_recycler_view);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                eventListAdapter = new EventListAdapter(eventDocumentSnapshots);
-                recyclerView.setAdapter(eventListAdapter);
+
+                if (eventType.equals("movies")) {
+                    Firestore.collection("movies").document(currentUserId).collection("movies").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            List<DocumentSnapshot> allPersonalMovies = task.getResult().getDocuments();
+                            allPersonalMovies.addAll(eventDocumentSnapshots);
+                            eventListAdapter = new EventListAdapter(allPersonalMovies);
+                            recyclerView.setAdapter(eventListAdapter);
+                        }
+                    });
+                } else {
+                    eventListAdapter = new EventListAdapter(eventDocumentSnapshots);
+                    recyclerView.setAdapter(eventListAdapter);
+                }
             }
         });
     }

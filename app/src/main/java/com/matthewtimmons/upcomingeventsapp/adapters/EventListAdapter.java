@@ -83,8 +83,13 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = DetailsActivity.newIntent(view.getContext(), eventDocumentSnapshot.getId(), eventDocumentSnapshot.getString("eventType"));
-                    view.getContext().startActivity(intent);
+                    if (!eventDocumentSnapshot.get("isCustomEvent").equals(true)) {
+                        Intent intent = DetailsActivity.newIntent(view.getContext(), eventDocumentSnapshot.getId(), eventDocumentSnapshot.getString("eventType"));
+                        view.getContext().startActivity(intent);
+                    } else {
+                        Intent intent = DetailsActivity.newIntent(view.getContext(), eventDocumentSnapshot.getId(), eventDocumentSnapshot.getString("eventType"), true);
+                        view.getContext().startActivity(intent);
+                    }
                 }
             });
 
