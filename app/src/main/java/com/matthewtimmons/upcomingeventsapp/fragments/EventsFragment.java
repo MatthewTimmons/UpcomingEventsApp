@@ -73,7 +73,7 @@ public class EventsFragment extends Fragment {
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
                 if (eventType.equals("movies")) {
-                    Firestore.collection("movies").document(currentUserId).collection("movies").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    Firestore.collection("users").document(currentUserId).collection(eventType).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             List<DocumentSnapshot> allPersonalMovies = task.getResult().getDocuments();
@@ -82,9 +82,26 @@ public class EventsFragment extends Fragment {
                             recyclerView.setAdapter(eventListAdapter);
                         }
                     });
-                } else {
-                    eventListAdapter = new EventListAdapter(eventDocumentSnapshots);
-                    recyclerView.setAdapter(eventListAdapter);
+                } else if (eventType.equals("games")) {
+                    Firestore.collection("users").document(currentUserId).collection(eventType).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            List<DocumentSnapshot> allPersonalGames = task.getResult().getDocuments();
+                            allPersonalGames.addAll(eventDocumentSnapshots);
+                            eventListAdapter = new EventListAdapter(allPersonalGames);
+                            recyclerView.setAdapter(eventListAdapter);
+                        }
+                    });
+                } else if (eventType.equals("concerts")) {
+                    Firestore.collection("users").document(currentUserId).collection(eventType).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            List<DocumentSnapshot> allPersonalConcerts = task.getResult().getDocuments();
+                            allPersonalConcerts.addAll(eventDocumentSnapshots);
+                            eventListAdapter = new EventListAdapter(allPersonalConcerts);
+                            recyclerView.setAdapter(eventListAdapter);
+                        }
+                    });
                 }
             }
         });

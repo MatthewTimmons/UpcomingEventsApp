@@ -3,6 +3,8 @@ package com.matthewtimmons.upcomingeventsapp.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +20,17 @@ public class User implements Parcelable {
     Map<String, Object> pendingFriendRequests;
 
     public User() {}
+
+    public User(DocumentSnapshot currentUserDocumentSnapshot) {
+        this.displayName = currentUserDocumentSnapshot.getString("displayName");
+        this.profilePhotoURL = currentUserDocumentSnapshot.getString("profilePhotoURL");
+        this.friends = (List<String>) currentUserDocumentSnapshot.get("friends");
+        this.gamesOwnedByGameId = (List<String>) currentUserDocumentSnapshot.get("gamesOwnedByGameId");
+        this.moviesSeenByMovieId = (List<String>) currentUserDocumentSnapshot.get("moviesOwnedByMovieId");
+        this.interestLevels = (Map<String, Object>) currentUserDocumentSnapshot.get("interestLevels");
+        this.myFavorites = (Map<String, Object>) currentUserDocumentSnapshot.get("myFavorites");
+        this.pendingFriendRequests = (Map<String, Object>) currentUserDocumentSnapshot.get("pendingFriendRequests");
+    }
 
     // ---------------------------- Parcelable methods (start) ---------------------------- //
 
@@ -81,14 +94,6 @@ public class User implements Parcelable {
         allData.put("interestLevels", emptyHashMapStringObject);
         allData.put("pendingFriendRequests", emptyHashMapStringObject);
         return allData;
-    }
-
-    public static String getCurrentUserId() {
-        return CURRENT_USER_ID;
-    }
-
-    public static void setCurrentUserId(String currentUserId) {
-        CURRENT_USER_ID = currentUserId;
     }
 
     public String getDisplayName() {

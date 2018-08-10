@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent">
+
+    <LinearLayout
+        android:id="@+id/add_events_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/add_events_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/add_event_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            />
+
+    </android.support.v7.widget.Toolbar>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp">
+            <TextView
+                android:id="@+id/welcome_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add new events"
+                android:textSize="30sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/get_suggestions_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Want help?"
+                android:textColor="@color/pastel_blue"
+                android:textSize="16sp"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="@id/welcome_text_view"/>
+            <ImageView
+                android:id="@+id/poster_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:src="@drawable/ic_movies_blue"
+                app:layout_constraintTop_toBottomOf="@id/get_suggestions_button"/>
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/add_event_fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/poster_image_view"/>
+
+            <Button
+                android:id="@+id/add_to_my_movies_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add to my movies"
+                app:layout_constraintTop_toBottomOf="@id/add_event_fragment_container"/>
+            <Button
+                android:id="@+id/add_to_all_movies_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Suggest for global adoption"
+                app:layout_constraintTop_toBottomOf="@id/add_to_my_movies_button"/>
+
+        </android.support.constraint.ConstraintLayout>
+    </LinearLayout>
+
+</ScrollView>

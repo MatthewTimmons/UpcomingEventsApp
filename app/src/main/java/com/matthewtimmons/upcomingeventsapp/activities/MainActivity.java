@@ -18,7 +18,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -136,9 +135,10 @@ public class MainActivity extends AppCompatActivity {
                                                                              }
                                                                          });
                                                                          return true;
-                                                                     case R.id.nav_drawer_foresight:
-                                                                         Intent intentToForesight = new Intent(MainActivity.this, ForesightActivity.class);
-                                                                         startActivity(intentToForesight);
+                                                                     case R.id.nav_drawer_add_events_activity:
+                                                                         Intent intentToAddEventsActivity = new Intent(MainActivity.this, AddEventsActivity.class);
+                                                                         intentToAddEventsActivity.putExtra(User.CURRENT_USER_ID, currentUserId);
+                                                                         startActivity(intentToAddEventsActivity);
                                                                          return true;
                                                                  }
                                                                  return true;

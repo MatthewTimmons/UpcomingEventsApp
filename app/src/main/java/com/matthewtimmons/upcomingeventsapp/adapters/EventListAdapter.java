@@ -22,7 +22,6 @@ import com.matthewtimmons.upcomingeventsapp.models.Concert;
 import com.matthewtimmons.upcomingeventsapp.models.Event;
 import com.matthewtimmons.upcomingeventsapp.models.Game;
 import com.matthewtimmons.upcomingeventsapp.models.Movie;
-import com.matthewtimmons.upcomingeventsapp.models.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -34,6 +33,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     String currentUserId;
     String eventType;
     int backupImage;
+    String formattedRating;
 
     public EventListAdapter(List<DocumentSnapshot> events) {
         this.events = events;
@@ -65,7 +65,10 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             case FirebaseConstants.COLLECTION_GAMES:
                 backupImage = R.drawable.ic_games_blue;
                 Game game = new Game(eventDocumentSnapshot);
-                String releaseConsolesAsString = Game.fetchGamesAsString(eventDocumentSnapshot);
+                viewHolder.optionalSecondEventInfoTextView.setVisibility(View.VISIBLE);
+                String releaseConsolesAsString = Game.fetchGameConsolesAsString(eventDocumentSnapshot);
+                formattedRating = viewHolder.itemView.getResources().getString(R.string.formatted_rating, game.getRating());
+                viewHolder.optionalSecondEventInfoTextView.setText(formattedRating);
                 setAllSharedFields(game, viewHolder);
                 viewHolder.thirdEventInfoTextView.setText(releaseConsolesAsString);
                 break;
@@ -74,7 +77,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                 Movie movie = new Movie(eventDocumentSnapshot);
                 setAllSharedFields(movie, viewHolder);
                 viewHolder.optionalSecondEventInfoTextView.setVisibility(View.VISIBLE);
-                String formattedRating = viewHolder.itemView.getResources().getString(R.string.formatted_rating, movie.getRating());
+                formattedRating = viewHolder.itemView.getResources().getString(R.string.formatted_rating, movie.getRating());
                 viewHolder.optionalSecondEventInfoTextView.setText(formattedRating);
                 viewHolder.thirdEventInfoTextView.setText(movie.getGenre());
                 break;

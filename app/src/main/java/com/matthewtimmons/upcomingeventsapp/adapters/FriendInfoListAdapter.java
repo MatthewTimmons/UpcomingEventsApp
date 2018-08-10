@@ -61,6 +61,15 @@ public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAd
                 friendInfoViewHolder.friendCheckbox.setVisibility(View.VISIBLE);
             }
         }
+        if (eventType.equals(FirebaseConstants.COLLECTION_GAMES)) {
+            ArrayList<String> gamesSeen = (ArrayList<String>) user.getGamesOwnedByGameId();
+            if (gamesSeen.contains(eventId)) {
+                friendInfoViewHolder.friendCheckbox.setVisibility(View.VISIBLE);
+                friendInfoViewHolder.friendCheckbox.setImageResource(R.drawable.ic_checked_checkbox);
+            } else {
+                friendInfoViewHolder.friendCheckbox.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override

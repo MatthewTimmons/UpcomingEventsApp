@@ -56,17 +56,12 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
         Fragment eventDetailsFragment = null;
-        if (eventType.equals(EventConstants.EVENT_TYPE_CONCERT)) {
-            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.COLLECTION_CONCERTS);
-        } else if (eventType.equals(EventConstants.EVENT_TYPE_GAME)) {
-            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.COLLECTION_GAMES);
-        } else if (eventType.equals(EventConstants.EVENT_TYPE_MOVIE)) {
-            if (!isCustomEvent) {
-                eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.COLLECTION_MOVIES);
-            } else {
-                eventDetailsFragment = EventDetailsFragment.newInstance(eventId, FirebaseConstants.COLLECTION_MOVIES, true);
-            }
+        if (!isCustomEvent) {
+            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, eventType);
+        } else {
+            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, eventType, true);
         }
+
 
         Fragment interestLevelSeekbarFragment = InterestLevelSeekbarFragment.newInstance(eventType, eventId);
         Fragment friendRecyclerViewFragment = FriendInfoFragment.newInstance(eventType, eventId);

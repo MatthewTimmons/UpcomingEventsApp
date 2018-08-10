@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -112,20 +113,38 @@ public class EventDetailsFragment extends Fragment {
 
         switch (eventKey) {
             case FirebaseConstants.COLLECTION_CONCERTS:
-                ConcertsController.getConcert(eventId, new ConcertsController.GetConcertListener() {
-                    @Override
-                    public void onConcertRetrieved(Concert concert) {
-                        presentConcert(concert);
-                    }
-                });
+                if (!isCustomEvent) {
+                    ConcertsController.getConcert(eventId, new ConcertsController.GetConcertListener() {
+                        @Override
+                        public void onConcertRetrieved(Concert concert) {
+                            presentConcert(concert);
+                        }
+                    });
+                } else {
+                    ConcertsController.getCustomConcert(eventId, currentUserId, new ConcertsController.GetConcertListener() {
+                        @Override
+                        public void onConcertRetrieved(Concert concert) {
+                            presentConcert(concert);
+                        }
+                    });
+                }
                 break;
             case FirebaseConstants.COLLECTION_GAMES:
-                GamesController.getGame(eventId, new GamesController.GetGameListener() {
-                    @Override
-                    public void onGameRetrieved(Game game) {
-                        presentGame(game);
-                    }
-                });
+                if (!isCustomEvent) {
+                    GamesController.getGame(eventId, new GamesController.GetGameListener() {
+                        @Override
+                        public void onGameRetrieved(Game game) {
+                            presentGame(game);
+                        }
+                    });
+                } else {
+                    GamesController.getCustomGame(eventId, currentUserId, new GamesController.GetGameListener() {
+                        @Override
+                        public void onGameRetrieved(Game game) {
+                            presentGame(game);
+                        }
+                    });
+                }
                 break;
             case FirebaseConstants.COLLECTION_MOVIES:
                 if (!isCustomEvent) {
@@ -206,6 +225,9 @@ public class EventDetailsFragment extends Fragment {
 
     void presentGame(Game game) {
         presentEvent(game, R.drawable.ic_games_blue);
+        optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);
+        String formattedRating = getResources().getString(R.string.formatted_rating, game.getRating());
+        optionalSecondSubtitleTextView.setText(formattedRating);
         fourthTextView.setText(game.getReleaseConsolesAsString());
         optionalCheckbox.setVisibility(View.VISIBLE);
         optionalCheckbox.setText("Owned");

@@ -1,12 +1,13 @@
-package com.matthewtimmons.upcomingeventsapp.activities;
+package com.matthewtimmons.upcomingeventsapp.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,13 +20,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.flags.impl.DataUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
+import com.matthewtimmons.upcomingeventsapp.activities.AddEventsActivity;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.squareup.picasso.Picasso;
 
@@ -35,13 +34,13 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.opencensus.internal.StringUtil;
-
-public class ForesightActivity extends AppCompatActivity {
+public class AddMovieFragment extends Fragment{
+    public static final String CURRENT_USER_ID = "CURRENT_USER_ID";
+    String currentUserId;
     String moviePosterUrl;
     TextView welcomeTextView;
     TextView getSuggestionsTextView;
-    Button dismissMessageButton;
+    ImageView posterImageView;
     EditText movieTitleEditText;
     EditText movieGenreEditText;
     EditText movieRatingEditText;
@@ -49,36 +48,39 @@ public class ForesightActivity extends AppCompatActivity {
     Button addToMyMoviesButton;
     Button addToAllMoviesButton;
 
+    public static AddMovieFragment newInstance(String currentUserId) {
+        AddMovieFragment foresightMoviesFragment = new AddMovieFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(CURRENT_USER_ID, currentUserId);
+        foresightMoviesFragment.setArguments(bundle);
+        return foresightMoviesFragment;
+    }
+
+    @Nullable
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_foresight);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_foresight_movies, container, false);
+    }
 
-        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_welcome, null);
-        welcomeTextView = findViewById(R.id.welcome_text_view);
-        getSuggestionsTextView = findViewById(R.id.get_suggestions_button);
-        dismissMessageButton = dialogView.findViewById(R.id.dismiss_dialog_button);
-        movieTitleEditText = findViewById(R.id.movie_title_text_view);
-        movieGenreEditText = findViewById(R.id.movie_genre_text_view);
-        movieRatingEditText = findViewById(R.id.movie_rating_text_view);
-        movieReleaseDateEditText = findViewById(R.id.movie_release_date_text_view);
-        addToMyMoviesButton = findViewById(R.id.add_to_my_movies_button);
-        addToAllMoviesButton = findViewById(R.id.add_to_all_movies_button);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+        welcomeTextView = view.findViewById(R.id.welcome_text_view);
+        getSuggestionsTextView = getActivity().findViewById(R.id.get_suggestions_button);
+        posterImageView = getActivity().findViewById(R.id.poster_image_view);
+        movieTitleEditText = view.findViewById(R.id.movie_title_text_view);
+        movieGenreEditText = view.findViewById(R.id.movie_genre_text_view);
+        movieRatingEditText = view.findViewById(R.id.movie_rating_text_view);
+        movieReleaseDateEditText = view.findViewById(R.id.movie_release_date_text_view);
+        addToMyMoviesButton = getActivity().findViewById(R.id.add_to_my_movies_button);
+        addToAllMoviesButton = getActivity().findViewById(R.id.add_to_all_movies_button);
 
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        final String currentUserId = firebaseAuth.getCurrentUser().getUid();
+        currentUserId = getArguments().getString(CURRENT_USER_ID);
 
-        dialogBuilder.setView(dialogView);
-        final AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.show();
-
-        dismissMessageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertDialog.cancel();
-            }
-        });
+        getSuggestionsTextView.setVisibility(View.VISIBLE);
+        addToMyMoviesButton.setText("Add to my movies");
+        Picasso.get().load(R.drawable.ic_movies_blue).into(posterImageView);
 
         addToMyMoviesButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,31 +92,22 @@ public class ForesightActivity extends AppCompatActivity {
                     final Map<String, Object> movieData = new HashMap<>();
                     movieData.put("date", movieReleaseDateEditText.getText().toString());
                     movieData.put("eventType", "movies");
-                    movieData.put("imageUrl", moviePosterUrl);
                     movieData.put("movieGenre", movieGenreEditText.getText().toString());
                     movieData.put("movieRating", movieRatingEditText.getText().toString());
                     movieData.put("title", movieTitleEditText.getText().toString());
                     movieData.put("isCustomEvent", true);
-                    Firestore.collection("movies").document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.getResult().exists()) {
-                                task.getResult().getReference().collection("movies").add(movieData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                                        Toast.makeText(ForesightActivity.this, "Movie has been added to your list of movies.", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            } else {
-                                Firestore.collection("movies").document(currentUserId).collection("movies").add(movieData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                                        Toast.makeText(ForesightActivity.this, "Movie has been added to your list of movies.", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        }
-                    });
+                    if (moviePosterUrl != null && !moviePosterUrl.equals("")) {
+                        movieData.put("imageUrl", moviePosterUrl);
+                    } else if (AddEventsActivity.moviePosterUrl != null && !AddEventsActivity.moviePosterUrl.equals("")) {
+                        movieData.put("imageUrl", AddEventsActivity.moviePosterUrl);
+                    } else {
+                        movieData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
+                        Toast.makeText(getContext(), "No movie poster detected", Toast.LENGTH_SHORT).show();
+                    }
+                    Firestore.collection("users").document(currentUserId).collection("movies").add(movieData);
+                    Toast.makeText(getContext(), "Movie has been added to your list of movies.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -123,22 +116,32 @@ public class ForesightActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (!movieTitleEditText.getText().toString().equals("") &&
-                    !movieGenreEditText.getText().toString().equals("") &&
-                    !movieRatingEditText.getText().toString().equals("") &&
-                    !movieReleaseDateEditText.getText().toString().equals("")) {
+                        !movieGenreEditText.getText().toString().equals("") &&
+                        !movieRatingEditText.getText().toString().equals("") &&
+                        !movieReleaseDateEditText.getText().toString().equals("")) {
                     final Map<String, Object> movieData = new HashMap<>();
                     movieData.put("date", movieReleaseDateEditText.getText().toString());
                     movieData.put("eventType", "movies");
-                    movieData.put("imageUrl", "https://i.pinimg.com/originals/cf/15/09/cf1509164702e231902c98f65fb35371.jpg");
                     movieData.put("movieGenre", movieGenreEditText.getText().toString());
                     movieData.put("movieRating", movieRatingEditText.getText().toString());
                     movieData.put("title", movieTitleEditText.getText().toString());
-                    Firestore.collection("movies").document("Suggested Additions").collection("movies").add(movieData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    movieData.put("isCustomEvent", true);
+                    if (AddEventsActivity.moviePosterUrl != null && !AddEventsActivity.moviePosterUrl.equals("")) {
+                        movieData.put("imageUrl", AddEventsActivity.moviePosterUrl);
+                    } else if (moviePosterUrl != null && !moviePosterUrl.equals("")) {
+                        movieData.put("imageUrl", moviePosterUrl);
+                    } else {
+                        movieData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
+                        Toast.makeText(getContext(), "No movie poster detected", Toast.LENGTH_SHORT).show();
+                    }
+                    Firestore.collection("usersAuth").document("Suggested Additions").collection("movies").add(movieData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentReference> task) {
-                            Toast.makeText(ForesightActivity.this, "Movie has been recommended for global adoption.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Movie has been recommended for global adoption.", Toast.LENGTH_SHORT).show();
                         }
                     });
+                } else {
+                    Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -158,8 +161,8 @@ public class ForesightActivity extends AppCompatActivity {
 
                 searchButton.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View view) {
-                        RequestQueue requestQueue = Volley.newRequestQueue(ForesightActivity.this);
+                    public void onClick(final View view) {
+                        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
 
                         String url = "http://www.omdbapi.com/?";
                         if (!searchTitle.getText().toString().equals("")) {
@@ -178,7 +181,7 @@ public class ForesightActivity extends AppCompatActivity {
                                     public void onResponse(JSONObject response) {
                                         try {
                                             if (response.getString("Response").equals("False")) {
-                                                Toast.makeText(ForesightActivity.this, "No movies found", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getContext(), "No movies found", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 movieTitleEditText.setText(response.getString("Title"));
                                                 movieGenreEditText.setText(response.getString("Genre"));
@@ -191,7 +194,7 @@ public class ForesightActivity extends AppCompatActivity {
                                             e.printStackTrace();
                                         }
                                         try {
-                                            Picasso.get().load(response.getString("Poster")).into((ImageView) findViewById(R.id.poster_image_view));
+                                            Picasso.get().load(response.getString("Poster")).into(posterImageView);
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
@@ -211,7 +214,7 @@ public class ForesightActivity extends AppCompatActivity {
             }
         });
 
-// Access the RequestQueue through your singleton class.
-//        MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
+        // Access the RequestQueue through your singleton class.
+        //        MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 }

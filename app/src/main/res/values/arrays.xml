@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="names">
+        <item>Movies</item>
+        <item>Games</item>
+        <item>Concerts</item>
+    </string-array>
+</resources>

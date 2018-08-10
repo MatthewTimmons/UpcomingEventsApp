@@ -9,11 +9,24 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.models.Game;
+import com.matthewtimmons.upcomingeventsapp.models.Movie;
 
 public class GamesController {
 
     public static void getGame(String id, final GetGameListener gameListener) {
         FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_GAMES).document(id)
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                Game game = new Game(documentSnapshot);
+                gameListener.onGameRetrieved(game);
+            }
+        });
+    }
+
+    public static void getCustomGame(String id, String userId, final GamesController.GetGameListener gameListener) {
+        FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(userId).collection("games").document(id)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

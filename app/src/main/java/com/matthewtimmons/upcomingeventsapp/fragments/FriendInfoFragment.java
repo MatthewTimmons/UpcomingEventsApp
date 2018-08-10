@@ -61,6 +61,8 @@ public class FriendInfoFragment extends Fragment {
 
         if (eventType.equals(FirebaseConstants.COLLECTION_MOVIES)) {
             friendsHeader = RecyclerViewHeaderFragment.newInstance(currentUserId, "Friends", "Interest Level", "Seen");
+        } else if (eventType.equals(FirebaseConstants.COLLECTION_GAMES)) {
+            friendsHeader = RecyclerViewHeaderFragment.newInstance(currentUserId, "Friends", "Interest Level", "Owned");
         } else {
             friendsHeader = RecyclerViewHeaderFragment.newInstance(currentUserId, "Friends", "Interest Level", "");
         }

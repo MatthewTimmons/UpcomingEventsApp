@@ -10,13 +10,15 @@ import java.util.List;
 
 public class Game extends Event implements Serializable {
     private List<String> releaseConsoles;
+    String rating;
 
     public Game(DocumentSnapshot documentSnapshot) {
         super(documentSnapshot);
         this.releaseConsoles = (List<String>) documentSnapshot.get("releaseConsoles");
+        this.rating = documentSnapshot.getString("rating");
     }
 
-    public static String fetchGamesAsString(DocumentSnapshot gameDocumentSnapshot) {
+    public static String fetchGameConsolesAsString(DocumentSnapshot gameDocumentSnapshot) {
         List<String> listOfGames = (List<String>) gameDocumentSnapshot.get("releaseConsoles");
         return TextUtils.join(", ", listOfGames);
     }
@@ -33,8 +35,15 @@ public class Game extends Event implements Serializable {
         return TextUtils.join(", ", releaseConsoles);
     }
 
+    public String getRating() {
+        return rating;
+    }
 
-//
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    //
 //
 //    public static List<Game> getPlaceholderGames() {
 //        List<Game> listOfGames = new ArrayList<>();

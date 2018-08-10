@@ -3,7 +3,6 @@ package com.matthewtimmons.upcomingeventsapp.fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -68,7 +67,7 @@ public class RecyclerViewHeaderFragment extends Fragment {
         secondColumnName = getArguments().getString(SECOND_COLUMN_NAME);
         thirdColumnName = getArguments().getString(THIRD_COLUMN_NAME);
         firstColumnNameTextView = view.findViewById(R.id.first_column_name);
-        secondColumnNameTextView = view.findViewById(R.id.second_column_name);
+        secondColumnNameTextView = view.findViewById(R.id.plus_icon);
         thirdColumnNameTextView = view.findViewById(R.id.third_column_name);
 
         if (!firstColumnName.equals("")) {

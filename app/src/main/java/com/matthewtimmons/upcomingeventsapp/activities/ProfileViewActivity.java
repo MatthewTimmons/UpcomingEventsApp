@@ -89,7 +89,7 @@ public class ProfileViewActivity extends AppCompatActivity {
 
         //Set Favorite Events Recycler View
         favoritesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        DevHelper.setFavoritesRecyclerViewAdapter(profileUserObject, favoritesRecyclerView, true);
+        DevHelper.setFavoritesRecyclerViewAdapter(profileUserObject, favoritesRecyclerView, profileUserId, true);
 
         displayNameTextView.setText(profileUserObject.getDisplayName());
         try {
@@ -281,7 +281,7 @@ public class ProfileViewActivity extends AppCompatActivity {
     void setRemoveFunctionality(final User currentUserObject) {
         sendFriendRequestButton.setVisibility(View.VISIBLE);
         sendFriendRequestButton.setText("Remove friend");
-        sendFriendRequestButton.setBackgroundColor(getResources().getColor(R.color.red));
+        sendFriendRequestButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         sendFriendRequestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

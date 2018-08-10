@@ -12,17 +12,31 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="30sp"
-        android:text="Welcome to Foresight. Here you can add movies to your list and recommend movies to be added for all users."
+        android:text="Upload an image URL below."
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <EditText
+        android:id="@+id/image_url_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/welcome_text"/>
+
     <Button
-        android:id="@+id/dismiss_dialog_button"
+        android:id="@+id/submit_url_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Okay "
-        app:layout_constraintTop_toBottomOf="@id/welcome_text"
+        android:text="Submit"
+        app:layout_constraintTop_toBottomOf="@id/image_url_edit_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    <Button
+        android:id="@+id/get_photo_from_phone_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Choose from phone instead"
+        app:layout_constraintTop_toBottomOf="@id/submit_url_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 </android.support.constraint.ConstraintLayout>

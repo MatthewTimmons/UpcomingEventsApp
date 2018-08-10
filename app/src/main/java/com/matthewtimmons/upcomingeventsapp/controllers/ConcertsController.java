@@ -8,11 +8,24 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.models.Concert;
+import com.matthewtimmons.upcomingeventsapp.models.Movie;
 
 public class ConcertsController {
 
     public static void getConcert(String id, final ConcertsController.GetConcertListener concertListener) {
         FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_CONCERTS).document(id)
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                Concert concert = new Concert(documentSnapshot);
+                concertListener.onConcertRetrieved(concert);
+            }
+        });
+    }
+
+    public static void getCustomConcert(String id, String userId, final ConcertsController.GetConcertListener concertListener) {
+        FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(userId).collection("concerts").document(id)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

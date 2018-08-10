@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <EditText
+        android:id="@+id/game_title_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Game title"
+        android:inputType="textVisiblePassword"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"/>
+    <EditText
+        android:id="@+id/game_rating_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Game Rating"
+        android:inputType="textVisiblePassword"
+        app:layout_constraintTop_toBottomOf="@id/game_title_text_view"
+        android:layout_marginTop="16dp"/>
+    <RelativeLayout
+        android:id="@+id/game_genre_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/game_rating_text_view"
+        android:layout_marginTop="16dp">
+        <CheckBox
+            android:id="@+id/pc_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PC"/>
+        <CheckBox
+            android:id="@+id/xbox_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/pc_checkbox"
+            android:text="Xbox One"/>
+        <CheckBox
+            android:id="@+id/playstation_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/xbox_checkbox"
+            android:text="Playstation 4"/>
+        <CheckBox
+            android:id="@+id/nintendo_switch_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pc_checkbox"
+            android:text="Nintendo Switch"/>
+        <CheckBox
+            android:id="@+id/nintendo_3ds_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/nintendo_switch_checkbox"
+            android:layout_below="@id/pc_checkbox"
+            android:text="Nintendo 3DS"/>
+    </RelativeLayout>
+    <EditText
+        android:id="@+id/game_release_date_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Game Release Date"
+        android:inputType="textVisiblePassword"
+        app:layout_constraintTop_toBottomOf="@id/game_genre_text_view"
+        android:layout_marginTop="16dp"/>
+</android.support.constraint.ConstraintLayout>

@@ -152,7 +152,7 @@ public class DevHelper {
         return allEventValues;
     }
 
-    public static void setFavoritesRecyclerViewAdapter(DocumentReference currentUserReference, final RecyclerView recyclerView, final boolean collapsed) {
+    public static void setFavoritesRecyclerViewAdapter(final DocumentReference currentUserReference, final RecyclerView recyclerView, final boolean collapsed) {
         currentUserReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -170,51 +170,56 @@ public class DevHelper {
                 final CollectionReference collectionReferenceConcerts = FirebaseFirestore.getInstance().collection("concerts");
                 final CollectionReference collectionReferenceGames = FirebaseFirestore.getInstance().collection("games");
                 final CollectionReference collectionReferenceMovies = FirebaseFirestore.getInstance().collection("movies");
+                final CollectionReference collectionReferenceCustomMovies = currentUserReference.collection("movies");
 
-                collectionReferenceConcerts.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                collectionReferenceCustomMovies.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         allDocumentSnapshots.addAll(task.getResult().getDocuments());
-                        collectionReferenceGames.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                allDocumentSnapshots.addAll(task.getResult().getDocuments());
-                                collectionReferenceMovies.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        allDocumentSnapshots.addAll(task.getResult().getDocuments());
+                        collectionReferenceConcerts.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            allDocumentSnapshots.addAll(task.getResult().getDocuments());
+                            collectionReferenceGames.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    allDocumentSnapshots.addAll(task.getResult().getDocuments());
+                                    collectionReferenceMovies.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            allDocumentSnapshots.addAll(task.getResult().getDocuments());
 
-                                        // Extract only items that are favorited by the user
-                                        for (DocumentSnapshot documentSnapshot : allDocumentSnapshots) {
-                                            if (allEventsMap.keySet().contains(documentSnapshot.getId())) {
-                                                allFavoriteDocumentSnapshots.add(documentSnapshot);
+                                            // Extract only items that are favorited by the user
+                                            for (DocumentSnapshot documentSnapshot : allDocumentSnapshots) {
+                                                if (allEventsMap.keySet().contains(documentSnapshot.getId())) {
+                                                    allFavoriteDocumentSnapshots.add(documentSnapshot);
+                                                }
+                                            }
+                                            if (collapsed) {
+                                                RecyclerViewWithHeaderListAdapter recyclerViewWithHeaderListAdapter =
+                                                new RecyclerViewWithHeaderListAdapter(allFavoriteDocumentSnapshots);
+                                                StringBuilder stringBuilder = new StringBuilder();
+                                                for (DocumentSnapshot doc : allFavoriteDocumentSnapshots) {
+                                                    stringBuilder.append(doc.getString("title"));
+                                                }
+                                                recyclerView.setAdapter(recyclerViewWithHeaderListAdapter);
+                                            } else {
+                                                EventListAdapter eventListAdapter = new EventListAdapter(allFavoriteDocumentSnapshots);
+                                                recyclerView.setAdapter(eventListAdapter);
                                             }
                                         }
-                                        if (collapsed) {
-                                            RecyclerViewWithHeaderListAdapter recyclerViewWithHeaderListAdapter =
-                                            new RecyclerViewWithHeaderListAdapter(allFavoriteDocumentSnapshots);
-                                            StringBuilder stringBuilder = new StringBuilder();
-                                            for (DocumentSnapshot doc : allFavoriteDocumentSnapshots) {
-                                                stringBuilder.append(doc.getString("title"));
-                                            }
-                                            recyclerView.setAdapter(recyclerViewWithHeaderListAdapter);
-                                        } else {
-                                            EventListAdapter eventListAdapter = new EventListAdapter(allFavoriteDocumentSnapshots);
-                                            recyclerView.setAdapter(eventListAdapter);
-                                        }
-
-
+                                    });
                                     }
                                 });
-                            }
-                        });
-                    }
-                });
+                                }
+                            });
+                        }
+                    });
             }
         });
     }
 
-    public static void setFavoritesRecyclerViewAdapter(User user, final RecyclerView recyclerView, final boolean collapsed) {
+    public static void setFavoritesRecyclerViewAdapter(User user, final RecyclerView recyclerView, String profileUserId, final boolean collapsed) {
         final HashMap<String, Object> allEventsMap = new HashMap<>();
         Map<String, Object> allDataForUser = user.getMyFavorites();
 
@@ -229,42 +234,49 @@ public class DevHelper {
         final CollectionReference collectionReferenceConcerts = FirebaseFirestore.getInstance().collection("concerts");
         final CollectionReference collectionReferenceGames = FirebaseFirestore.getInstance().collection("games");
         final CollectionReference collectionReferenceMovies = FirebaseFirestore.getInstance().collection("movies");
+        final CollectionReference collectionReferenceCustomMovies = FirebaseFirestore.getInstance().collection("users").document(profileUserId).collection("movies");
 
-        collectionReferenceConcerts.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        collectionReferenceCustomMovies.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 allDocumentSnapshots.addAll(task.getResult().getDocuments());
-                collectionReferenceGames.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        allDocumentSnapshots.addAll(task.getResult().getDocuments());
-                        collectionReferenceMovies.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                allDocumentSnapshots.addAll(task.getResult().getDocuments());
+                collectionReferenceConcerts.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    allDocumentSnapshots.addAll(task.getResult().getDocuments());
+                    collectionReferenceGames.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            allDocumentSnapshots.addAll(task.getResult().getDocuments());
+                            collectionReferenceMovies.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    allDocumentSnapshots.addAll(task.getResult().getDocuments());
 
-                                // Extract only items that are favorited by the user
-                                for (DocumentSnapshot documentSnapshot : allDocumentSnapshots) {
-                                    if (allEventsMap.keySet().contains(documentSnapshot.getId())) {
-                                        allFavoriteDocumentSnapshots.add(documentSnapshot);
+                                    // Extract only items that are favorited by the user
+                                    for (DocumentSnapshot documentSnapshot : allDocumentSnapshots) {
+                                        if (allEventsMap.keySet().contains(documentSnapshot.getId())) {
+                                            allFavoriteDocumentSnapshots.add(documentSnapshot);
+                                        }
+                                    }
+                                    if (collapsed) {
+                                        RecyclerViewWithHeaderListAdapter recyclerViewWithHeaderListAdapter =
+                                                new RecyclerViewWithHeaderListAdapter(allFavoriteDocumentSnapshots);
+                                        StringBuilder stringBuilder = new StringBuilder();
+                                        for (DocumentSnapshot doc : allFavoriteDocumentSnapshots) {
+                                            stringBuilder.append(doc.getString("title"));
+                                        }
+                                        recyclerView.setAdapter(recyclerViewWithHeaderListAdapter);
+                                    } else {
+                                        EventListAdapter eventListAdapter = new EventListAdapter(allFavoriteDocumentSnapshots);
+                                        recyclerView.setAdapter(eventListAdapter);
                                     }
                                 }
-                                if (collapsed) {
-                                    RecyclerViewWithHeaderListAdapter recyclerViewWithHeaderListAdapter =
-                                            new RecyclerViewWithHeaderListAdapter(allFavoriteDocumentSnapshots);
-                                    StringBuilder stringBuilder = new StringBuilder();
-                                    for (DocumentSnapshot doc : allFavoriteDocumentSnapshots) {
-                                        stringBuilder.append(doc.getString("title"));
-                                    }
-                                    recyclerView.setAdapter(recyclerViewWithHeaderListAdapter);
-                                } else {
-                                    EventListAdapter eventListAdapter = new EventListAdapter(allFavoriteDocumentSnapshots);
-                                    recyclerView.setAdapter(eventListAdapter);
-                                }
-                            }
-                        });
-                    }
-                });
+                            });
+                        };
+                    });
+                }
+            });
             }
         });
     }
