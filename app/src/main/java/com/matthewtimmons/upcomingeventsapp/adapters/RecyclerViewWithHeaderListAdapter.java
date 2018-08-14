@@ -84,7 +84,7 @@ public class RecyclerViewWithHeaderListAdapter extends RecyclerView.Adapter<Recy
             super(itemView);
             firstColumnNameTextView = itemView.findViewById(R.id.event_title);
 
-            thirdColumnImageView = itemView.findViewById(R.id.event_type_icon);
+            thirdColumnImageView = itemView.findViewById(R.id.checkbox);
         }
     }
 }

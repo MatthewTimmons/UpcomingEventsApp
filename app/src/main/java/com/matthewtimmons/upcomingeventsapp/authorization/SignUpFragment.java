@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,18 +21,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.matthewtimmons.upcomingeventsapp.CircleTransform;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.MainActivity;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.matthewtimmons.upcomingeventsapp.models.User;
-import com.squareup.picasso.Picasso;
 
-import java.util.HashMap;
 import java.util.Map;
-
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 public class SignUpFragment extends Fragment {
     FirebaseAuth firebaseAuth;
@@ -137,7 +130,7 @@ public class SignUpFragment extends Fragment {
             CollectionReference currentUserAuthDocRef = Firestore.collection("usersAuth");
             currentUserDocRef.document(currentUserId).set(blankUser);
             currentUserAuthDocRef.document(currentUserId).set(currentUser);
-            Toast.makeText(getContext(), "Account set up successfully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Account set up successfully", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(getContext(), "Something went wrong, creating your account", Toast.LENGTH_SHORT).show();
         }

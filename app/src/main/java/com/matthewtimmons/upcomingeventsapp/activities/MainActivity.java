@@ -20,11 +20,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.matthewtimmons.upcomingeventsapp.CircleTransform;
+import com.matthewtimmons.upcomingeventsapp.manager.CircleTransform;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventPagerAdapter;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.authorization.AuthorizeUserActivity;
@@ -35,16 +36,15 @@ import com.squareup.picasso.Picasso;
 public class MainActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     FirebaseFirestore firebaseFirestore;
-    User currentUser;
-    NavigationView navigationView;
-    String currentUserId;
-    String currentUserDisplayname;
-    ImageView profilePhotoImageView;
-    BottomNavigationView bottomNavigationView;
+    FragmentPagerAdapter pagerAdapter;
     DrawerLayout navigationDrawerView;
     ViewPager viewPager;
-    FragmentPagerAdapter pagerAdapter;
     Toolbar toolbar;
+    NavigationView navigationView;
+    BottomNavigationView bottomNavigationView;
+    ImageView profilePhotoImageView;
+    String currentUserId, currentUserDisplayname;
+    User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,8 +210,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.navbar_menu, menu);
-        TextView displayNameTextView = findViewById(R.id.current_user_displayname);
-        if (displayNameTextView != null) { displayNameTextView.setText("Welcome, " + currentUserDisplayname); }
+        FirebaseFirestore.getInstance().document("users/" + currentUserId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                TextView displayNameTextView = findViewById(R.id.current_user_displayname);
+                String displayName = documentSnapshot.getString("displayName");
+                displayNameTextView.setText("Welcome, " + displayName);
+            }
+        });
         return super.onCreateOptionsMenu(menu);
     }
 

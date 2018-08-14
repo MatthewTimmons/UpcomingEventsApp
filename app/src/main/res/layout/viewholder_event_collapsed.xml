@@ -36,11 +36,11 @@
         android:gravity="center"
         android:src="@drawable/ic_star"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/event_type_icon"
+        app:layout_constraintEnd_toStartOf="@+id/checkbox"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/event_type_icon"
+        android:id="@+id/checkbox"
         android:layout_width="40dp"
         android:layout_height="0dp"
         android:layout_marginEnd="16dp"

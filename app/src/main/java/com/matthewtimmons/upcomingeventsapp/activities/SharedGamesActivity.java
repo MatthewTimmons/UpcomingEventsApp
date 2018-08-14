@@ -15,11 +15,8 @@ import com.matthewtimmons.upcomingeventsapp.models.User;
 import java.util.ArrayList;
 
 public class SharedGamesActivity extends AppCompatActivity {
-    String currentUserId;
-    String firstUserId;
-    String secondUserId;
-    Button nextButton;
-    Button backButton;
+    String currentUserId, firstUserId, secondUserId;
+    Button nextButton, backButton;
     ArrayList<String> friendsChecked = new ArrayList<>();
 
     @Override

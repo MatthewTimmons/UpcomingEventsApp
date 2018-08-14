@@ -2,6 +2,7 @@ package com.matthewtimmons.upcomingeventsapp.manager;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -11,6 +12,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -26,10 +28,6 @@ import static com.firebase.ui.auth.ui.email.CheckEmailFragment.TAG;
 public class Firestore {
     public static CollectionReference collection(String collectionId) {
         return FirebaseFirestore.getInstance().collection(collectionId);
-    }
-
-    public static DocumentSnapshot refreshThisDocument(String documentId) {
-        return FirebaseFirestore.getInstance().collection("movies").document(documentId).get().getResult();
     }
 
     public static void copyAllDataToOneObjectInOtherDocument(final DocumentReference fromPath, final DocumentReference toPath) {
@@ -58,6 +56,12 @@ public class Firestore {
                 }
             }
         });
+    }
+
+    // documentFieldPath should be in the form of "collectionId/documentId/collectionId/documentId/etc."
+    // fieldPathToIntendedFieldValue should be in the form of "key.nestedKey.nestedKey.etc."
+    public static void updateFirestoreDocument(String documentFieldPath, String fieldValueFieldPath, Object updatedValue) {
+        FirebaseFirestore.getInstance().document(documentFieldPath).update(fieldValueFieldPath, updatedValue);
     }
 
 }

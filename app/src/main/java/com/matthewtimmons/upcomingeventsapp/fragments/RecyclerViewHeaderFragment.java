@@ -18,15 +18,8 @@ public class RecyclerViewHeaderFragment extends Fragment {
     private static final String FIRST_COLUMN_NAME = "FIRST_COLUMN_NAME";
     private static final String SECOND_COLUMN_NAME = "SECOND_COLUMN_NAME";
     private static final String THIRD_COLUMN_NAME = "THIRD_COLUMN_NAME";
-    RecyclerView recyclerView;
-    TextView firstColumnNameTextView;
-    TextView secondColumnNameTextView;
-    TextView thirdColumnNameTextView;
-    String eventId;
-    Integer resourceId;
-    String firstColumnName;
-    String secondColumnName;
-    String thirdColumnName;
+    TextView firstColumnNameTextView, secondColumnNameTextView, thirdColumnNameTextView;
+    String eventId, firstColumnName, secondColumnName, thirdColumnName;
 
     // Header only
     public static RecyclerViewHeaderFragment newInstance(String currentUser, String firstColumnName) {

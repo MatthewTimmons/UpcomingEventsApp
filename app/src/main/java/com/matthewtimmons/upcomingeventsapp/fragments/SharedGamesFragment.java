@@ -31,8 +31,7 @@ public class SharedGamesFragment extends Fragment {
     private static final String KEY_FIRST_USER_ID = "KEY_FIRST_USER_ID";
     private static final String KEY_SECOND_USER_ID = "KEY_SECOND_USER_ID";
     RecyclerView recyclerView;
-    String firstUserId;
-    String secondUserId;
+    String firstUserId, secondUserId;
 
     public static SharedGamesFragment newInstance(String firstUserId, String secondUserId) {
         SharedGamesFragment friendSelectorFragment = new SharedGamesFragment();

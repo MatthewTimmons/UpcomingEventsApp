@@ -36,11 +36,9 @@ import static android.graphics.Color.WHITE;
 public class InterestLevelSeekbarFragment extends Fragment {
     private static final long DELAY_SEEKBAR_HINT_MS = 1000L;
     Handler seekbarHandler = new Handler();
-    SeekBar interestLevelSeekbar;
+    String currentUserId, eventId, eventType;
     TextView interestLevelTextView;
-    String currentUserId;
-    String eventId;
-    String eventType;
+    SeekBar interestLevelSeekbar;
 
     private static final String EVENT_TYPE = "eventType";
     public static final String EVENT_ID = "eventId";

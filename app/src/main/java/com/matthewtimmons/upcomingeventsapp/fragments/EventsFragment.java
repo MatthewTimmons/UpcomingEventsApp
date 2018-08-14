@@ -1,6 +1,7 @@
 package com.matthewtimmons.upcomingeventsapp.fragments;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,8 +22,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventListAdapter;
+import com.matthewtimmons.upcomingeventsapp.manager.DevHelper;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class EventsFragment extends Fragment {
@@ -52,18 +55,6 @@ public class EventsFragment extends Fragment {
 
         final String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-//        switch (eventType) {
-//            case FirebaseConstants.COLLECTION_CONCERTS:
-//                view.findViewById(R.id.events_recycler_view).setBackgroundColor(Color.parseColor("#FDEEB7"));
-//                break;
-//            case FirebaseConstants.COLLECTION_GAMES:
-//                view.findViewById(R.id.events_recycler_view).setBackgroundResource(R.drawable.stripes);
-//                break;
-//            case FirebaseConstants.COLLECTION_MOVIES:
-//                view.findViewById(R.id.events_recycler_view).setBackgroundColor(getResources().getColor(R.color.pastel_green));
-//                break;
-//        }
-
         Query eventQuery = FirebaseFirestore.getInstance().collection(eventType).orderBy(FirebaseConstants.KEY_DATE);
         eventQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -78,6 +69,7 @@ public class EventsFragment extends Fragment {
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             List<DocumentSnapshot> allPersonalMovies = task.getResult().getDocuments();
                             allPersonalMovies.addAll(eventDocumentSnapshots);
+                            allPersonalMovies = DevHelper.sortByDate(allPersonalMovies);
                             eventListAdapter = new EventListAdapter(allPersonalMovies);
                             recyclerView.setAdapter(eventListAdapter);
                         }
@@ -88,6 +80,7 @@ public class EventsFragment extends Fragment {
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             List<DocumentSnapshot> allPersonalGames = task.getResult().getDocuments();
                             allPersonalGames.addAll(eventDocumentSnapshots);
+                            allPersonalGames = DevHelper.sortByDate(allPersonalGames);
                             eventListAdapter = new EventListAdapter(allPersonalGames);
                             recyclerView.setAdapter(eventListAdapter);
                         }
@@ -98,6 +91,7 @@ public class EventsFragment extends Fragment {
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             List<DocumentSnapshot> allPersonalConcerts = task.getResult().getDocuments();
                             allPersonalConcerts.addAll(eventDocumentSnapshots);
+                            allPersonalConcerts = DevHelper.sortByDate(allPersonalConcerts);
                             eventListAdapter = new EventListAdapter(allPersonalConcerts);
                             recyclerView.setAdapter(eventListAdapter);
                         }

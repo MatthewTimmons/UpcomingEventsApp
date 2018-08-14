@@ -31,9 +31,7 @@ public class FriendInfoFragment extends Fragment {
     Fragment friendsHeader;
     FriendInfoListAdapter friendsListAdapter;
     RecyclerView recyclerView;
-    String currentUserId;
-    String eventId;
-    String eventType;
+    String currentUserId, eventId, eventType;
 
     public static FriendInfoFragment newInstance(String eventType, String eventId) {
         FriendInfoFragment friendInfoFragment = new FriendInfoFragment();

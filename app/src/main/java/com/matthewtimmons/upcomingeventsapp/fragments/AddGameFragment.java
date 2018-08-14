@@ -30,23 +30,13 @@ import java.util.Map;
 
 public class AddGameFragment extends Fragment{
     public static final String CURRENT_USER_ID = "CURRENT_USER_ID";
-    String currentUserId;
-    String gamePosterUrl;
-    TextView welcomeTextView;
-    TextView getSuggestionsTextView;
+    String currentUserId, gamePosterUrl;
+    TextView welcomeTextView, getSuggestionsTextView;
     ImageView posterImageView;
-    EditText gameTitleEditText;
-    EditText gameRatingEditText;
-    EditText gameReleaseDateEditText;
-    Button addToMyGamesButton;
-    Button addToAllGamesButton;
+    EditText gameTitleEditText, gameRatingEditText, gameReleaseDateEditText;
+    Button addToMyGamesButton, addToAllGamesButton;
     List<String> releaseConsolesChecked;
     List<CheckBox> allCheckboxes;
-    CheckBox pcCheckbox;
-    CheckBox xboxCheckbox;
-    CheckBox playstationCheckbox;
-    CheckBox nintendoSwitchCheckbox;
-    CheckBox nintendo3DSCheckbox;
 
     public static AddGameFragment newInstance(String currentUserId) {
         AddGameFragment addGameFragment = new AddGameFragment();
@@ -65,7 +55,7 @@ public class AddGameFragment extends Fragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        welcomeTextView = getActivity().findViewById(R.id.welcome_text_view);
+        welcomeTextView = getActivity().findViewById(R.id.add_event_type);
         getSuggestionsTextView = getActivity().findViewById(R.id.get_suggestions_button);
         posterImageView = getActivity().findViewById(R.id.poster_image_view);
         gameTitleEditText = view.findViewById(R.id.game_title_text_view);

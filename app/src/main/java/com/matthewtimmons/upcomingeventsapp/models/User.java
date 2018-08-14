@@ -83,15 +83,25 @@ public class User implements Parcelable {
     public static Map<String, Object> getBlankUserValues() {
         Map<String, Object> allData = new HashMap<>();
         HashMap<String, Object> emptyHashMapStringObject= new HashMap<>();
+        HashMap<String, Object> concertsGamesMoviesHashMapStringObject = new HashMap<>();
+        HashMap<String, Object> concertsGamesMoviesHashMapObject = new HashMap<>();
         ArrayList<String> emptyArrayList = new ArrayList<>();
 
+        concertsGamesMoviesHashMapStringObject.put("concerts", emptyArrayList);
+        concertsGamesMoviesHashMapStringObject.put("games", emptyArrayList);
+        concertsGamesMoviesHashMapStringObject.put("movies", emptyArrayList);
+
+        concertsGamesMoviesHashMapObject.put("concerts", emptyHashMapStringObject);
+        concertsGamesMoviesHashMapObject.put("games", emptyHashMapStringObject);
+        concertsGamesMoviesHashMapObject.put("movies", emptyHashMapStringObject);
+
         allData.put("displayName", "");
-        allData.put("profilePhotoURL", "");
+        allData.put("profilePhotoURL", "https://localmarketingplus.ca/wp-content/uploads/2015/02/blue-head.jpg");
         allData.put("friends", emptyArrayList);
         allData.put("gamesOwnedByGameId", emptyArrayList);
         allData.put("moviesSeenByMovieId", emptyArrayList);
-        allData.put("favorites", emptyHashMapStringObject);
-        allData.put("interestLevels", emptyHashMapStringObject);
+        allData.put("myFavorites", concertsGamesMoviesHashMapStringObject);
+        allData.put("interestLevels", concertsGamesMoviesHashMapObject);
         allData.put("pendingFriendRequests", emptyHashMapStringObject);
         return allData;
     }

@@ -23,10 +23,6 @@ import java.util.Map;
 
 public class FriendsListActivity extends AppCompatActivity {
     String currentUserId;
-    Fragment pendingFriendRequestFragment;
-    RecyclerView pendingFriendRequestsRecyclerView;
-    Fragment friendsFragment;
-    RecyclerView friendsRecyclerView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

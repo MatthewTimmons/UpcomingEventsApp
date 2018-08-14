@@ -26,41 +26,35 @@
             android:text="Bands"
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/plus_icon"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <ImageView
-            android:id="@+id/plus_icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_plus_sign"
-            />
-
     </android.support.constraint.ConstraintLayout>
 
-    <ListView
-        android:id="@+id/list_of_bands_linear_layout"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/band_names_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="200dp"
-        app:layout_constraintTop_toBottomOf="@id/column_names_constraint_layout"
-        android:orientation="vertical"
-        tools:layout_height="200dp"
-        />
+        app:layout_constraintTop_toBottomOf="@id/column_names_constraint_layout"/>
+
+    <!--<ListView-->
+        <!--android:id="@+id/list_of_bands_linear_layout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:minHeight="200dp"-->
+        <!--app:layout_constraintTop_toBottomOf="@id/column_names_constraint_layout"-->
+        <!--android:orientation="vertical"-->
+        <!--tools:layout_height="200dp"-->
+        <!--/>-->
 
     <EditText
         android:id="@+id/add_band_name_edit_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Enter Band Name"
-        android:inputType="textVisiblePassword"
-        app:layout_constraintTop_toBottomOf="@id/list_of_bands_linear_layout"
+        android:inputType="textCapSentences"
+        app:layout_constraintTop_toBottomOf="@id/band_names_recycler_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/add_band_name_button"
         />
@@ -69,7 +63,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add Band"
-        app:layout_constraintTop_toBottomOf="@id/list_of_bands_linear_layout"
+        app:layout_constraintTop_toBottomOf="@id/band_names_recycler_view"
         app:layout_constraintEnd_toEndOf="parent"
         />
     <EditText
@@ -77,7 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Concert Location"
-        android:inputType="textVisiblePassword"
+        android:inputType="textCapSentences"
         app:layout_constraintTop_toBottomOf="@id/add_band_name_edit_text"
         android:layout_marginTop="16dp" />
     <EditText
@@ -85,7 +79,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Concert Date"
-        android:inputType="textVisiblePassword"
+        android:inputType="textCapSentences"
         app:layout_constraintTop_toBottomOf="@id/concert_location_edit_text"
         android:layout_marginTop="16dp"/>
 

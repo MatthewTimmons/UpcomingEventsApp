@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.firestore.FieldPath;
 import com.matthewtimmons.upcomingeventsapp.R;
@@ -87,7 +86,7 @@ public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAd
             super(itemView);
             friendUsername = itemView.findViewById(R.id.friend_user_name);
             friendInterestLevel = itemView.findViewById(R.id.favorite_star_icon);
-            friendCheckbox = itemView.findViewById(R.id.event_type_icon);
+            friendCheckbox = itemView.findViewById(R.id.checkbox);
         }
     }
 }

@@ -102,9 +102,11 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 HashMap<String, Object> allData = (HashMap<String, Object>) task.getResult().get("myFavorites");
                 ArrayList<String> allFavorites = new ArrayList<>();
-                allFavorites.addAll((ArrayList<String>) allData.get("concerts"));
-                allFavorites.addAll((ArrayList<String>) allData.get("games"));
-                allFavorites.addAll((ArrayList<String>) allData.get("movies"));
+                if (allData != null) {
+                    allFavorites.addAll((ArrayList<String>) allData.get("concerts"));
+                    allFavorites.addAll((ArrayList<String>) allData.get("games"));
+                    allFavorites.addAll((ArrayList<String>) allData.get("movies"));
+                }
 
                 if (allFavorites.contains(eventDocumentSnapshot.getId())) {
                    viewHolder.favoriteStarImageView.setVisibility(View.VISIBLE);

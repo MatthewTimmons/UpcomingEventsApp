@@ -98,7 +98,7 @@ public class UsersListAdapterRows extends RecyclerView.Adapter<UsersListAdapterR
         public FriendSelectorViewHolder(@NonNull View itemView) {
             super(itemView);
             friendUsername = itemView.findViewById(R.id.friend_user_name);
-            friendCheckbox = itemView.findViewById(R.id.event_type_icon);
+            friendCheckbox = itemView.findViewById(R.id.checkbox);
         }
     }
 }

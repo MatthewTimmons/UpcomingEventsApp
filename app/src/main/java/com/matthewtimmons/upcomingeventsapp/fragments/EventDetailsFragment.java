@@ -1,6 +1,5 @@
 package com.matthewtimmons.upcomingeventsapp.fragments;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -13,18 +12,20 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.R;
+import com.matthewtimmons.upcomingeventsapp.adapters.CustomCheckableSpinnerAdapter;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.controllers.ConcertsController;
 import com.matthewtimmons.upcomingeventsapp.controllers.GamesController;
@@ -36,6 +37,7 @@ import com.matthewtimmons.upcomingeventsapp.models.Game;
 import com.matthewtimmons.upcomingeventsapp.models.Movie;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -43,18 +45,12 @@ public class EventDetailsFragment extends Fragment {
     private static final String ARGS_EVENT_ID = "ARGS_EVENT_ID";
     private static final String ARGS_EVENT_TYPE = "ARGS_EVENT_TYPE";
     private static final String ARGS_IS_CUSTOM_EVENT = "ARGS_IS_CUSTOM_EVENT";
-    String currentUserId;
-    String eventId;
-    String eventKey;
+    String currentUserId, eventId, eventKey;
     Boolean isCustomEvent;
     ImageView eventPictureImageView;
-    TextView titleTextView;
-    TextView subtitleTextView;
-    TextView optionalSecondSubtitleTextView;
-    TextView fourthTextView;
-    TextView fifthTextView;
-    CheckBox optionalCheckbox;
-    CheckBox favoritesCheckbox;
+    TextView titleTextView, subtitleTextView, optionalSecondSubtitleTextView, fourthTextView, fifthTextView;
+    CheckBox optionalCheckbox, favoritesCheckbox;
+    Spinner optionalSpinner;
 
 
     public static EventDetailsFragment newInstance(String eventId, String eventKey) {
@@ -110,6 +106,7 @@ public class EventDetailsFragment extends Fragment {
         fifthTextView = view.findViewById(R.id.fifth_info_field);
         optionalCheckbox = view.findViewById(R.id.optional_checkbox);
         favoritesCheckbox = view.findViewById(R.id.favorite_checkbox);
+        optionalSpinner = view.findViewById(R.id.optional_spinner);
 
         switch (eventKey) {
             case FirebaseConstants.COLLECTION_CONCERTS:
@@ -223,15 +220,38 @@ public class EventDetailsFragment extends Fragment {
         }
     }
 
-    void presentGame(Game game) {
+    void presentGame(final Game game) {
         presentEvent(game, R.drawable.ic_games_blue);
-        optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);
-        String formattedRating = getResources().getString(R.string.formatted_rating, game.getRating());
-        optionalSecondSubtitleTextView.setText(formattedRating);
         fourthTextView.setText(game.getReleaseConsolesAsString());
-        optionalCheckbox.setVisibility(View.VISIBLE);
-        optionalCheckbox.setText("Owned");
-        setCheckmarkFunctionality(game.getId(), FieldPath.of(FirebaseConstants.KEY_GAMES_OWNED), optionalCheckbox, false);
+
+
+
+
+        // Set rating TextView
+        String formattedRating = getResources().getString(R.string.formatted_rating, game.getRating());
+        optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);
+        optionalSecondSubtitleTextView.setText(formattedRating);
+
+        if (game.getReleaseConsoles().size() > 1) {
+            // Set Owned Spinner of checkable items
+            Firestore.collection("users").document(currentUserId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    ArrayList<String> allCurrentlyOwnedConsoles = (ArrayList<String>) documentSnapshot.get(FieldPath.of("gamesOwned", game.getId()));
+
+                    List<String> applicableConsoles = game.getReleaseConsoles();
+                    applicableConsoles.add(0, "Owned");
+                    optionalSpinner.setVisibility(View.VISIBLE);
+                    SpinnerAdapter adapter = new CustomCheckableSpinnerAdapter(applicableConsoles, getActivity(), currentUserId, game.getId(), allCurrentlyOwnedConsoles);
+                    optionalSpinner.setAdapter(adapter);
+                }
+            });
+        } else {
+            optionalCheckbox.setVisibility(View.VISIBLE);
+            optionalCheckbox.setText("Owned");
+            setCheckmarkFunctionality(game.getId(), FieldPath.of(FirebaseConstants.KEY_GAMES_OWNED), optionalCheckbox, false);
+        }
+
     }
 
     void presentMovie(Movie movie) {

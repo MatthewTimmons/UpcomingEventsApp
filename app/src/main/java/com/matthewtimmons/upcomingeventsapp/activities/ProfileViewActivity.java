@@ -43,19 +43,17 @@ public class ProfileViewActivity extends AppCompatActivity {
     private StorageReference uploadsStorageReference;
     int PICK_IMAGE_REQUEST = 1;
     FirebaseUser currentFirebaseUser;
+    DocumentReference profileUserReference;
     User profileUserObject;
     List<String> allFriendIds;
-    String currentUserId;
-    String profileUserId;
-    User currentUser;
+    RecyclerView favoritesRecyclerView;
+    TextView displayNameTextView;
+    ImageView profilePhotoImageView, editIconImageView;
+    Button sendFriendRequestButton;
+    String currentUserId, profileUserId;
     boolean isCurrentUserViewer;
     Uri imageUri;
-    DocumentReference profileUserReference;
-    RecyclerView favoritesRecyclerView;
-    ImageView profilePhotoImageView;
-    TextView displayNameTextView;
-    ImageView editIconImageView;
-    Button sendFriendRequestButton;
+    User currentUser;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -281,7 +279,7 @@ public class ProfileViewActivity extends AppCompatActivity {
     void setRemoveFunctionality(final User currentUserObject) {
         sendFriendRequestButton.setVisibility(View.VISIBLE);
         sendFriendRequestButton.setText("Remove friend");
-        sendFriendRequestButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        sendFriendRequestButton.setBackgroundColor(getResources().getColor(R.color.red));
         sendFriendRequestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

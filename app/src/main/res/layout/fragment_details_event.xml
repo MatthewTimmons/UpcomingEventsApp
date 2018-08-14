@@ -109,5 +109,15 @@
         tools:text="Optional Checkbox"
         tools:visibility="visible" />
 
+    <Spinner
+        android:id="@+id/optional_spinner"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/right_gutter"
+        app:layout_constraintBottom_toTopOf="@id/favorite_checkbox"
+        android:background="@color/colorAccent"
+        tools:visibility="visible"/>
+
 
 </android.support.constraint.ConstraintLayout>

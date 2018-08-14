@@ -36,17 +36,11 @@ import java.util.Map;
 
 public class AddMovieFragment extends Fragment{
     public static final String CURRENT_USER_ID = "CURRENT_USER_ID";
-    String currentUserId;
-    String moviePosterUrl;
-    TextView welcomeTextView;
-    TextView getSuggestionsTextView;
+    String currentUserId, moviePosterUrl;
+    TextView welcomeTextView, getSuggestionsTextView;
     ImageView posterImageView;
-    EditText movieTitleEditText;
-    EditText movieGenreEditText;
-    EditText movieRatingEditText;
-    EditText movieReleaseDateEditText;
-    Button addToMyMoviesButton;
-    Button addToAllMoviesButton;
+    EditText movieTitleEditText, movieGenreEditText, movieRatingEditText, movieReleaseDateEditText;
+    Button addToMyMoviesButton, addToAllMoviesButton;
 
     public static AddMovieFragment newInstance(String currentUserId) {
         AddMovieFragment foresightMoviesFragment = new AddMovieFragment();
@@ -66,7 +60,7 @@ public class AddMovieFragment extends Fragment{
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
-        welcomeTextView = view.findViewById(R.id.welcome_text_view);
+        welcomeTextView = view.findViewById(R.id.add_event_type);
         getSuggestionsTextView = getActivity().findViewById(R.id.get_suggestions_button);
         posterImageView = getActivity().findViewById(R.id.poster_image_view);
         movieTitleEditText = view.findViewById(R.id.movie_title_text_view);
@@ -92,8 +86,8 @@ public class AddMovieFragment extends Fragment{
                     final Map<String, Object> movieData = new HashMap<>();
                     movieData.put("date", movieReleaseDateEditText.getText().toString());
                     movieData.put("eventType", "movies");
-                    movieData.put("movieGenre", movieGenreEditText.getText().toString());
-                    movieData.put("movieRating", movieRatingEditText.getText().toString());
+                    movieData.put("genre", movieGenreEditText.getText().toString());
+                    movieData.put("rating", movieRatingEditText.getText().toString());
                     movieData.put("title", movieTitleEditText.getText().toString());
                     movieData.put("isCustomEvent", true);
                     if (moviePosterUrl != null && !moviePosterUrl.equals("")) {
@@ -122,8 +116,8 @@ public class AddMovieFragment extends Fragment{
                     final Map<String, Object> movieData = new HashMap<>();
                     movieData.put("date", movieReleaseDateEditText.getText().toString());
                     movieData.put("eventType", "movies");
-                    movieData.put("movieGenre", movieGenreEditText.getText().toString());
-                    movieData.put("movieRating", movieRatingEditText.getText().toString());
+                    movieData.put("genre", movieGenreEditText.getText().toString());
+                    movieData.put("rating", movieRatingEditText.getText().toString());
                     movieData.put("title", movieTitleEditText.getText().toString());
                     movieData.put("isCustomEvent", true);
                     if (AddEventsActivity.moviePosterUrl != null && !AddEventsActivity.moviePosterUrl.equals("")) {

@@ -25,13 +25,11 @@ public class ListOfUsersFragment extends Fragment {
     private static final String FLAG = "FLAG";
     public static String columnTitle = "Friends";
     private static Bundle bundle;
-    RecyclerView recyclerView;
-    String currentUserId;
     DocumentReference currentUserDocRef;
+    RecyclerView recyclerView;
     ArrayList<String> friendsChecked;
-    String flag;
-    boolean includeCheckmarks;
-    boolean square;
+    String currentUserId, flag;
+    boolean includeCheckmarks, square;
 
     public static ListOfUsersFragment initializeBundleWithSharedValues(String currentUserId) {
         bundle = new Bundle();

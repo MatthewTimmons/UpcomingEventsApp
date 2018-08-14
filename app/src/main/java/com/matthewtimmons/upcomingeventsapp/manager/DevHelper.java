@@ -1,6 +1,7 @@
 package com.matthewtimmons.upcomingeventsapp.manager;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -19,13 +20,34 @@ import com.matthewtimmons.upcomingeventsapp.adapters.UsersListAdapterSquare;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class DevHelper {
     //TODO: Implement method to get the current user
+
+    public static List<DocumentSnapshot> sortByDate(List<DocumentSnapshot> list) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            list.sort(new Comparator<DocumentSnapshot>() {
+                @Override
+                public int compare(DocumentSnapshot documentSnapshot, DocumentSnapshot t1) {
+                    String date1AsString = documentSnapshot.getString("date");
+                    String date2AsString = t1.getString("date");
+                    String reorderedDate1 = date1AsString.substring(6, 10) + date1AsString.substring(0, 2) + date1AsString.substring(3, 5);
+                    String reorderedDate2 = date2AsString.substring(6, 10) + date2AsString.substring(0, 2) + date2AsString.substring(3, 5);
+
+                    return reorderedDate1.compareTo(reorderedDate2);
+                }
+            });
+        }
+        return list;
+    }
 
     public static void setUsersListAdapter(final RecyclerView recyclerView, final String firestoreBranchName, final String currentUserId, final boolean includeCurrentUser, final boolean square) {
         FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -223,9 +245,11 @@ public class DevHelper {
         final HashMap<String, Object> allEventsMap = new HashMap<>();
         Map<String, Object> allDataForUser = user.getMyFavorites();
 
-        allEventsMap.putAll(fetchSharedValues(allDataForUser, "concerts"));
-        allEventsMap.putAll(fetchSharedValues(allDataForUser, "games"));
-        allEventsMap.putAll(fetchSharedValues(allDataForUser, "movies"));
+        if (allDataForUser != null) {
+            allEventsMap.putAll(fetchSharedValues(allDataForUser, "concerts"));
+            allEventsMap.putAll(fetchSharedValues(allDataForUser, "games"));
+            allEventsMap.putAll(fetchSharedValues(allDataForUser, "movies"));
+        }
 
         //Temp
         final List<DocumentSnapshot> allDocumentSnapshots = new ArrayList<>();

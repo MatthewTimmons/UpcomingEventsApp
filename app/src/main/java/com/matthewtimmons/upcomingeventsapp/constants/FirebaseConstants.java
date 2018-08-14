@@ -24,8 +24,8 @@ public class FirebaseConstants {
     public static final String KEY_CONCERT_LOCATION = "concertLocation";
     public static final String KEY_CONCERT_BANDS_ARRAY = "concertBandsArray";
 
-    public static final String KEY_MOVIE_RATING = "movieRating";
-    public static final String KEY_MOVIE_GENRE = "movieGenre";
+    public static final String KEY_MOVIE_RATING = "rating";
+    public static final String KEY_MOVIE_GENRE = "genre";
 
     public static StorageReference getStorageReference(String path) {
         return FirebaseStorage.getInstance().getReference(path);

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Game title"
-        android:inputType="textVisiblePassword"
+        android:inputType="textCapSentences"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="16dp"/>
     <EditText
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Game Rating"
-        android:inputType="textVisiblePassword"
+        android:inputType="textCapCharacters"
         app:layout_constraintTop_toBottomOf="@id/game_title_text_view"
         android:layout_marginTop="16dp"/>
     <RelativeLayout
@@ -64,7 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Game Release Date"
-        android:inputType="textVisiblePassword"
+        android:inputType="textCapSentences"
         app:layout_constraintTop_toBottomOf="@id/game_genre_text_view"
         android:layout_marginTop="16dp"/>
 </android.support.constraint.ConstraintLayout>

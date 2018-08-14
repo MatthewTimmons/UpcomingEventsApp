@@ -4,13 +4,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -22,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.AddEventsActivity;
+import com.matthewtimmons.upcomingeventsapp.adapters.CustomRemovableSpinnerAdapter;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.squareup.picasso.Picasso;
 
@@ -32,31 +34,12 @@ import java.util.Map;
 
 public class AddConcertFragment extends Fragment {
     public static final String CURRENT_USER_ID = "CURRENT_USER_ID";
-    String currentUserId;
-    String concertPosterUrl;
-    TextView welcomeTextView;
-    TextView getSuggestionsTextView;
+    TextView welcomeTextView, getSuggestionsTextView;
     ImageView posterImageView;
-    ListView bandsListView;
+    EditText addBandNameEditText, concertLocationEditText, concertDateEditText;
+    Button addBandNameButton, addToMyConcertsButton, addToAllConcertsButton;
+    String currentUserId, concertPosterUrl;
     Integer minHeight;
-    Button addBandNameButton;
-    EditText addBandNameEditText;
-    EditText concertLocationEditText;
-    EditText concertDateEditText;
-    EditText gameReleaseDateEditText;
-    Button addToMyConcertsButton;
-    Button addToAllConcertsButton;
-    List<String> releaseConsolesChecked;
-    List<CheckBox> allCheckboxes;
-    CheckBox pcCheckbox;
-    CheckBox xboxCheckbox;
-    CheckBox playstationCheckbox;
-    CheckBox nintendoSwitchCheckbox;
-    CheckBox nintendo3DSCheckbox;
-
-    TextView firstColumnNameTextView;
-    String eventId;
-    String firstColumnName;
 
     public static AddConcertFragment newInstance(String currentUserId) {
         AddConcertFragment addConcertFragment = new AddConcertFragment();
@@ -75,10 +58,10 @@ public class AddConcertFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        welcomeTextView = getActivity().findViewById(R.id.welcome_text_view);
+        welcomeTextView = getActivity().findViewById(R.id.add_event_type);
         getSuggestionsTextView = getActivity().findViewById(R.id.get_suggestions_button);
         posterImageView = getActivity().findViewById(R.id.poster_image_view);
-        bandsListView = view.findViewById(R.id.list_of_bands_linear_layout);
+//        bandsListView = view.findViewById(R.id.list_of_bands_linear_layout);
         addBandNameButton = view.findViewById(R.id.add_band_name_button);
         addBandNameEditText = view.findViewById(R.id.add_band_name_edit_text);
         concertLocationEditText = view.findViewById(R.id.concert_location_edit_text);
@@ -92,24 +75,22 @@ public class AddConcertFragment extends Fragment {
         addToMyConcertsButton.setText("Add to my concerts");
         Picasso.get().load(R.drawable.ic_concerts_blue).into(posterImageView);
 
-        final ArrayList<String> bandNames = new ArrayList<>();
-        final ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, bandNames);
-        bandsListView.setAdapter(stringArrayAdapter);
 
-        // Set functionality for adding bands to listview
+        final ArrayList<String> bandNames = new ArrayList<>();
+
+        final CustomRemovableSpinnerAdapter customRemovableSpinnerAdapter = new CustomRemovableSpinnerAdapter(bandNames);
+        RecyclerView recyclerView = view.findViewById(R.id.band_names_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(customRemovableSpinnerAdapter);
+
         addBandNameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String bandNameEntered = addBandNameEditText.getText().toString();
-                stringArrayAdapter.add(bandNameEntered);
                 addBandNameEditText.setText("");
-                minHeight += 130;
-                ViewGroup.LayoutParams params = bandsListView.getLayoutParams();
-                params.height = minHeight;
-                bandsListView.setLayoutParams(params);
-                bandsListView.requestLayout();
                 addBandNameEditText.requestFocus();
-                Toast.makeText(getContext(), minHeight.toString(), Toast.LENGTH_SHORT).show();
+                bandNames.add(bandNameEntered);
+                customRemovableSpinnerAdapter.notifyDataSetChanged();
             }
         });
 

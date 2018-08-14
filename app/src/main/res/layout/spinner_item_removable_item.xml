@@ -24,13 +24,28 @@
             android:maxLines="1"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/favorite_star_icon"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="Band name"
-            tools:layout_width="200dp"/>
+            app:layout_constraintEnd_toStartOf="@id/up_arrow_icon_image_view"
+            tools:text="Band name"/>
 
         <ImageView
-            android:id="@+id/event_type_icon"
+            android:id="@+id/up_arrow_icon_image_view"
+            android:layout_width="40dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/down_arrow_icon_image_view"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/ic_up_arrow"/>
+        <ImageView
+            android:id="@+id/down_arrow_icon_image_view"
+            android:layout_width="40dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/remove_icon_image_view"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/ic_down_arrow"/>
+        <ImageView
+            android:id="@+id/remove_icon_image_view"
             android:layout_width="40dp"
             android:layout_height="0dp"
             android:layout_marginEnd="16dp"
@@ -38,7 +53,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:src="@drawable/ic_minus_sign"
-            tools:src="@drawable/ic_minus_sign" />
+            android:src="@drawable/ic_delete"/>
 
 </android.support.constraint.ConstraintLayout>
