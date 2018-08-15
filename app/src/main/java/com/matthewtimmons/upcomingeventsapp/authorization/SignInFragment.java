@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.MainActivity;
+import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
 
 public class SignInFragment extends Fragment {
     FirebaseAuth.AuthStateListener authStateListener;
@@ -87,6 +88,7 @@ public class SignInFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                                CurrentUserSingleton.getInstance(firebaseAuth.getCurrentUser().getUid());
                                 getActivity().finish();
                                 startActivity(new Intent(getContext(), MainActivity.class));
                             } else {

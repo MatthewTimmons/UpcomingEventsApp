@@ -10,6 +10,7 @@ import android.widget.Button;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.fragments.ListOfUsersFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.SharedGamesFragment;
+import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class SharedGamesActivity extends AppCompatActivity {
         nextButton = findViewById(R.id.nextButton);
         backButton = findViewById(R.id.backButton);
 
-        currentUserId = getIntent().getStringExtra(User.CURRENT_USER_ID);
+        currentUserId = CurrentUserSingleton.currentUserObject.getUserId();
 
         final Fragment friendsSelector = ListOfUsersFragment.newInstance(currentUserId, friendsChecked);
         getSupportFragmentManager().beginTransaction().add(R.id.friend_selector_fragment_container, friendsSelector).commit();

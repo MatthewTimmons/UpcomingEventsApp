@@ -2,6 +2,7 @@ package com.matthewtimmons.upcomingeventsapp.authorization;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -14,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.matthewtimmons.upcomingeventsapp.manager.CircleTransform;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.MainActivity;
+import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
 import com.squareup.picasso.Picasso;
 
 public class AuthorizeUserActivity extends AppCompatActivity {
@@ -34,10 +36,24 @@ public class AuthorizeUserActivity extends AppCompatActivity {
         setContentView(R.layout.activity_authorize);
         firebaseAuth = FirebaseAuth.getInstance();
 
+//        // TODO: Make sure current user has been set before beginning main activity
+//        if (firebaseAuth.getCurrentUser() != null) {
+//            CurrentUserSingleton.getInstance(firebaseAuth.getCurrentUser().getUid());
+//            Handler handler = new Handler();
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    finish();
+//                    Intent intent = new Intent(AuthorizeUserActivity.this, MainActivity.class);
+//                    startActivity(intent);
+//                }
+//            }, 2000);
+//        }
+
         if (firebaseAuth.getCurrentUser() != null) {
-                finish();
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
+            finish();
+            Intent intent = new Intent(AuthorizeUserActivity.this, MainActivity.class);
+            startActivity(intent);
         }
 
         appLogoImageView = findViewById(R.id.horizon_events_logo);

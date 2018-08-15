@@ -7,11 +7,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +24,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.AddEventsActivity;
+import com.matthewtimmons.upcomingeventsapp.adapters.CustomCheckableSpinnerAdapter;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
+import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -29,22 +35,14 @@ import java.util.List;
 import java.util.Map;
 
 public class AddGameFragment extends Fragment{
-    public static final String CURRENT_USER_ID = "CURRENT_USER_ID";
-    String currentUserId, gamePosterUrl;
+    String currentUserId, gamePosterUrl, gameRating;
     TextView welcomeTextView, getSuggestionsTextView;
     ImageView posterImageView;
-    EditText gameTitleEditText, gameRatingEditText, gameReleaseDateEditText;
+    EditText gameTitleEditText, gameReleaseDateEditText;
+    Spinner gameRatingSpinner;
     Button addToMyGamesButton, addToAllGamesButton;
     List<String> releaseConsolesChecked;
     List<CheckBox> allCheckboxes;
-
-    public static AddGameFragment newInstance(String currentUserId) {
-        AddGameFragment addGameFragment = new AddGameFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(CURRENT_USER_ID, currentUserId);
-        addGameFragment.setArguments(bundle);
-        return addGameFragment;
-    }
 
     @Nullable
     @Override
@@ -58,12 +56,13 @@ public class AddGameFragment extends Fragment{
         welcomeTextView = getActivity().findViewById(R.id.add_event_type);
         getSuggestionsTextView = getActivity().findViewById(R.id.get_suggestions_button);
         posterImageView = getActivity().findViewById(R.id.poster_image_view);
-        gameTitleEditText = view.findViewById(R.id.game_title_text_view);
-        gameRatingEditText = view.findViewById(R.id.game_rating_text_view);
-        gameReleaseDateEditText = view.findViewById(R.id.game_release_date_text_view);
+        gameTitleEditText = view.findViewById(R.id.game_title_edit_text);
+        gameRatingSpinner = view.findViewById(R.id.game_rating_spinner);
+        gameReleaseDateEditText = view.findViewById(R.id.game_release_date_edit_text);
         addToMyGamesButton = getActivity().findViewById(R.id.add_to_my_movies_button);
         addToAllGamesButton = getActivity().findViewById(R.id.add_to_all_movies_button);
-        currentUserId = getArguments().getString(CURRENT_USER_ID);
+        currentUserId = CurrentUserSingleton.currentUserObject.getUserId();
+        gameRating = "Rating Pending";
         releaseConsolesChecked = new ArrayList<>();
 
         // Set Checkboxes
@@ -74,6 +73,21 @@ public class AddGameFragment extends Fragment{
         allCheckboxes.add((CheckBox) view.findViewById(R.id.nintendo_switch_checkbox));
         allCheckboxes.add((CheckBox) view.findViewById(R.id.nintendo_3ds_checkbox));
 
+        // Set up rating spinner
+        SpinnerAdapter adapter = ArrayAdapter.createFromResource(getContext(), R.array.gameRatings, android.R.layout.simple_list_item_1);
+        gameRatingSpinner.setAdapter(adapter);
+        gameRatingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                gameRating = (String) adapterView.getItemAtPosition(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         getSuggestionsTextView.setVisibility(View.GONE);
         addToMyGamesButton.setText("Add to my games");
         Picasso.get().load(R.drawable.ic_games_blue).into(posterImageView);
@@ -82,13 +96,12 @@ public class AddGameFragment extends Fragment{
             @Override
             public void onClick(View view) {
                 if (!gameTitleEditText.getText().toString().equals("") &&
-                    !gameRatingEditText.getText().toString().equals("") &&
                     !gameReleaseDateEditText.getText().toString().equals("") &&
                     !releaseConsolesChecked.isEmpty()) {
                     final Map<String, Object> gameData = new HashMap<>();
                     gameData.put("date", gameReleaseDateEditText.getText().toString());
                     gameData.put("eventType", "games");
-                    gameData.put("rating", gameRatingEditText.getText().toString());
+                    gameData.put("rating", gameRating);
                     gameData.put("title", gameTitleEditText.getText().toString());
                     gameData.put("releaseConsoles", releaseConsolesChecked);
                     gameData.put("isCustomEvent", true);
@@ -107,33 +120,33 @@ public class AddGameFragment extends Fragment{
                 }
             }
         });
-
-        addToAllGamesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!gameTitleEditText.getText().toString().equals("") &&
-                    !gameRatingEditText.getText().toString().equals("") &&
-                    !gameReleaseDateEditText.getText().toString().equals("") &&
-                    !releaseConsolesChecked.isEmpty()) {
-                    final Map<String, Object> gameData = new HashMap<>();
-                    gameData.put("date", gameReleaseDateEditText.getText().toString());
-                    gameData.put("eventType", "movies");
-                    gameData.put("imageUrl", gamePosterUrl);
-                    gameData.put("rating", gameRatingEditText.getText().toString());
-                    gameData.put("title", gameTitleEditText.getText().toString());
-                    gameData.put("releaseConsoles", releaseConsolesChecked);
-                    gameData.put("isCustomEvent", true);
-                    Firestore.collection("usersAuth").document("Suggested Additions").collection("games").add(gameData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentReference> task) {
-                            Toast.makeText(getContext(), "Game has been recommended for global adoption.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else {
-                    Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+//
+//        addToAllGamesButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (!gameTitleEditText.getText().toString().equals("") &&
+//                    !gameRatingEditText.getText().toString().equals("") &&
+//                    !gameReleaseDateEditText.getText().toString().equals("") &&
+//                    !releaseConsolesChecked.isEmpty()) {
+//                    final Map<String, Object> gameData = new HashMap<>();
+//                    gameData.put("date", gameReleaseDateEditText.getText().toString());
+//                    gameData.put("eventType", "movies");
+//                    gameData.put("imageUrl", gamePosterUrl);
+//                    gameData.put("rating", gameRatingEditText.getText().toString());
+//                    gameData.put("title", gameTitleEditText.getText().toString());
+//                    gameData.put("releaseConsoles", releaseConsolesChecked);
+//                    gameData.put("isCustomEvent", true);
+//                    Firestore.collection("usersAuth").document("Suggested Additions").collection("games").add(gameData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<DocumentReference> task) {
+//                            Toast.makeText(getContext(), "Game has been recommended for global adoption.", Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
+//                } else {
+//                    Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
 
         for (final CheckBox checkBox : allCheckboxes) {
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

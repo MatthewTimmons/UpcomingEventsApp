@@ -5,4 +5,18 @@
         <item>Games</item>
         <item>Concerts</item>
     </string-array>
+    <string-array name="gameRatings">
+        <item>Rating Pending</item>
+        <item>E</item>
+        <item>E10</item>
+        <item>T</item>
+        <item>M</item>
+    </string-array>
+    <string-array name="movieRatings">
+        <item>Rating Pending</item>
+        <item>G</item>
+        <item>PG</item>
+        <item>PG-13</item>
+        <item>R</item>
+    </string-array>
 </resources>

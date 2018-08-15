@@ -8,9 +8,13 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +30,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.AddEventsActivity;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
+import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -35,20 +40,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AddMovieFragment extends Fragment{
-    public static final String CURRENT_USER_ID = "CURRENT_USER_ID";
-    String currentUserId, moviePosterUrl;
+    String currentUserId, moviePosterUrl, movieRating;
     TextView welcomeTextView, getSuggestionsTextView;
     ImageView posterImageView;
-    EditText movieTitleEditText, movieGenreEditText, movieRatingEditText, movieReleaseDateEditText;
+    EditText movieTitleEditText, movieGenreEditText, movieReleaseDateEditText;
+    Spinner movieRatingSpinner;
     Button addToMyMoviesButton, addToAllMoviesButton;
-
-    public static AddMovieFragment newInstance(String currentUserId) {
-        AddMovieFragment foresightMoviesFragment = new AddMovieFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(CURRENT_USER_ID, currentUserId);
-        foresightMoviesFragment.setArguments(bundle);
-        return foresightMoviesFragment;
-    }
 
     @Nullable
     @Override
@@ -63,31 +60,46 @@ public class AddMovieFragment extends Fragment{
         welcomeTextView = view.findViewById(R.id.add_event_type);
         getSuggestionsTextView = getActivity().findViewById(R.id.get_suggestions_button);
         posterImageView = getActivity().findViewById(R.id.poster_image_view);
-        movieTitleEditText = view.findViewById(R.id.movie_title_text_view);
-        movieGenreEditText = view.findViewById(R.id.movie_genre_text_view);
-        movieRatingEditText = view.findViewById(R.id.movie_rating_text_view);
-        movieReleaseDateEditText = view.findViewById(R.id.movie_release_date_text_view);
+        movieTitleEditText = view.findViewById(R.id.movie_title_edit_text);
+        movieGenreEditText = view.findViewById(R.id.movie_genre_edit_text);
+        movieRatingSpinner = view.findViewById(R.id.movie_rating_spinner);
+        movieReleaseDateEditText = view.findViewById(R.id.movie_release_date_edit_text);
         addToMyMoviesButton = getActivity().findViewById(R.id.add_to_my_movies_button);
         addToAllMoviesButton = getActivity().findViewById(R.id.add_to_all_movies_button);
 
-        currentUserId = getArguments().getString(CURRENT_USER_ID);
+        currentUserId = CurrentUserSingleton.currentUserObject.getUserId();
+        movieRating = "Rating Pending";
 
         getSuggestionsTextView.setVisibility(View.VISIBLE);
         addToMyMoviesButton.setText("Add to my movies");
         Picasso.get().load(R.drawable.ic_movies_blue).into(posterImageView);
+
+        // Set up rating spinner
+        SpinnerAdapter adapter = ArrayAdapter.createFromResource(getContext(), R.array.movieRatings, android.R.layout.simple_list_item_1);
+        movieRatingSpinner.setAdapter(adapter);
+        movieRatingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                movieRating = (String) adapterView.getItemAtPosition(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         addToMyMoviesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!movieTitleEditText.getText().toString().equals("") &&
                         !movieGenreEditText.getText().toString().equals("") &&
-                        !movieRatingEditText.getText().toString().equals("") &&
                         !movieReleaseDateEditText.getText().toString().equals("")) {
                     final Map<String, Object> movieData = new HashMap<>();
                     movieData.put("date", movieReleaseDateEditText.getText().toString());
                     movieData.put("eventType", "movies");
                     movieData.put("genre", movieGenreEditText.getText().toString());
-                    movieData.put("rating", movieRatingEditText.getText().toString());
+                    movieData.put("rating", movieRating);
                     movieData.put("title", movieTitleEditText.getText().toString());
                     movieData.put("isCustomEvent", true);
                     if (moviePosterUrl != null && !moviePosterUrl.equals("")) {
@@ -105,40 +117,40 @@ public class AddMovieFragment extends Fragment{
                 }
             }
         });
-
-        addToAllMoviesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!movieTitleEditText.getText().toString().equals("") &&
-                        !movieGenreEditText.getText().toString().equals("") &&
-                        !movieRatingEditText.getText().toString().equals("") &&
-                        !movieReleaseDateEditText.getText().toString().equals("")) {
-                    final Map<String, Object> movieData = new HashMap<>();
-                    movieData.put("date", movieReleaseDateEditText.getText().toString());
-                    movieData.put("eventType", "movies");
-                    movieData.put("genre", movieGenreEditText.getText().toString());
-                    movieData.put("rating", movieRatingEditText.getText().toString());
-                    movieData.put("title", movieTitleEditText.getText().toString());
-                    movieData.put("isCustomEvent", true);
-                    if (AddEventsActivity.moviePosterUrl != null && !AddEventsActivity.moviePosterUrl.equals("")) {
-                        movieData.put("imageUrl", AddEventsActivity.moviePosterUrl);
-                    } else if (moviePosterUrl != null && !moviePosterUrl.equals("")) {
-                        movieData.put("imageUrl", moviePosterUrl);
-                    } else {
-                        movieData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
-                        Toast.makeText(getContext(), "No movie poster detected", Toast.LENGTH_SHORT).show();
-                    }
-                    Firestore.collection("usersAuth").document("Suggested Additions").collection("movies").add(movieData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentReference> task) {
-                            Toast.makeText(getContext(), "Movie has been recommended for global adoption.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else {
-                    Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+//
+//        addToAllMoviesButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (!movieTitleEditText.getText().toString().equals("") &&
+//                        !movieGenreEditText.getText().toString().equals("") &&
+//                        !movieRatingSpinner.getText().toString().equals("") &&
+//                        !movieReleaseDateEditText.getText().toString().equals("")) {
+//                    final Map<String, Object> movieData = new HashMap<>();
+//                    movieData.put("date", movieReleaseDateEditText.getText().toString());
+//                    movieData.put("eventType", "movies");
+//                    movieData.put("genre", movieGenreEditText.getText().toString());
+//                    movieData.put("rating", movieRatingSpinner.getText().toString());
+//                    movieData.put("title", movieTitleEditText.getText().toString());
+//                    movieData.put("isCustomEvent", true);
+//                    if (AddEventsActivity.moviePosterUrl != null && !AddEventsActivity.moviePosterUrl.equals("")) {
+//                        movieData.put("imageUrl", AddEventsActivity.moviePosterUrl);
+//                    } else if (moviePosterUrl != null && !moviePosterUrl.equals("")) {
+//                        movieData.put("imageUrl", moviePosterUrl);
+//                    } else {
+//                        movieData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
+//                        Toast.makeText(getContext(), "No movie poster detected", Toast.LENGTH_SHORT).show();
+//                    }
+//                    Firestore.collection("usersAuth").document("Suggested Additions").collection("movies").add(movieData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<DocumentReference> task) {
+//                            Toast.makeText(getContext(), "Movie has been recommended for global adoption.", Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
+//                } else {
+//                    Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
 
         getSuggestionsTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,9 +191,26 @@ public class AddMovieFragment extends Fragment{
                                             } else {
                                                 movieTitleEditText.setText(response.getString("Title"));
                                                 movieGenreEditText.setText(response.getString("Genre"));
-                                                movieRatingEditText.setText(response.getString("Rated"));
                                                 movieReleaseDateEditText.setText(response.getString("Released"));
                                                 moviePosterUrl = response.getString("Poster");
+
+                                                switch (response.getString("Rated")) {
+                                                    case "N/A":
+                                                        movieRatingSpinner.setSelection(0);
+                                                        break;
+                                                    case "G":
+                                                        movieRatingSpinner.setSelection(1);
+                                                        break;
+                                                    case "PG":
+                                                        movieRatingSpinner.setSelection(2);
+                                                        break;
+                                                    case "PG-13":
+                                                        movieRatingSpinner.setSelection(3);
+                                                        break;
+                                                    case "R":
+                                                        movieRatingSpinner.setSelection(4);
+                                                        break;
+                                                }
                                                 alertDialog2.cancel();
                                             }
                                         } catch (JSONException e) {

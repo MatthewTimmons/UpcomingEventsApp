@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,6 +31,7 @@ import com.matthewtimmons.upcomingeventsapp.adapters.EventPagerAdapter;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.authorization.AuthorizeUserActivity;
 import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
+import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 import com.squareup.picasso.Picasso;
 
@@ -55,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
         currentUserId = firebaseAuth.getCurrentUser().getUid();
         currentUserDisplayname = firebaseAuth.getCurrentUser().getDisplayName();
 
+        CurrentUserSingleton.getInstance(currentUserId);
+
         navigationView = findViewById(R.id.navigation_view);
         navigationDrawerView = findViewById(R.id.nav_drawer);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -73,16 +77,10 @@ public class MainActivity extends AppCompatActivity {
         profilePhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                firebaseFirestore.document("users/" + currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    User user = task.getResult().toObject(User.class);
                     Intent intentToProfileViewActivity = new Intent(MainActivity.this, ProfileViewActivity.class);
                     intentToProfileViewActivity.putExtra(User.CURRENT_USER_ID, currentUserId);
-                    intentToProfileViewActivity.putExtra(User.CURRENT_USER_OBJECT, user);
+                    intentToProfileViewActivity.putExtra(User.CURRENT_USER_OBJECT, CurrentUserSingleton.currentUserObject);
                     startActivity(intentToProfileViewActivity);
-                    }
-                });
             }
         });
 
@@ -92,19 +90,14 @@ public class MainActivity extends AppCompatActivity {
                                                                  switch (menuItem.getItemId()) {
                                                                      case R.id.nav_drawer_favorites:
                                                                          Intent intentToDrawersFavorites = new Intent(MainActivity.this, FavoritesActivity.class);
-                                                                         // TODO Pass in the current User object if possible. Otherwise, the favorites will have to make the call again
-//                                                                         intentToDrawersFavorites.putExtra();
-                                                                         intentToDrawersFavorites.putExtra(User.CURRENT_USER_ID, currentUserId);
                                                                          startActivity(intentToDrawersFavorites);
                                                                          return true;
                                                                      case R.id.nav_drawer_shared_games:
                                                                          Intent intentToSharedGames = new Intent(MainActivity.this, SharedGamesActivity.class);
-                                                                         intentToSharedGames.putExtra(User.CURRENT_USER_ID, currentUserId);
                                                                          startActivity(intentToSharedGames);
                                                                          return true;
                                                                      case R.id.nav_drawer_friends:
                                                                          Intent intentToFriends = new Intent(MainActivity.this, FriendsListActivity.class);
-                                                                         intentToFriends.putExtra(User.CURRENT_USER_ID, currentUserId);
                                                                          startActivity(intentToFriends);
                                                                          return true;
                                                                      case R.id.nav_drawer_sign_out:
@@ -127,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                                                                          confirmButton.setOnClickListener(new View.OnClickListener() {
                                                                              @Override
                                                                              public void onClick(View view) {
+                                                                             CurrentUserSingleton.clearCurrentUserSingleton();
                                                                              firebaseAuth.signOut();
                                                                              Intent intentToStartSignInPage = new Intent(MainActivity.this, AuthorizeUserActivity.class);
                                                                              intentToStartSignInPage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -137,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
                                                                          return true;
                                                                      case R.id.nav_drawer_add_events_activity:
                                                                          Intent intentToAddEventsActivity = new Intent(MainActivity.this, AddEventsActivity.class);
-                                                                         intentToAddEventsActivity.putExtra(User.CURRENT_USER_ID, currentUserId);
                                                                          startActivity(intentToAddEventsActivity);
                                                                          return true;
                                                                  }
@@ -226,8 +219,6 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.nav_item_hamburger:
                 navigationDrawerView.openDrawer(GravityCompat.START);
-                return true;
-            case R.id.nav_drawer_favorites:
                 return true;
         }
         return super.onOptionsItemSelected(item);

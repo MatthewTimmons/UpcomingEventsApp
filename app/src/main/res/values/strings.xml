@@ -8,4 +8,5 @@
     <string name="games">"Games"</string>
     <string name="movies">"Movies"</string>
     <string name="formatted_rating">"Rated %s"</string>
+    <string name="game_rating_prompt">Select game rating</string>
 </resources>

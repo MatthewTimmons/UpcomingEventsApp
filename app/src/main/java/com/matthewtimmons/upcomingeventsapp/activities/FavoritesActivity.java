@@ -11,6 +11,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
 import com.matthewtimmons.upcomingeventsapp.manager.DevHelper;
+import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 
 public class FavoritesActivity extends AppCompatActivity {
@@ -24,7 +25,7 @@ public class FavoritesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
 
-        currentUserId = getIntent().getStringExtra(User.CURRENT_USER_ID);
+        currentUserId = CurrentUserSingleton.currentUserObject.getUserId();
         currentUserReference = UserController.getUserReference(currentUserId);
 
         recyclerView = findViewById(R.id.favorites_recycler_view);

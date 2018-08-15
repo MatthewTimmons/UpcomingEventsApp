@@ -224,9 +224,6 @@ public class EventDetailsFragment extends Fragment {
         presentEvent(game, R.drawable.ic_games_blue);
         fourthTextView.setText(game.getReleaseConsolesAsString());
 
-
-
-
         // Set rating TextView
         String formattedRating = getResources().getString(R.string.formatted_rating, game.getRating());
         optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);

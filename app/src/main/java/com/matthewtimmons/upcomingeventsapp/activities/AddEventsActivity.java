@@ -18,6 +18,7 @@ import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.fragments.AddConcertFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.AddGameFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.AddMovieFragment;
+import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 
 public class AddEventsActivity extends AppCompatActivity {
@@ -38,7 +39,7 @@ public class AddEventsActivity extends AppCompatActivity {
         addToMyMoviesButton = findViewById(R.id.add_to_my_movies_button);
         addToAllMoviesButton = findViewById(R.id.add_to_all_movies_button);
 
-        currentUserId = getIntent().getStringExtra(User.CURRENT_USER_ID);
+        currentUserId = CurrentUserSingleton.currentUserObject.getUserId();
 
         final Spinner spinner = findViewById(R.id.add_event_spinner);
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
@@ -51,15 +52,15 @@ public class AddEventsActivity extends AppCompatActivity {
 
                 if (i == 0) {
                     addEventTypeTextView.setText("Add new movie");
-                    AddMovieFragment addMovieFragment = AddMovieFragment.newInstance(currentUserId);
+                    AddMovieFragment addMovieFragment = new AddMovieFragment();
                     getSupportFragmentManager().beginTransaction().replace(R.id.add_event_fragment_container, addMovieFragment).commit();
                 } else if (i == 1) {
                     addEventTypeTextView.setText("Add new game");
-                    AddGameFragment addGameFragment = AddGameFragment.newInstance(currentUserId);
+                    AddGameFragment addGameFragment = new AddGameFragment();
                     getSupportFragmentManager().beginTransaction().replace(R.id.add_event_fragment_container, addGameFragment).commit();
                 } else if (i == 2) {
                     addEventTypeTextView.setText("Add new concert");
-                    AddConcertFragment addConcertFragment = AddConcertFragment.newInstance(currentUserId);
+                    AddConcertFragment addConcertFragment = new AddConcertFragment();
                     getSupportFragmentManager().beginTransaction().replace(R.id.add_event_fragment_container, addConcertFragment).commit();
                 }
             }

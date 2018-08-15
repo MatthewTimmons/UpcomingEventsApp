@@ -33,6 +33,7 @@ import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
 import com.matthewtimmons.upcomingeventsapp.fragments.ListOfUsersFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.RecyclerViewHeaderFragment;
 import com.matthewtimmons.upcomingeventsapp.manager.DevHelper;
+import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 import com.squareup.picasso.Picasso;
 
@@ -53,12 +54,10 @@ public class ProfileViewActivity extends AppCompatActivity {
     String currentUserId, profileUserId;
     boolean isCurrentUserViewer;
     Uri imageUri;
-    User currentUser;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_profile_view);
         profilePhotoImageView = findViewById(R.id.profile_photo);
         displayNameTextView = findViewById(R.id.display_name);
@@ -72,8 +71,7 @@ public class ProfileViewActivity extends AppCompatActivity {
         profileUserObject = getIntent().getParcelableExtra(User.CURRENT_USER_OBJECT);
 
         // Get signed in user data
-        currentFirebaseUser = firebaseAuth.getCurrentUser();
-        currentUserId = currentFirebaseUser.getUid();
+        currentUserId = CurrentUserSingleton.currentUserObject.getUserId();
         isCurrentUserViewer = currentUserId.equals(profileUserId);
         uploadsStorageReference = FirebaseConstants.getStorageReference("uploads");
 
@@ -113,7 +111,6 @@ public class ProfileViewActivity extends AppCompatActivity {
             editIconImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                if (isCurrentUserViewer) {
                     View dialogView = getLayoutInflater().inflate(R.layout.dialog_confirm, null);
                     TextView titleMessageTextView = dialogView.findViewById(R.id.question_confirmation);
                     final EditText userInputEditText = dialogView.findViewById(R.id.user_input_edittext);
@@ -153,9 +150,6 @@ public class ProfileViewActivity extends AppCompatActivity {
                             alertDialog.cancel();
                         }
                     });
-                } else {
-                    Toast.makeText(ProfileViewActivity.this, "You do not have permission to change someone else's display name", Toast.LENGTH_SHORT).show();
-                }
                 }
             });
         }
@@ -163,13 +157,8 @@ public class ProfileViewActivity extends AppCompatActivity {
         // Set all rules for the button at the bottom of the screen when the current user is looking at another user's profile
         if(!isCurrentUserViewer) {
             sendFriendRequestButton.setVisibility(View.VISIBLE);
-            UserController.getUser(currentUserId, new UserController.GetUserListener() {
-                @Override
-                public void onUserRetrieved(final User currentUserObject) {
-                    allFriendIds = currentUserObject.getFriends();
-                    setFriendRequestButtonFunctionality(currentUserObject);
-                }
-            });
+            allFriendIds = CurrentUserSingleton.currentUserObject.getFriends();
+            setFriendRequestButtonFunctionality(CurrentUserSingleton.currentUserObject);
         }
     }
 

@@ -13,7 +13,7 @@ import java.util.Map;
 public class User implements Parcelable {
     public static String CURRENT_USER_ID = "CURRENT_USER_ID";
     public static String CURRENT_USER_OBJECT = "CURRENT_USER_OBJECT";
-    String displayName, profilePhotoURL;
+    String displayName, profilePhotoURL, userId;
     List<String> friends, gamesOwnedByGameId, moviesSeenByMovieId;
     Map<String, Object> interestLevels;
     Map<String, Object> myFavorites;
@@ -22,6 +22,7 @@ public class User implements Parcelable {
     public User() {}
 
     public User(DocumentSnapshot currentUserDocumentSnapshot) {
+        this.userId = currentUserDocumentSnapshot.getId();
         this.displayName = currentUserDocumentSnapshot.getString("displayName");
         this.profilePhotoURL = currentUserDocumentSnapshot.getString("profilePhotoURL");
         this.friends = (List<String>) currentUserDocumentSnapshot.get("friends");
@@ -104,6 +105,14 @@ public class User implements Parcelable {
         allData.put("interestLevels", concertsGamesMoviesHashMapObject);
         allData.put("pendingFriendRequests", emptyHashMapStringObject);
         return allData;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getDisplayName() {

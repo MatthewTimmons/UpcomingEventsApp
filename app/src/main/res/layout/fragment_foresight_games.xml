@@ -7,26 +7,18 @@
     >
 
     <EditText
-        android:id="@+id/game_title_text_view"
+        android:id="@+id/game_title_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Game title"
         android:inputType="textCapSentences"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="16dp"/>
-    <EditText
-        android:id="@+id/game_rating_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Game Rating"
-        android:inputType="textCapCharacters"
-        app:layout_constraintTop_toBottomOf="@id/game_title_text_view"
-        android:layout_marginTop="16dp"/>
     <RelativeLayout
-        android:id="@+id/game_genre_text_view"
+        android:id="@+id/game_genre_relative_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/game_rating_text_view"
+        app:layout_constraintTop_toBottomOf="@id/game_title_edit_text"
         android:layout_marginTop="16dp">
         <CheckBox
             android:id="@+id/pc_checkbox"
@@ -59,12 +51,19 @@
             android:layout_below="@id/pc_checkbox"
             android:text="Nintendo 3DS"/>
     </RelativeLayout>
+    <Spinner
+        android:id="@+id/game_rating_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:prompt="@string/game_rating_prompt"
+        app:layout_constraintTop_toBottomOf="@id/game_genre_relative_layout"
+        android:layout_marginTop="16dp"/>
     <EditText
-        android:id="@+id/game_release_date_text_view"
+        android:id="@+id/game_release_date_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Game Release Date"
         android:inputType="textCapSentences"
-        app:layout_constraintTop_toBottomOf="@id/game_genre_text_view"
+        app:layout_constraintTop_toBottomOf="@id/game_rating_spinner"
         android:layout_marginTop="16dp"/>
 </android.support.constraint.ConstraintLayout>

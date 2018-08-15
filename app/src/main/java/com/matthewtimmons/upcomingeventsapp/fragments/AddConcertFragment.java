@@ -25,6 +25,7 @@ import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.AddEventsActivity;
 import com.matthewtimmons.upcomingeventsapp.adapters.CustomRemovableSpinnerAdapter;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
+import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -33,21 +34,11 @@ import java.util.List;
 import java.util.Map;
 
 public class AddConcertFragment extends Fragment {
-    public static final String CURRENT_USER_ID = "CURRENT_USER_ID";
     TextView welcomeTextView, getSuggestionsTextView;
     ImageView posterImageView;
     EditText addBandNameEditText, concertLocationEditText, concertDateEditText;
     Button addBandNameButton, addToMyConcertsButton, addToAllConcertsButton;
     String currentUserId, concertPosterUrl;
-    Integer minHeight;
-
-    public static AddConcertFragment newInstance(String currentUserId) {
-        AddConcertFragment addConcertFragment = new AddConcertFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(CURRENT_USER_ID, currentUserId);
-        addConcertFragment.setArguments(bundle);
-        return addConcertFragment;
-    }
 
     @Nullable
     @Override
@@ -61,20 +52,17 @@ public class AddConcertFragment extends Fragment {
         welcomeTextView = getActivity().findViewById(R.id.add_event_type);
         getSuggestionsTextView = getActivity().findViewById(R.id.get_suggestions_button);
         posterImageView = getActivity().findViewById(R.id.poster_image_view);
-//        bandsListView = view.findViewById(R.id.list_of_bands_linear_layout);
         addBandNameButton = view.findViewById(R.id.add_band_name_button);
         addBandNameEditText = view.findViewById(R.id.add_band_name_edit_text);
         concertLocationEditText = view.findViewById(R.id.concert_location_edit_text);
         concertDateEditText = view.findViewById(R.id.concert_date_edit_text);
         addToMyConcertsButton = getActivity().findViewById(R.id.add_to_my_movies_button);
         addToAllConcertsButton = getActivity().findViewById(R.id.add_to_all_movies_button);
-        currentUserId = getArguments().getString(CURRENT_USER_ID);
-        minHeight = 0;
+        currentUserId = CurrentUserSingleton.currentUserObject.getUserId();
 
         getSuggestionsTextView.setVisibility(View.GONE);
         addToMyConcertsButton.setText("Add to my concerts");
         Picasso.get().load(R.drawable.ic_concerts_blue).into(posterImageView);
-
 
         final ArrayList<String> bandNames = new ArrayList<>();
 

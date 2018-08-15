@@ -15,6 +15,7 @@ import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.fragments.ListOfUsersFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.RecyclerViewHeaderFragment;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
+import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 
 import java.util.List;
@@ -29,24 +30,20 @@ public class FriendsListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
 
-        currentUserId = getIntent().getStringExtra(User.CURRENT_USER_ID);
+        currentUserId = CurrentUserSingleton.currentUserObject.getUserId();
 
         // Set friends header and recycler view
         Fragment listOfUsersHeader = RecyclerViewHeaderFragment.newInstance(currentUserId, "Friends");
         ListOfUsersFragment friendsFragment = ListOfUsersFragment.newInstance(currentUserId, "Grid");
         getSupportFragmentManager().beginTransaction().add(R.id.friends_header, listOfUsersHeader).add(R.id.friends_header, friendsFragment).commit();
 
-        Firestore.collection("users").document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                Map<String, Boolean> pendingFriendRequests = (Map<String, Boolean>) task.getResult().get("pendingFriendRequests");
-                if (pendingFriendRequests != null && pendingFriendRequests.size() > 0) {
-                    // Set pending friend requests header and recycler view
-                    Fragment header = RecyclerViewHeaderFragment.newInstance(currentUserId, "Pending Friend Requests");
-                    ListOfUsersFragment pendingRequests = ListOfUsersFragment.newInstance(currentUserId, "pendingFriendRequests");
-                    getSupportFragmentManager().beginTransaction().add(R.id.pending_requests_header, header).add(R.id.pending_requests_header, pendingRequests).commit();
-                }
-            }
-        });
+        // Set pending friend requests as visible if they exist
+        Map<String, Object> pendingFriendRequests = CurrentUserSingleton.currentUserObject.getPendingFriendRequests();
+        if (pendingFriendRequests != null && pendingFriendRequests.size() > 0) {
+            // Set pending friend requests header and recycler view
+            Fragment header = RecyclerViewHeaderFragment.newInstance(currentUserId, "Pending Friend Requests");
+            ListOfUsersFragment pendingRequests = ListOfUsersFragment.newInstance(currentUserId, "pendingFriendRequests");
+            getSupportFragmentManager().beginTransaction().add(R.id.pending_requests_header, header).add(R.id.pending_requests_header, pendingRequests).commit();
+        }
     }
 }
