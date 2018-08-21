@@ -75,7 +75,7 @@ public class EventsFragment extends Fragment {
                         }
                     });
                 } else if (eventType.equals("games")) {
-                    Firestore.collection("users").document(currentUserId).collection(eventType).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    Firestore.collection("games").document(currentUserId).collection(eventType).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             List<DocumentSnapshot> allPersonalGames = task.getResult().getDocuments();
@@ -86,7 +86,7 @@ public class EventsFragment extends Fragment {
                         }
                     });
                 } else if (eventType.equals("concerts")) {
-                    Firestore.collection("users").document(currentUserId).collection(eventType).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    Firestore.collection("concerts").document(currentUserId).collection(eventType).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             List<DocumentSnapshot> allPersonalConcerts = task.getResult().getDocuments();

@@ -64,14 +64,6 @@
         android:inputType="textCapSentences"
         app:layout_constraintTop_toBottomOf="@id/add_band_name_edit_text"
         android:layout_marginTop="16dp" />
-    <EditText
-        android:id="@+id/concert_date_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Concert Date"
-        android:inputType="textCapSentences"
-        app:layout_constraintTop_toBottomOf="@id/concert_location_edit_text"
-        android:layout_marginTop="16dp"/>
 
 
 </android.support.constraint.ConstraintLayout>

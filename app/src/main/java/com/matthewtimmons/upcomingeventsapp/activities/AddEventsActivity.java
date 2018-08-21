@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -19,12 +20,16 @@ import com.matthewtimmons.upcomingeventsapp.fragments.AddGameFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.AddMovieFragment;
 import com.matthewtimmons.upcomingeventsapp.models.UserManager;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class AddEventsActivity extends AppCompatActivity {
     public static String moviePosterUrl;
     String currentUserId;
     TextView addEventTypeTextView, getSuggestionsTextView;
     ImageView posterImageView;
     Button addToMyMoviesButton, addToAllMoviesButton;
+    NumberPicker monthNumberPicker, dayNumberPicker, yearNumberPicker;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,6 +43,8 @@ public class AddEventsActivity extends AppCompatActivity {
         addToAllMoviesButton = findViewById(R.id.add_to_all_movies_button);
 
         currentUserId = UserManager.getInstance().getCurrentUserId();
+
+        setDateNumberPicker();
 
         final Spinner spinner = findViewById(R.id.add_event_spinner);
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
@@ -91,6 +98,44 @@ public class AddEventsActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    private void setDateNumberPicker() {
+        Date date = Calendar.getInstance().getTime();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        monthNumberPicker = findViewById(R.id.month_picker);
+        monthNumberPicker.setMinValue(1);
+        monthNumberPicker.setMaxValue(12);
+        monthNumberPicker.setDisplayedValues(new String[]{"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"});
+
+        dayNumberPicker = findViewById(R.id.day_picker);
+        dayNumberPicker.setMinValue(1);
+        dayNumberPicker.setMaxValue(31);
+        dayNumberPicker.setWrapSelectorWheel(false);
+
+        yearNumberPicker = findViewById(R.id.year_picker);
+        yearNumberPicker.setMinValue(1950);
+        yearNumberPicker.setMaxValue(2028);
+        yearNumberPicker.setWrapSelectorWheel(false);
+
+        monthNumberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
+                if (i1 == 2) {
+                    dayNumberPicker.setMaxValue(28);
+                } else if (i1 == 9 | i1 == 4 | i1 == 6 | i1 == 11) {
+                    dayNumberPicker.setMaxValue(30);
+                } else {
+                    dayNumberPicker.setMaxValue(31);
+                }
+            }
+        });
+
+        monthNumberPicker.setValue(calendar.get(Calendar.MONTH) + 1);
+        dayNumberPicker.setValue(calendar.get(Calendar.DAY_OF_MONTH));
+        yearNumberPicker.setValue(calendar.get(Calendar.YEAR));
     }
 
 }

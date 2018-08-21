@@ -84,50 +84,48 @@ public class DetailsActivity extends AppCompatActivity {
         interestLevelSeekbarFragment = InterestLevelSeekbarFragment.newInstance(eventType, eventId);
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.fragment_container, eventDetailsFragment);
         fragmentTransaction.add(R.id.interest_level_container, interestLevelSeekbarFragment);
         fragmentTransaction.add(R.id.fragment_friend_recycler_view, friendRecyclerViewFragment);
-        fragmentTransaction.add(R.id.fragment_container, eventDetailsFragment);
         fragmentTransaction.commit();
     }
 
     public void setDeleteButtonFunctionality() {
         deleteCustomEventButton.setVisibility(View.VISIBLE);
-        if (eventType.equals("movies")) {
-            deleteCustomEventButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //TODO: Extract this duplicate code into it's own Alert Dialog Builder
-                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DetailsActivity.this);
-                    View dialogView = getLayoutInflater().inflate(R.layout.dialog_confirm, null);
-                    Button confirmButton = dialogView.findViewById(R.id.confirm_button);
-                    Button cancelButton = dialogView.findViewById(R.id.cancel_button);
+        deleteCustomEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: Extract this duplicate code into it's own Alert Dialog Builder
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DetailsActivity.this);
+                View dialogView = getLayoutInflater().inflate(R.layout.dialog_confirm, null);
+                Button confirmButton = dialogView.findViewById(R.id.confirm_button);
+                Button cancelButton = dialogView.findViewById(R.id.cancel_button);
 
-                    dialogBuilder.setView(dialogView);
-                    final AlertDialog alertDialog = dialogBuilder.create();
-                    alertDialog.show();
+                dialogBuilder.setView(dialogView);
+                final AlertDialog alertDialog = dialogBuilder.create();
+                alertDialog.show();
 
-                    cancelButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            alertDialog.cancel();
-                        }
-                    });
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        alertDialog.cancel();
+                    }
+                });
 
-                    confirmButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            DocumentReference currentCustomMovieRef = Firestore.collection(eventType).document(currentUserId).collection(eventType).document(eventId);
-                            currentCustomMovieRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Toast.makeText(DetailsActivity.this, "Custom movie was deleted", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-        }
+                confirmButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DocumentReference currentCustomMovieRef = Firestore.collection(eventType).document(currentUserId).collection(eventType).document(eventId);
+                        currentCustomMovieRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(DetailsActivity.this, "Custom event was deleted", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
 }

@@ -58,12 +58,4 @@
         android:prompt="@string/game_rating_prompt"
         app:layout_constraintTop_toBottomOf="@id/game_genre_relative_layout"
         android:layout_marginTop="16dp"/>
-    <EditText
-        android:id="@+id/game_release_date_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Game Release Date"
-        android:inputType="textCapSentences"
-        app:layout_constraintTop_toBottomOf="@id/game_rating_spinner"
-        android:layout_marginTop="16dp"/>
 </android.support.constraint.ConstraintLayout>

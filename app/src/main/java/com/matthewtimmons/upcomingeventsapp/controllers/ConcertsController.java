@@ -25,7 +25,7 @@ public class ConcertsController {
     }
 
     public static void getCustomConcert(String id, String userId, final ConcertsController.GetConcertListener concertListener) {
-        FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(userId).collection("concerts").document(id)
+        FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_CONCERTS).document(userId).collection("concerts").document(id)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,9 +33,10 @@ import java.util.Map;
 public class AddConcertFragment extends Fragment {
     TextView welcomeTextView, getSuggestionsTextView;
     ImageView posterImageView;
-    EditText addBandNameEditText, concertLocationEditText, concertDateEditText;
+    EditText addBandNameEditText, concertLocationEditText;
     Button addBandNameButton, addToMyConcertsButton, addToAllConcertsButton;
     String currentUserId, concertPosterUrl;
+    NumberPicker monthNumberPicker, dayNumberPicker, yearNumberPicker;
 
     @Nullable
     @Override
@@ -51,7 +53,6 @@ public class AddConcertFragment extends Fragment {
         addBandNameButton = view.findViewById(R.id.add_band_name_button);
         addBandNameEditText = view.findViewById(R.id.add_band_name_edit_text);
         concertLocationEditText = view.findViewById(R.id.concert_location_edit_text);
-        concertDateEditText = view.findViewById(R.id.concert_date_edit_text);
         addToMyConcertsButton = getActivity().findViewById(R.id.add_to_my_movies_button);
         addToAllConcertsButton = getActivity().findViewById(R.id.add_to_all_movies_button);
         currentUserId = UserManager.getInstance().getCurrentUserId();
@@ -59,6 +60,11 @@ public class AddConcertFragment extends Fragment {
         getSuggestionsTextView.setVisibility(View.GONE);
         addToMyConcertsButton.setText("Add to my concerts");
         Picasso.get().load(R.drawable.ic_concerts_blue).into(posterImageView);
+
+        // Set up date number picker
+        monthNumberPicker = getActivity().findViewById(R.id.month_picker);
+        dayNumberPicker = getActivity().findViewById(R.id.day_picker);
+        yearNumberPicker = getActivity().findViewById(R.id.year_picker);
 
         final ArrayList<String> bandNames = new ArrayList<>();
 
@@ -82,15 +88,19 @@ public class AddConcertFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (!concertLocationEditText.getText().toString().equals("") &&
-                        !concertDateEditText.getText().toString().equals("") &&
                         !bandNames.isEmpty()) {
+                    StringBuilder formattedDate = new StringBuilder();
+                    formattedDate.append((String.format("%02d", monthNumberPicker.getValue())) + "/" +
+                            String.format("%02d", dayNumberPicker.getValue()) + "/" +
+                            String.valueOf(yearNumberPicker.getValue()));
+
                     final Map<String, Object> concertData = new HashMap<>();
                     concertData.put("concertLocation", concertLocationEditText.getText().toString());
-                    concertData.put("date", concertDateEditText.getText().toString());
+                    concertData.put("date", formattedDate.toString());
                     concertData.put("eventType", "concerts");
                     concertData.put("imageUrl", concertPosterUrl);
                     concertData.put("concertBandsArray", bandNames);
-                    concertData.put("isCustomEvent", true);
+                    concertData.put("eventCreator", currentUserId);
                     if (AddEventsActivity.moviePosterUrl != null && !AddEventsActivity.moviePosterUrl.equals("")) {
                         concertData.put("imageUrl", AddEventsActivity.moviePosterUrl);
                     } else if (concertPosterUrl != null && !concertPosterUrl.equals("")) {
@@ -99,7 +109,7 @@ public class AddConcertFragment extends Fragment {
                         concertData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
                         Toast.makeText(getContext(), "No concert poster detected", Toast.LENGTH_SHORT).show();
                     }
-                    Firestore.collection("users").document(currentUserId).collection("concerts").add(concertData);
+                    Firestore.collection("concerts").document(currentUserId).collection("concerts").add(concertData);
                     Toast.makeText(getContext(), "Concert has been added to your list of concerts.", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();
@@ -111,15 +121,19 @@ public class AddConcertFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (!concertLocationEditText.getText().toString().equals("") &&
-                        !concertDateEditText.getText().toString().equals("") &&
                         !bandNames.isEmpty()) {
+                    StringBuilder formattedDate = new StringBuilder();
+                    formattedDate.append((String.format("%02d", monthNumberPicker.getValue())) + "/" +
+                            String.format("%02d", dayNumberPicker.getValue()) + "/" +
+                            String.valueOf(yearNumberPicker.getValue()));
+
                     final Map<String, Object> concertData = new HashMap<>();
                     concertData.put("concertLocation", concertLocationEditText.getText().toString());
-                    concertData.put("date", concertDateEditText.getText().toString());
+                    concertData.put("date", formattedDate);
                     concertData.put("eventType", "concerts");
                     concertData.put("imageUrl", concertPosterUrl);
                     concertData.put("concertBandsArray", bandNames);
-                    concertData.put("isCustomEvent", true);
+                    concertData.put("eventCreator", currentUserId);
                     Firestore.collection("usersAuth").document("Suggested Additions").collection("concerts").add(concertData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentReference> task) {

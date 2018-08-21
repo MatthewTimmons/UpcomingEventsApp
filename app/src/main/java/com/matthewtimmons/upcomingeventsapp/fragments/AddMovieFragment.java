@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
@@ -39,6 +40,11 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,11 +58,13 @@ public class AddMovieFragment extends Fragment{
     String currentUserId, moviePosterUrl, movieRating;
     TextView welcomeTextView, getSuggestionsTextView;
     ImageView posterImageView;
-    EditText movieTitleEditText, movieGenreEditText, movieReleaseDateEditText;
+    EditText movieTitleEditText, movieGenreEditText;
     Spinner movieRatingSpinner;
     Button addToMyMoviesButton, addToAllMoviesButton;
     SeekBar ratingsSeekbar;
     LinearLayout movieRatingIcons;
+
+    NumberPicker monthNumberPicker, dayNumberPicker, yearNumberPicker;
 
     @Nullable
     @Override
@@ -74,7 +82,6 @@ public class AddMovieFragment extends Fragment{
         movieTitleEditText = view.findViewById(R.id.movie_title_edit_text);
         movieGenreEditText = view.findViewById(R.id.movie_genre_edit_text);
         movieRatingSpinner = view.findViewById(R.id.movie_rating_spinner);
-        movieReleaseDateEditText = view.findViewById(R.id.movie_release_date_edit_text);
         addToMyMoviesButton = getActivity().findViewById(R.id.add_to_my_movies_button);
         addToAllMoviesButton = getActivity().findViewById(R.id.add_to_all_movies_button);
         ratingsSeekbar = view.findViewById(R.id.rating_seekbar);
@@ -102,19 +109,29 @@ public class AddMovieFragment extends Fragment{
             }
         });
 
+        // Set up date number picker
+        monthNumberPicker = getActivity().findViewById(R.id.month_picker);
+        dayNumberPicker = getActivity().findViewById(R.id.day_picker);
+        yearNumberPicker = getActivity().findViewById(R.id.year_picker);
+
         addToMyMoviesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                StringBuilder formattedDate = new StringBuilder();
+                formattedDate.append((String.format("%02d", monthNumberPicker.getValue())) + "/" +
+                        String.format("%02d", dayNumberPicker.getValue()) + "/" +
+                        String.valueOf(yearNumberPicker.getValue()));
+
                 if (!movieTitleEditText.getText().toString().equals("") &&
-                        !movieGenreEditText.getText().toString().equals("") &&
-                        !movieReleaseDateEditText.getText().toString().equals("")) {
+                        !movieGenreEditText.getText().toString().equals("")) {
                     final Map<String, Object> movieData = new HashMap<>();
-                    movieData.put("date", movieReleaseDateEditText.getText().toString());
                     movieData.put("eventType", "movies");
                     movieData.put("genre", movieGenreEditText.getText().toString());
                     movieData.put("rating", movieRating);
                     movieData.put("title", movieTitleEditText.getText().toString());
                     movieData.put("eventCreator", currentUserId);
+                    movieData.put("date", formattedDate.toString());
+
                     if (moviePosterUrl != null && !moviePosterUrl.equals("")) {
                         movieData.put("imageUrl", moviePosterUrl);
                     } else if (AddEventsActivity.moviePosterUrl != null && !AddEventsActivity.moviePosterUrl.equals("")) {
@@ -223,8 +240,21 @@ public class AddMovieFragment extends Fragment{
                                             } else {
                                                 movieTitleEditText.setText(response.getString("Title"));
                                                 movieGenreEditText.setText(response.getString("Genre"));
-                                                movieReleaseDateEditText.setText(response.getString("Released"));
                                                 moviePosterUrl = response.getString("Poster");
+
+                                                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
+                                                String dateString = response.getString("Released");
+
+                                                try {
+                                                    Date date = sdf.parse(dateString);
+                                                    Calendar calendar = Calendar.getInstance();
+                                                    calendar.setTime(date);
+                                                    monthNumberPicker.setValue(calendar.get(Calendar.MONTH) + 1);
+                                                    dayNumberPicker.setValue(calendar.get(Calendar.DAY_OF_MONTH));
+                                                    yearNumberPicker.setValue(calendar.get(Calendar.YEAR));
+                                                } catch (ParseException e) {
+                                                    e.printStackTrace();
+                                                }
 
                                                 switch (response.getString("Rated")) {
                                                     case "N/A":

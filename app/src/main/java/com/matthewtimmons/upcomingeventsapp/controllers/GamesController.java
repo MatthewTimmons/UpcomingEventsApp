@@ -26,7 +26,7 @@ public class GamesController {
     }
 
     public static void getCustomGame(String id, String userId, final GamesController.GetGameListener gameListener) {
-        FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(userId).collection("games").document(id)
+        FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_GAMES).document(userId).collection("games").document(id)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
