@@ -19,14 +19,10 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.AddEventsActivity;
-import com.matthewtimmons.upcomingeventsapp.adapters.CustomCheckableSpinnerAdapter;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
-import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
+import com.matthewtimmons.upcomingeventsapp.models.UserManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -61,7 +57,7 @@ public class AddGameFragment extends Fragment{
         gameReleaseDateEditText = view.findViewById(R.id.game_release_date_edit_text);
         addToMyGamesButton = getActivity().findViewById(R.id.add_to_my_movies_button);
         addToAllGamesButton = getActivity().findViewById(R.id.add_to_all_movies_button);
-        currentUserId = CurrentUserSingleton.currentUserObject.getUserId();
+        currentUserId = UserManager.getInstance().getCurrentUserId();
         gameRating = "Rating Pending";
         releaseConsolesChecked = new ArrayList<>();
 

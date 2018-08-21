@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.storage.OnProgressListener;
@@ -33,7 +32,7 @@ import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
 import com.matthewtimmons.upcomingeventsapp.fragments.ListOfUsersFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.RecyclerViewHeaderFragment;
 import com.matthewtimmons.upcomingeventsapp.manager.DevHelper;
-import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
+import com.matthewtimmons.upcomingeventsapp.models.UserManager;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 import com.squareup.picasso.Picasso;
 
@@ -65,13 +64,23 @@ public class ProfileViewActivity extends AppCompatActivity {
         favoritesRecyclerView = findViewById(R.id.profile_favorite_events_recycler_view);
         sendFriendRequestButton = findViewById(R.id.send_friend_request_button);
 
-        // Get profile data
-        profileUserId = getIntent().getStringExtra(User.CURRENT_USER_ID);
-        profileUserReference = UserController.getUserReference(profileUserId);
-        profileUserObject = getIntent().getParcelableExtra(User.CURRENT_USER_OBJECT);
+        //--------------------------Fix this!--------------------------//
+        if (getIntent().getParcelableExtra(User.CURRENT_USER_OBJECT) != null) {
+
+            // Get profile data
+            profileUserId = getIntent().getStringExtra(User.CURRENT_USER_ID);
+            profileUserReference = UserController.getUserReference(profileUserId);
+            profileUserObject = getIntent().getParcelableExtra(User.CURRENT_USER_OBJECT);
+        } else {
+            profileUserId = UserManager.getInstance().getCurrentUserId();
+            profileUserReference = UserController.getUserReference(profileUserId);
+            profileUserObject = UserManager.getInstance().getCurrentUser();
+        }
+
+        //--------------------------Fix this!--------------------------//
 
         // Get signed in user data
-        currentUserId = CurrentUserSingleton.currentUserObject.getUserId();
+        currentUserId = UserManager.getInstance().getCurrentUserId();
         isCurrentUserViewer = currentUserId.equals(profileUserId);
         uploadsStorageReference = FirebaseConstants.getStorageReference("uploads");
 
@@ -157,8 +166,8 @@ public class ProfileViewActivity extends AppCompatActivity {
         // Set all rules for the button at the bottom of the screen when the current user is looking at another user's profile
         if(!isCurrentUserViewer) {
             sendFriendRequestButton.setVisibility(View.VISIBLE);
-            allFriendIds = CurrentUserSingleton.currentUserObject.getFriends();
-            setFriendRequestButtonFunctionality(CurrentUserSingleton.currentUserObject);
+            allFriendIds = UserManager.getInstance().getCurrentUser().getFriends();
+            setFriendRequestButtonFunctionality(UserManager.getInstance().getCurrentUser());
         }
     }
 

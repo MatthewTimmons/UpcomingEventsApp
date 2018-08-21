@@ -5,34 +5,48 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.matthewtimmons.upcomingeventsapp.fragments.FriendInfoFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.InterestLevelSeekbarFragment;
 import com.matthewtimmons.upcomingeventsapp.R;
-import com.matthewtimmons.upcomingeventsapp.constants.EventConstants;
-import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.fragments.EventDetailsFragment;
-import com.matthewtimmons.upcomingeventsapp.models.User;
+import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
+import com.matthewtimmons.upcomingeventsapp.models.UserManager;
+
+// Details Activity is made of 3 fragments:
+//  Details Fragment that contains the image and info for the event
+//  Friends Info Fragment that contains a recycler view showing what interest level friends rate the event
+//  Interest Level Seekbar Fragment that contains the seekbar for the current user to indicate their interest
 
 public class DetailsActivity extends AppCompatActivity {
     private static final String EXTRA_EVENT_ID = "extraEventId";
     private static final String EXTRA_EVENT_TYPE = "extraEventType";
-    private static final String EXTRA_IS_CUSTOM_EVENT = "EXTRA_IS_CUSTOM_EVENT";
+    private static final String EXTRA_EVENT_CREATOR = "EXTRA_EVENT_CREATOR";
 
+    String currentUserId = UserManager.getInstance().getCurrentUserId();
     String eventId;
     String eventType;
-    Boolean isCustomEvent;
+    String eventCreator;
 
-    public static Intent newIntent(Context context, String eventId, String eventType, Boolean isCustomEvent) {
+    Button deleteCustomEventButton;
+
+    Fragment eventDetailsFragment = null;
+    Fragment friendRecyclerViewFragment = null;
+    Fragment interestLevelSeekbarFragment = null;
+
+    public static Intent newIntent(Context context, String eventId, String eventType, String eventCreator) {
         Intent intent = new Intent(context, DetailsActivity.class);
         intent.putExtra(EXTRA_EVENT_ID, eventId);
         intent.putExtra(EXTRA_EVENT_TYPE, eventType);
-        intent.putExtra(EXTRA_IS_CUSTOM_EVENT, isCustomEvent);
+        intent.putExtra(EXTRA_EVENT_CREATOR, eventCreator);
         return intent;
     }
 
@@ -40,7 +54,7 @@ public class DetailsActivity extends AppCompatActivity {
         Intent intent = new Intent(context, DetailsActivity.class);
         intent.putExtra(EXTRA_EVENT_ID, eventId);
         intent.putExtra(EXTRA_EVENT_TYPE, eventType);
-        intent.putExtra(EXTRA_IS_CUSTOM_EVENT, false);
+        intent.putExtra(EXTRA_EVENT_CREATOR, false);
         return intent;
     }
 
@@ -49,25 +63,71 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        deleteCustomEventButton = findViewById(R.id.delete_custom_event_button);
+
         if (getIntent() != null) {
            eventId = getIntent().getStringExtra(EXTRA_EVENT_ID);
            eventType = getIntent().getStringExtra(EXTRA_EVENT_TYPE);
-           isCustomEvent = getIntent().getBooleanExtra(EXTRA_IS_CUSTOM_EVENT, false);
+           eventCreator = getIntent().getStringExtra(EXTRA_EVENT_CREATOR);
         }
 
-        Fragment eventDetailsFragment = null;
-        if (!isCustomEvent) {
+        if (eventCreator.equals("global")) {
             eventDetailsFragment = EventDetailsFragment.newInstance(eventId, eventType);
         } else {
             eventDetailsFragment = EventDetailsFragment.newInstance(eventId, eventType, true);
+            if (eventCreator.equals(currentUserId)) {
+                setDeleteButtonFunctionality();
+            }
         }
 
+        friendRecyclerViewFragment = FriendInfoFragment.newInstance(eventType, eventId);
+        interestLevelSeekbarFragment = InterestLevelSeekbarFragment.newInstance(eventType, eventId);
 
-        Fragment interestLevelSeekbarFragment = InterestLevelSeekbarFragment.newInstance(eventType, eventId);
-        Fragment friendRecyclerViewFragment = FriendInfoFragment.newInstance(eventType, eventId);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.interest_level_container, interestLevelSeekbarFragment);
+        fragmentTransaction.add(R.id.fragment_friend_recycler_view, friendRecyclerViewFragment);
+        fragmentTransaction.add(R.id.fragment_container, eventDetailsFragment);
+        fragmentTransaction.commit();
+    }
 
-        getSupportFragmentManager().beginTransaction().add(R.id.interest_level_container, interestLevelSeekbarFragment).commit();
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_friend_recycler_view, friendRecyclerViewFragment).commit();
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, eventDetailsFragment).commit();
+    public void setDeleteButtonFunctionality() {
+        deleteCustomEventButton.setVisibility(View.VISIBLE);
+        if (eventType.equals("movies")) {
+            deleteCustomEventButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //TODO: Extract this duplicate code into it's own Alert Dialog Builder
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DetailsActivity.this);
+                    View dialogView = getLayoutInflater().inflate(R.layout.dialog_confirm, null);
+                    Button confirmButton = dialogView.findViewById(R.id.confirm_button);
+                    Button cancelButton = dialogView.findViewById(R.id.cancel_button);
+
+                    dialogBuilder.setView(dialogView);
+                    final AlertDialog alertDialog = dialogBuilder.create();
+                    alertDialog.show();
+
+                    cancelButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            alertDialog.cancel();
+                        }
+                    });
+
+                    confirmButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            DocumentReference currentCustomMovieRef = Firestore.collection(eventType).document(currentUserId).collection(eventType).document(eventId);
+                            currentCustomMovieRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(DetailsActivity.this, "Custom movie was deleted", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
     }
 }

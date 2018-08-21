@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventListAdapter;
@@ -23,6 +24,8 @@ import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.matthewtimmons.upcomingeventsapp.manager.DevHelper;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 
 
 public class SharedGamesFragment extends Fragment {
@@ -66,11 +69,13 @@ public class SharedGamesFragment extends Fragment {
         currentUserDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                final ArrayList<String> listOfGames1 = (ArrayList<String>) task.getResult().get(FirebaseConstants.KEY_GAMES_OWNED);
+                Map<String, Object> mapOfGames1 = (Map<String, Object>) task.getResult().get(FirebaseConstants.KEY_GAMES_OWNED);
+                final Set<String> listOfGames1 = mapOfGames1.keySet();
                 friendsDocRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        ArrayList<String> listOfGames2 = (ArrayList<String>) task.getResult().get(FirebaseConstants.KEY_GAMES_OWNED);
+                        Map<String, Object> mapOfGames2 = (Map<String, Object>) task.getResult().get(FirebaseConstants.KEY_GAMES_OWNED);
+                        final Set<String> listOfGames2 = mapOfGames2.keySet();
                         allSharedGames.addAll(DevHelper.fetchListOfMatchingItems(listOfGames1, listOfGames2));
 
                         allGamesCollectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

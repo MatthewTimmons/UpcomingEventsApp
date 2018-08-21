@@ -5,11 +5,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import java.io.Serializable;
 
 public abstract class Event implements Serializable {
-    String id;
-    String title;
-    String date;
-    String imageUrl;
-    String eventType;
+    private String id,title,date,imageUrl,eventType,eventCreator;
 
     public Event(DocumentSnapshot documentSnapshot) {
         this.id = documentSnapshot.getId();
@@ -17,6 +13,7 @@ public abstract class Event implements Serializable {
         this.date = documentSnapshot.getString("date");
         this.imageUrl = documentSnapshot.getString("imageUrl");
         this.eventType = documentSnapshot.getString("eventType");
+        this.eventCreator = documentSnapshot.getString("eventCreator");
     }
 
     public String getId() {
@@ -58,4 +55,8 @@ public abstract class Event implements Serializable {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public String getEventCreator() { return eventCreator; }
+
+    public void setEventCreator(String eventCreator) { this.eventCreator = eventCreator; }
 }

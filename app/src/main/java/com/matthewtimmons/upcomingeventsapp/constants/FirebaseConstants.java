@@ -12,7 +12,7 @@ public class FirebaseConstants {
 
     // User keys
     public static final String KEY_MOVIES_SEEN = "moviesSeenByMovieId";
-    public static final String KEY_GAMES_OWNED = "gamesOwnedByGameId";
+    public static final String KEY_GAMES_OWNED = "gamesOwned";
     public static final String KEY_INTEREST_LEVELS_USER = "interestLevels";
 
     // Generic Event Keys

@@ -50,7 +50,7 @@ public class SignUpFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         firebaseAuth = FirebaseAuth.getInstance();
-        getActivity().findViewById(R.id.authorization_activity).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        getActivity().findViewById(R.id.authorization_activity).setBackgroundColor(getResources().getColor(R.color.colorSecondary));
         displayNameEditTextView = view.findViewById(R.id.sign_up_displayname_edittext);
         emailEditTextView = view.findViewById(R.id.sign_up_email_edittext);
         passwordEditTextView = view.findViewById(R.id.sign_up_password_edittext);

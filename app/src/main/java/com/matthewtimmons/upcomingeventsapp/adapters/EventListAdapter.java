@@ -86,13 +86,8 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (!eventDocumentSnapshot.get("isCustomEvent").equals(true)) {
-                        Intent intent = DetailsActivity.newIntent(view.getContext(), eventDocumentSnapshot.getId(), eventDocumentSnapshot.getString("eventType"));
-                        view.getContext().startActivity(intent);
-                    } else {
-                        Intent intent = DetailsActivity.newIntent(view.getContext(), eventDocumentSnapshot.getId(), eventDocumentSnapshot.getString("eventType"), true);
-                        view.getContext().startActivity(intent);
-                    }
+                    Intent intent = DetailsActivity.newIntent(view.getContext(), eventDocumentSnapshot.getId(), eventDocumentSnapshot.getString("eventType"), eventDocumentSnapshot.getString("eventCreator"));
+                    view.getContext().startActivity(intent);
                 }
             });
 
@@ -118,11 +113,12 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
     public void setAllSharedFields(Event event, EventViewHolder viewHolder) {
         Picasso.get().load(event.getImageUrl()).error(backupImage).into(viewHolder.eventPictureImageView);
+        Picasso.get().load(event.getImageUrl()).error(backupImage).into(viewHolder.cardBackgroundImageView);
         viewHolder.titleTextView.setText(event.getTitle());
         viewHolder.fourthEventInfoTextView.setText(event.getDate());
     }
 
-    public void setBandNameValues(Concert concert, EventViewHolder viewHolder) {
+    public void setBandNameValues(Concert concert, final EventViewHolder viewHolder) {
         ArrayList<String> listOfBandsAtConcert = (ArrayList<String>) concert.getBands();
         viewHolder.titleTextView.setText(listOfBandsAtConcert.get(0));
         // Rules for second and third bands at concert
@@ -139,12 +135,15 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
     }
 
 
+
+
     @Override
     public int getItemCount() {
         return events != null ? events.size() : 0;
     }
 
     public class EventViewHolder extends RecyclerView.ViewHolder {
+        private ImageView cardBackgroundImageView;
         private CardView cardView;
         private ImageView eventPictureImageView;
         private ImageView favoriteStarImageView;
@@ -158,6 +157,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
 
         EventViewHolder(@NonNull final View itemView) {
             super(itemView);
+            cardBackgroundImageView = itemView.findViewById(R.id.card_background_image_view);
             cardView = itemView.findViewById(R.id.event_card_view);
             eventPictureImageView = itemView.findViewById(R.id.event_picture);
             favoriteStarImageView = itemView.findViewById(R.id.event_view_favorite_ribbon);

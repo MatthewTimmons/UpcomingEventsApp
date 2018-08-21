@@ -20,6 +20,13 @@
         android:background="@color/pastel_blue">
 
         <ImageView
+            android:id="@+id/card_background_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:alpha=".2"/>
+
+        <ImageView
             android:id="@+id/event_view_favorite_ribbon"
             android:layout_width="100dp"
             android:layout_height="100dp"

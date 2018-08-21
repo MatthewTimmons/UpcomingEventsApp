@@ -64,7 +64,7 @@ public class EventsFragment extends Fragment {
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
                 if (eventType.equals("movies")) {
-                    Firestore.collection("users").document(currentUserId).collection(eventType).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    Firestore.collection("movies").document(currentUserId).collection(eventType).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             List<DocumentSnapshot> allPersonalMovies = task.getResult().getDocuments();

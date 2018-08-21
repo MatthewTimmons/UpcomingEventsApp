@@ -2,7 +2,6 @@ package com.matthewtimmons.upcomingeventsapp.authorization;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -15,7 +14,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.matthewtimmons.upcomingeventsapp.manager.CircleTransform;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.MainActivity;
-import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
+import com.matthewtimmons.upcomingeventsapp.models.UserManager;
 import com.squareup.picasso.Picasso;
 
 public class AuthorizeUserActivity extends AppCompatActivity {
@@ -38,7 +37,7 @@ public class AuthorizeUserActivity extends AppCompatActivity {
 
 //        // TODO: Make sure current user has been set before beginning main activity
 //        if (firebaseAuth.getCurrentUser() != null) {
-//            CurrentUserSingleton.getInstance(firebaseAuth.getCurrentUser().getUid());
+//            UserManager.getInstance(firebaseAuth.getCurrentUser().getUid());
 //            Handler handler = new Handler();
 //            handler.postDelayed(new Runnable() {
 //                @Override
@@ -51,6 +50,7 @@ public class AuthorizeUserActivity extends AppCompatActivity {
 //        }
 
         if (firebaseAuth.getCurrentUser() != null) {
+            UserManager.getInstance().setCurrentUser();
             finish();
             Intent intent = new Intent(AuthorizeUserActivity.this, MainActivity.class);
             startActivity(intent);

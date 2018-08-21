@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorAccent"
+    android:background="@color/colorSecondary"
     android:paddingBottom="16dp">
 
     <ImageView
@@ -116,7 +116,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/right_gutter"
         app:layout_constraintBottom_toTopOf="@id/favorite_checkbox"
-        android:background="@color/colorAccent"
+        android:background="@color/colorSecondary"
         tools:visibility="visible"/>
 
 

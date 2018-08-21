@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.adapters.CustomCheckableSpinnerAdapter;
@@ -196,6 +198,33 @@ public class EventDetailsFragment extends Fragment {
         });
     }
 
+
+    public void setCheckmarkFunctionalityForObject(final String eventId, final FieldPath fieldpathToArray, final String console, final CheckBox checkBox) {
+        Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS)
+                .document(currentUserId).get();
+        task.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                final DocumentReference currentUserDocumentReference = task.getResult().getReference();
+                List<String> arrayOfAllInstances = (List<String>) task.getResult().get(fieldpathToArray);
+                checkBox.setChecked(arrayOfAllInstances != null);
+                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                        if (checked) {
+                            ArrayList<String> consoleValue = new ArrayList<>();
+                            consoleValue.add("Owned");
+                            consoleValue.add(console);
+                            currentUserDocumentReference.update(fieldpathToArray, consoleValue);
+                        } else {
+                            currentUserDocumentReference.update(fieldpathToArray, FieldValue.delete());
+                        }
+                    }
+                });
+            }
+        });
+    }
+
     void presentEvent(Event event, @DrawableRes int backupImageId) {
         Picasso.get().load(event.getImageUrl()).error(backupImageId).into(eventPictureImageView);
         titleTextView.setText(event.getTitle());
@@ -246,7 +275,7 @@ public class EventDetailsFragment extends Fragment {
         } else {
             optionalCheckbox.setVisibility(View.VISIBLE);
             optionalCheckbox.setText("Owned");
-            setCheckmarkFunctionality(game.getId(), FieldPath.of(FirebaseConstants.KEY_GAMES_OWNED), optionalCheckbox, false);
+            setCheckmarkFunctionalityForObject(game.getId(), FieldPath.of("gamesOwned", game.getId()), game.getReleaseConsoles().get(0),optionalCheckbox);
         }
 
     }

@@ -18,11 +18,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -31,13 +28,12 @@ import com.matthewtimmons.upcomingeventsapp.adapters.EventPagerAdapter;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.authorization.AuthorizeUserActivity;
 import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
-import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
+import com.matthewtimmons.upcomingeventsapp.models.UserManager;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
-    FirebaseAuth firebaseAuth;
-    FirebaseFirestore firebaseFirestore;
+    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FragmentPagerAdapter pagerAdapter;
     DrawerLayout navigationDrawerView;
     ViewPager viewPager;
@@ -48,17 +44,15 @@ public class MainActivity extends AppCompatActivity {
     String currentUserId, currentUserDisplayname;
     User currentUser;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
         currentUserId = firebaseAuth.getCurrentUser().getUid();
         currentUserDisplayname = firebaseAuth.getCurrentUser().getDisplayName();
 
-        CurrentUserSingleton.getInstance(currentUserId);
-
+        // Set view references
         navigationView = findViewById(R.id.navigation_view);
         navigationDrawerView = findViewById(R.id.nav_drawer);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -71,75 +65,67 @@ public class MainActivity extends AppCompatActivity {
         View navHeader = navigationView.getHeaderView(0);
         profilePhotoImageView = navHeader.findViewById(R.id.nav_bar_profile_photo);
 
-        // TODO DO I need to make the call to the signed in user now and then wrap everything else in that?
-        // Or maybe just move that as far down as possible, so I only wrap what's necessary?
-
         profilePhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                     Intent intentToProfileViewActivity = new Intent(MainActivity.this, ProfileViewActivity.class);
-                    intentToProfileViewActivity.putExtra(User.CURRENT_USER_ID, currentUserId);
-                    intentToProfileViewActivity.putExtra(User.CURRENT_USER_OBJECT, CurrentUserSingleton.currentUserObject);
                     startActivity(intentToProfileViewActivity);
             }
         });
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-                                                             @Override
-                                                             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                                                                 switch (menuItem.getItemId()) {
-                                                                     case R.id.nav_drawer_favorites:
-                                                                         Intent intentToDrawersFavorites = new Intent(MainActivity.this, FavoritesActivity.class);
-                                                                         startActivity(intentToDrawersFavorites);
-                                                                         return true;
-                                                                     case R.id.nav_drawer_shared_games:
-                                                                         Intent intentToSharedGames = new Intent(MainActivity.this, SharedGamesActivity.class);
-                                                                         startActivity(intentToSharedGames);
-                                                                         return true;
-                                                                     case R.id.nav_drawer_friends:
-                                                                         Intent intentToFriends = new Intent(MainActivity.this, FriendsListActivity.class);
-                                                                         startActivity(intentToFriends);
-                                                                         return true;
-                                                                     case R.id.nav_drawer_sign_out:
-                                                                         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
-                                                                         View dialogView = getLayoutInflater().inflate(R.layout.dialog_confirm, null);
-                                                                         Button confirmButton = dialogView.findViewById(R.id.confirm_button);
-                                                                         Button cancelButton = dialogView.findViewById(R.id.cancel_button);
+             @Override
+             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                 switch (menuItem.getItemId()) {
+                     case R.id.nav_drawer_favorites:
+                         Intent intentToDrawersFavorites = new Intent(MainActivity.this, FavoritesActivity.class);
+                         startActivity(intentToDrawersFavorites);
+                         return true;
+                     case R.id.nav_drawer_shared_games:
+                         Intent intentToSharedGames = new Intent(MainActivity.this, SharedGamesActivity.class);
+                         startActivity(intentToSharedGames);
+                         return true;
+                     case R.id.nav_drawer_friends:
+                         Intent intentToFriends = new Intent(MainActivity.this, FriendsListActivity.class);
+                         startActivity(intentToFriends);
+                         return true;
+                     case R.id.nav_drawer_sign_out:
+                         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                         View dialogView = getLayoutInflater().inflate(R.layout.dialog_confirm, null);
+                         Button confirmButton = dialogView.findViewById(R.id.confirm_button);
+                         Button cancelButton = dialogView.findViewById(R.id.cancel_button);
 
-                                                                         dialogBuilder.setView(dialogView);
-                                                                         final AlertDialog alertDialog = dialogBuilder.create();
-                                                                         alertDialog.show();
+                         dialogBuilder.setView(dialogView);
+                         final AlertDialog alertDialog = dialogBuilder.create();
+                         alertDialog.show();
 
-                                                                         cancelButton.setOnClickListener(new View.OnClickListener() {
-                                                                             @Override
-                                                                             public void onClick(View view) {
-                                                                                 alertDialog.cancel();
-                                                                             }
-                                                                         });
+                         cancelButton.setOnClickListener(new View.OnClickListener() {
+                             @Override
+                             public void onClick(View view) {
+                                 alertDialog.cancel();
+                             }
+                         });
 
-                                                                         confirmButton.setOnClickListener(new View.OnClickListener() {
-                                                                             @Override
-                                                                             public void onClick(View view) {
-                                                                             CurrentUserSingleton.clearCurrentUserSingleton();
-                                                                             firebaseAuth.signOut();
-                                                                             Intent intentToStartSignInPage = new Intent(MainActivity.this, AuthorizeUserActivity.class);
-                                                                             intentToStartSignInPage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                                             startActivity(intentToStartSignInPage);
-                                                                             finish();
-                                                                             }
-                                                                         });
-                                                                         return true;
-                                                                     case R.id.nav_drawer_add_events_activity:
-                                                                         Intent intentToAddEventsActivity = new Intent(MainActivity.this, AddEventsActivity.class);
-                                                                         startActivity(intentToAddEventsActivity);
-                                                                         return true;
-                                                                 }
-                                                                 return true;
-                                                             }
-                                                         });
-
-
-
+                         confirmButton.setOnClickListener(new View.OnClickListener() {
+                             @Override
+                             public void onClick(View view) {
+                             UserManager.getInstance().clearCurrentUser();
+                             firebaseAuth.signOut();
+                             Intent intentToStartSignInPage = new Intent(MainActivity.this, AuthorizeUserActivity.class);
+                             intentToStartSignInPage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                             startActivity(intentToStartSignInPage);
+                             finish();
+                             }
+                         });
+                         return true;
+                     case R.id.nav_drawer_add_events_activity:
+                         Intent intentToAddEventsActivity = new Intent(MainActivity.this, AddEventsActivity.class);
+                         startActivity(intentToAddEventsActivity);
+                         return true;
+                 }
+                 return true;
+             }
+         });
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

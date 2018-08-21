@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DevHelper {
     //TODO: Implement method to get the current user
@@ -146,7 +147,7 @@ public class DevHelper {
         return friends;
     }
 
-    public static ArrayList<String> fetchListOfMatchingItems(ArrayList<String> firstUser, ArrayList<String> secondUser) {
+    public static ArrayList<String> fetchListOfMatchingItems(Set<String> firstUser, Set<String> secondUser) {
         final ArrayList<String> listOfSharedGames = new ArrayList<>();
         for (String item : firstUser) {
             if (secondUser.contains(item)) {

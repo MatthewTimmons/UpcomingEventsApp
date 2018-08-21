@@ -33,7 +33,7 @@
                     android:layout_above="@+id/bottom_navigation"
                     app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:background="@color/colorAccent"/>
+                    android:background="@color/colorSecondary"/>
 
                 <android.support.design.widget.BottomNavigationView
                     android:id="@+id/bottom_navigation"
@@ -57,6 +57,6 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/nav_drawer_menu"
-        android:background="@color/colorAccent"/>
+        android:background="@color/colorSecondary"/>
 
     </android.support.v4.widget.DrawerLayout>

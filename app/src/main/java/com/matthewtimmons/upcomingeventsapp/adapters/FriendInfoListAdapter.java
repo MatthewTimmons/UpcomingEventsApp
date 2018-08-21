@@ -16,6 +16,7 @@ import com.matthewtimmons.upcomingeventsapp.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAdapter.FriendInfoViewHolder> {
     List<DocumentSnapshot> friends;
@@ -61,8 +62,8 @@ public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAd
             }
         }
         if (eventType.equals(FirebaseConstants.COLLECTION_GAMES)) {
-            ArrayList<String> gamesSeen = (ArrayList<String>) user.getGamesOwnedByGameId();
-            if (gamesSeen.contains(eventId)) {
+            Map<String, Object> gamesOwned = user.getGamesOwned();
+            if (gamesOwned.containsKey(eventId)) {
                 friendInfoViewHolder.friendCheckbox.setVisibility(View.VISIBLE);
                 friendInfoViewHolder.friendCheckbox.setImageResource(R.drawable.ic_checked_checkbox);
             } else {

@@ -12,4 +12,14 @@
 
     </style>
 
+    <style name="WhiteSeekbar" parent="@style/Widget.AppCompat.SeekBar.Discrete">
+        <item name="android:progressTint">@color/white</item>
+        <item name="android:thumbTint">@color/white</item>
+    </style>
+
+    <style name="DeleteButton">
+        <item name="android:background">@color/red</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
 </resources>

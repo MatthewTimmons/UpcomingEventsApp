@@ -1,18 +1,24 @@
 package com.matthewtimmons.upcomingeventsapp.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
@@ -24,13 +30,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.AddEventsActivity;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
-import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
+import com.matthewtimmons.upcomingeventsapp.models.UserManager;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -40,12 +43,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AddMovieFragment extends Fragment{
+    public static final int RATING_NULL = 0;
+    public static final int RATING_G = 1;
+    public static final int RATING_PG = 2;
+    public static final int RATING_PG_13= 3;
+    public static final int RATING_R = 4;
+
     String currentUserId, moviePosterUrl, movieRating;
     TextView welcomeTextView, getSuggestionsTextView;
     ImageView posterImageView;
     EditText movieTitleEditText, movieGenreEditText, movieReleaseDateEditText;
     Spinner movieRatingSpinner;
     Button addToMyMoviesButton, addToAllMoviesButton;
+    SeekBar ratingsSeekbar;
+    LinearLayout movieRatingIcons;
 
     @Nullable
     @Override
@@ -66,8 +77,10 @@ public class AddMovieFragment extends Fragment{
         movieReleaseDateEditText = view.findViewById(R.id.movie_release_date_edit_text);
         addToMyMoviesButton = getActivity().findViewById(R.id.add_to_my_movies_button);
         addToAllMoviesButton = getActivity().findViewById(R.id.add_to_all_movies_button);
+        ratingsSeekbar = view.findViewById(R.id.rating_seekbar);
+        movieRatingIcons = view.findViewById(R.id.movie_rating_icons);
 
-        currentUserId = CurrentUserSingleton.currentUserObject.getUserId();
+        currentUserId = UserManager.getInstance().getCurrentUserId();
         movieRating = "Rating Pending";
 
         getSuggestionsTextView.setVisibility(View.VISIBLE);
@@ -101,7 +114,7 @@ public class AddMovieFragment extends Fragment{
                     movieData.put("genre", movieGenreEditText.getText().toString());
                     movieData.put("rating", movieRating);
                     movieData.put("title", movieTitleEditText.getText().toString());
-                    movieData.put("isCustomEvent", true);
+                    movieData.put("eventCreator", currentUserId);
                     if (moviePosterUrl != null && !moviePosterUrl.equals("")) {
                         movieData.put("imageUrl", moviePosterUrl);
                     } else if (AddEventsActivity.moviePosterUrl != null && !AddEventsActivity.moviePosterUrl.equals("")) {
@@ -110,11 +123,30 @@ public class AddMovieFragment extends Fragment{
                         movieData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
                         Toast.makeText(getContext(), "No movie poster detected", Toast.LENGTH_SHORT).show();
                     }
-                    Firestore.collection("users").document(currentUserId).collection("movies").add(movieData);
+                    Firestore.collection("movies").document(currentUserId).collection("movies").add(movieData);
                     Toast.makeText(getContext(), "Movie has been added to your list of movies.", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        // TODO Come back and fix these animations
+        ratingsSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                movieRatingIcons.getChildAt(i).animate().translationY(-10).setDuration(500).start();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int seekbarProgress = seekBar.getProgress();
+                movieRatingIcons.getChildAt(seekbarProgress).animate().rotation(360).setDuration(1000);
             }
         });
 //
@@ -197,18 +229,24 @@ public class AddMovieFragment extends Fragment{
                                                 switch (response.getString("Rated")) {
                                                     case "N/A":
                                                         movieRatingSpinner.setSelection(0);
+                                                        ratingsSeekbar.setProgress(0);
                                                         break;
                                                     case "G":
                                                         movieRatingSpinner.setSelection(1);
+                                                        ratingsSeekbar.setProgress(1);
                                                         break;
                                                     case "PG":
                                                         movieRatingSpinner.setSelection(2);
+                                                        ratingsSeekbar.setProgress(2);
                                                         break;
                                                     case "PG-13":
                                                         movieRatingSpinner.setSelection(3);
+                                                        ratingsSeekbar.setProgress(3);
                                                         break;
                                                     case "R":
                                                         movieRatingSpinner.setSelection(4);
+                                                        ratingsSeekbar.setProgress(4);
+                                                        movieRatingIcons.getChildAt(4).animate().rotation(360).setDuration(500).start();
                                                         break;
                                                 }
                                                 alertDialog2.cancel();

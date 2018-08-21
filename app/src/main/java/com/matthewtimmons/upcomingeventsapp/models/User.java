@@ -13,11 +13,15 @@ import java.util.Map;
 public class User implements Parcelable {
     public static String CURRENT_USER_ID = "CURRENT_USER_ID";
     public static String CURRENT_USER_OBJECT = "CURRENT_USER_OBJECT";
+
     String displayName, profilePhotoURL, userId;
-    List<String> friends, gamesOwnedByGameId, moviesSeenByMovieId;
-    Map<String, Object> interestLevels;
-    Map<String, Object> myFavorites;
-    Map<String, Object> pendingFriendRequests;
+    List<String> friends, moviesSeenByMovieId;
+    Map<String, Object> interestLevels, gamesOwned, myFavorites, pendingFriendRequests;
+
+    // interestLevels = interestLevels > Event Type > Event ID > Interest Level Value
+    // gamesOwned = gamesOwned > Game ID > List of Strings representing what consoles that game is owned for
+    // myFavorites = myFavorites > Event Type > List of Event ID's
+    // pendingFriendRequests = pendingFriendRequests > User ID > boolean seen or not seen
 
     public User() {}
 
@@ -26,8 +30,8 @@ public class User implements Parcelable {
         this.displayName = currentUserDocumentSnapshot.getString("displayName");
         this.profilePhotoURL = currentUserDocumentSnapshot.getString("profilePhotoURL");
         this.friends = (List<String>) currentUserDocumentSnapshot.get("friends");
-        this.gamesOwnedByGameId = (List<String>) currentUserDocumentSnapshot.get("gamesOwnedByGameId");
-        this.moviesSeenByMovieId = (List<String>) currentUserDocumentSnapshot.get("moviesOwnedByMovieId");
+        this.gamesOwned = (Map<String, Object>) currentUserDocumentSnapshot.get("gamesOwned");
+        this.moviesSeenByMovieId = (List<String>) currentUserDocumentSnapshot.get("moviesSeenByMovieId");
         this.interestLevels = (Map<String, Object>) currentUserDocumentSnapshot.get("interestLevels");
         this.myFavorites = (Map<String, Object>) currentUserDocumentSnapshot.get("myFavorites");
         this.pendingFriendRequests = (Map<String, Object>) currentUserDocumentSnapshot.get("pendingFriendRequests");
@@ -36,6 +40,7 @@ public class User implements Parcelable {
     // ---------------------------- Parcelable methods (start) ---------------------------- //
 
     protected User(Parcel in) {
+        gamesOwned = new HashMap<>();
         interestLevels = new HashMap<>();
         myFavorites = new HashMap<>();
         pendingFriendRequests = new HashMap<>();
@@ -43,8 +48,8 @@ public class User implements Parcelable {
         displayName = in.readString();
         profilePhotoURL = in.readString();
         friends = in.createStringArrayList();
-        gamesOwnedByGameId = in.createStringArrayList();
         moviesSeenByMovieId = in.createStringArrayList();
+        in.readMap(gamesOwned, ClassLoader.getSystemClassLoader());
         in.readMap(interestLevels, ClassLoader.getSystemClassLoader());
         in.readMap(myFavorites, ClassLoader.getSystemClassLoader());
         in.readMap(pendingFriendRequests, ClassLoader.getSystemClassLoader());
@@ -55,8 +60,8 @@ public class User implements Parcelable {
         dest.writeString(displayName);
         dest.writeString(profilePhotoURL);
         dest.writeStringList(friends);
-        dest.writeStringList(gamesOwnedByGameId);
         dest.writeStringList(moviesSeenByMovieId);
+        dest.writeMap(gamesOwned);
         dest.writeMap(interestLevels);
         dest.writeMap(myFavorites);
         dest.writeMap(pendingFriendRequests);
@@ -99,7 +104,7 @@ public class User implements Parcelable {
         allData.put("displayName", "");
         allData.put("profilePhotoURL", "https://localmarketingplus.ca/wp-content/uploads/2015/02/blue-head.jpg");
         allData.put("friends", emptyArrayList);
-        allData.put("gamesOwnedByGameId", emptyArrayList);
+        allData.put("gamesOwned", emptyArrayList);
         allData.put("moviesSeenByMovieId", emptyArrayList);
         allData.put("myFavorites", concertsGamesMoviesHashMapStringObject);
         allData.put("interestLevels", concertsGamesMoviesHashMapObject);
@@ -139,12 +144,12 @@ public class User implements Parcelable {
         this.friends = friends;
     }
 
-    public List<String> getGamesOwnedByGameId() {
-        return gamesOwnedByGameId;
+    public Map<String, Object> getGamesOwned() {
+        return gamesOwned;
     }
 
-    public void setGamesOwnedByGameId(List<String> gamesOwnedByGameId) {
-        this.gamesOwnedByGameId = gamesOwnedByGameId;
+    public void setGamesOwned(Map<String, Object> gamesOwned) {
+        this.gamesOwned = gamesOwned;
     }
 
     public List<String> getMoviesSeenByMovieId() {

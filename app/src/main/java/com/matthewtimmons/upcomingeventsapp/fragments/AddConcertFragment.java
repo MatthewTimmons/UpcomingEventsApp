@@ -9,12 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,12 +22,11 @@ import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.AddEventsActivity;
 import com.matthewtimmons.upcomingeventsapp.adapters.CustomRemovableSpinnerAdapter;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
-import com.matthewtimmons.upcomingeventsapp.models.CurrentUserSingleton;
+import com.matthewtimmons.upcomingeventsapp.models.UserManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AddConcertFragment extends Fragment {
@@ -58,7 +54,7 @@ public class AddConcertFragment extends Fragment {
         concertDateEditText = view.findViewById(R.id.concert_date_edit_text);
         addToMyConcertsButton = getActivity().findViewById(R.id.add_to_my_movies_button);
         addToAllConcertsButton = getActivity().findViewById(R.id.add_to_all_movies_button);
-        currentUserId = CurrentUserSingleton.currentUserObject.getUserId();
+        currentUserId = UserManager.getInstance().getCurrentUserId();
 
         getSuggestionsTextView.setVisibility(View.GONE);
         addToMyConcertsButton.setText("Add to my concerts");
