@@ -40,7 +40,6 @@ public class AddGameFragment extends Fragment{
     Button addToMyGamesButton, addToAllGamesButton;
     List<String> releaseConsolesChecked;
     List<CheckBox> allCheckboxes;
-    NumberPicker monthNumberPicker, dayNumberPicker, yearNumberPicker;
 
     @Nullable
     @Override
@@ -70,11 +69,6 @@ public class AddGameFragment extends Fragment{
         allCheckboxes.add((CheckBox) view.findViewById(R.id.nintendo_switch_checkbox));
         allCheckboxes.add((CheckBox) view.findViewById(R.id.nintendo_3ds_checkbox));
 
-        // Set up date number picker
-        monthNumberPicker = getActivity().findViewById(R.id.month_picker);
-        dayNumberPicker = getActivity().findViewById(R.id.day_picker);
-        yearNumberPicker = getActivity().findViewById(R.id.year_picker);
-
         // Set up rating spinner
         SpinnerAdapter adapter = ArrayAdapter.createFromResource(getContext(), R.array.gameRatings, android.R.layout.simple_list_item_1);
         gameRatingSpinner.setAdapter(adapter);
@@ -97,62 +91,16 @@ public class AddGameFragment extends Fragment{
         addToMyGamesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!gameTitleEditText.getText().toString().equals("") &&
-                    !releaseConsolesChecked.isEmpty()) {
-                    StringBuilder formattedDate = new StringBuilder();
-                    formattedDate.append((String.format("%02d", monthNumberPicker.getValue())) + "/" +
-                            String.format("%02d", dayNumberPicker.getValue()) + "/" +
-                            String.valueOf(yearNumberPicker.getValue()));
-
-                    final Map<String, Object> gameData = new HashMap<>();
-                    gameData.put("date", formattedDate.toString());
-                    gameData.put("eventType", "games");
-                    gameData.put("rating", gameRating);
-                    gameData.put("title", gameTitleEditText.getText().toString());
-                    gameData.put("releaseConsoles", releaseConsolesChecked);
-                    gameData.put("eventCreator", currentUserId);
-                    if (AddEventsActivity.moviePosterUrl != null && !AddEventsActivity.moviePosterUrl.equals("")) {
-                        gameData.put("imageUrl", AddEventsActivity.moviePosterUrl);
-                    } else if (gamePosterUrl != null && !gamePosterUrl.equals("")) {
-                        gameData.put("imageUrl", gamePosterUrl);
-                    } else {
-                        gameData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
-                        Toast.makeText(getContext(), "No game poster detected", Toast.LENGTH_SHORT).show();
-                    }
-                    Firestore.collection("games").document(currentUserId).collection("games").add(gameData);
-                    Toast.makeText(getContext(), "Game has been added to your list of games.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();
-                }
+                setCustomGame(currentUserId);
             }
         });
-//
-//        addToAllGamesButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (!gameTitleEditText.getText().toString().equals("") &&
-//                    !gameRatingEditText.getText().toString().equals("") &&
-//                    !gameReleaseDateEditText.getText().toString().equals("") &&
-//                    !releaseConsolesChecked.isEmpty()) {
-//                    final Map<String, Object> gameData = new HashMap<>();
-//                    gameData.put("date", gameReleaseDateEditText.getText().toString());
-//                    gameData.put("eventType", "movies");
-//                    gameData.put("imageUrl", gamePosterUrl);
-//                    gameData.put("rating", gameRatingEditText.getText().toString());
-//                    gameData.put("title", gameTitleEditText.getText().toString());
-//                    gameData.put("releaseConsoles", releaseConsolesChecked);
-//                    gameData.put("isCustomEvent", true);
-//                    Firestore.collection("usersAuth").document("Suggested Additions").collection("games").add(gameData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<DocumentReference> task) {
-//                            Toast.makeText(getContext(), "Game has been recommended for global adoption.", Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
-//                } else {
-//                    Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
+
+        addToAllGamesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setCustomGame("recommendations");
+            }
+        });
 
         for (final CheckBox checkBox : allCheckboxes) {
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -165,6 +113,32 @@ public class AddGameFragment extends Fragment{
                     }
                 }
             });
+        }
+    }
+
+    public void setCustomGame(String folder) {
+        if (!gameTitleEditText.getText().toString().equals("") &&
+                !releaseConsolesChecked.isEmpty()) {
+            final Map<String, Object> gameData = new HashMap<>();
+            gameData.put("date", AddEventsActivity.dateFormatDatabaseFriendly.format(AddEventsActivity.dateEntered));
+            gameData.put("eventType", "games");
+            gameData.put("rating", gameRating);
+            gameData.put("title", gameTitleEditText.getText().toString());
+            gameData.put("releaseConsoles", releaseConsolesChecked);
+            gameData.put("eventCreator", currentUserId);
+            if (AddEventsActivity.moviePosterUrl != null && !AddEventsActivity.moviePosterUrl.equals("")) {
+                gameData.put("imageUrl", AddEventsActivity.moviePosterUrl);
+            } else if (gamePosterUrl != null && !gamePosterUrl.equals("")) {
+                gameData.put("imageUrl", gamePosterUrl);
+            } else {
+                gameData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
+                Toast.makeText(getContext(), "No game poster detected", Toast.LENGTH_SHORT).show();
+            }
+            Firestore.collection("games").document(folder).collection("games").add(gameData);
+            String toastMessage = folder.equals("recommendations") ? "recommended for global adoption" : "added to your list of games.";
+            Toast.makeText(getContext(), "Game has been " + toastMessage, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();
         }
     }
 }

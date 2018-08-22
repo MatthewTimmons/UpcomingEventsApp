@@ -47,7 +47,7 @@ public class UsersListAdapterSquare extends RecyclerView.Adapter<UsersListAdapte
             public void onClick(View view) {
                 Context context = friendListViewholder.friendSquareIcon.getContext();
                 Intent intent = new Intent(context, ProfileViewActivity.class);
-                intent.putExtra(User.CURRENT_USER_ID, currentFriendDocumentSnapshot.getString("displayName"));
+                intent.putExtra(User.CURRENT_USER_ID, currentFriendDocumentSnapshot.getId());
                 intent.putExtra(User.CURRENT_USER_OBJECT, user);
                 context.startActivity(intent);
             }

@@ -46,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class AddMovieFragment extends Fragment{
@@ -56,15 +57,13 @@ public class AddMovieFragment extends Fragment{
     public static final int RATING_R = 4;
 
     String currentUserId, moviePosterUrl, movieRating;
-    TextView welcomeTextView, getSuggestionsTextView;
+    TextView welcomeTextView, getSuggestionsTextView, dateTextView;
     ImageView posterImageView;
     EditText movieTitleEditText, movieGenreEditText;
     Spinner movieRatingSpinner;
     Button addToMyMoviesButton, addToAllMoviesButton;
     SeekBar ratingsSeekbar;
     LinearLayout movieRatingIcons;
-
-    NumberPicker monthNumberPicker, dayNumberPicker, yearNumberPicker;
 
     @Nullable
     @Override
@@ -78,6 +77,7 @@ public class AddMovieFragment extends Fragment{
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
         welcomeTextView = view.findViewById(R.id.add_event_type);
         getSuggestionsTextView = getActivity().findViewById(R.id.get_suggestions_button);
+        dateTextView = getActivity().findViewById(R.id.date_picker);
         posterImageView = getActivity().findViewById(R.id.poster_image_view);
         movieTitleEditText = view.findViewById(R.id.movie_title_edit_text);
         movieGenreEditText = view.findViewById(R.id.movie_genre_edit_text);
@@ -109,42 +109,17 @@ public class AddMovieFragment extends Fragment{
             }
         });
 
-        // Set up date number picker
-        monthNumberPicker = getActivity().findViewById(R.id.month_picker);
-        dayNumberPicker = getActivity().findViewById(R.id.day_picker);
-        yearNumberPicker = getActivity().findViewById(R.id.year_picker);
-
         addToMyMoviesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                StringBuilder formattedDate = new StringBuilder();
-                formattedDate.append((String.format("%02d", monthNumberPicker.getValue())) + "/" +
-                        String.format("%02d", dayNumberPicker.getValue()) + "/" +
-                        String.valueOf(yearNumberPicker.getValue()));
+                setCustomMovie(currentUserId);
+            }
+        });
 
-                if (!movieTitleEditText.getText().toString().equals("") &&
-                        !movieGenreEditText.getText().toString().equals("")) {
-                    final Map<String, Object> movieData = new HashMap<>();
-                    movieData.put("eventType", "movies");
-                    movieData.put("genre", movieGenreEditText.getText().toString());
-                    movieData.put("rating", movieRating);
-                    movieData.put("title", movieTitleEditText.getText().toString());
-                    movieData.put("eventCreator", currentUserId);
-                    movieData.put("date", formattedDate.toString());
-
-                    if (moviePosterUrl != null && !moviePosterUrl.equals("")) {
-                        movieData.put("imageUrl", moviePosterUrl);
-                    } else if (AddEventsActivity.moviePosterUrl != null && !AddEventsActivity.moviePosterUrl.equals("")) {
-                        movieData.put("imageUrl", AddEventsActivity.moviePosterUrl);
-                    } else {
-                        movieData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
-                        Toast.makeText(getContext(), "No movie poster detected", Toast.LENGTH_SHORT).show();
-                    }
-                    Firestore.collection("movies").document(currentUserId).collection("movies").add(movieData);
-                    Toast.makeText(getContext(), "Movie has been added to your list of movies.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();
-                }
+        addToAllMoviesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setCustomMovie("recommendations");
             }
         });
 
@@ -166,41 +141,8 @@ public class AddMovieFragment extends Fragment{
                 movieRatingIcons.getChildAt(seekbarProgress).animate().rotation(360).setDuration(1000);
             }
         });
-//
-//        addToAllMoviesButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (!movieTitleEditText.getText().toString().equals("") &&
-//                        !movieGenreEditText.getText().toString().equals("") &&
-//                        !movieRatingSpinner.getText().toString().equals("") &&
-//                        !movieReleaseDateEditText.getText().toString().equals("")) {
-//                    final Map<String, Object> movieData = new HashMap<>();
-//                    movieData.put("date", movieReleaseDateEditText.getText().toString());
-//                    movieData.put("eventType", "movies");
-//                    movieData.put("genre", movieGenreEditText.getText().toString());
-//                    movieData.put("rating", movieRatingSpinner.getText().toString());
-//                    movieData.put("title", movieTitleEditText.getText().toString());
-//                    movieData.put("isCustomEvent", true);
-//                    if (AddEventsActivity.moviePosterUrl != null && !AddEventsActivity.moviePosterUrl.equals("")) {
-//                        movieData.put("imageUrl", AddEventsActivity.moviePosterUrl);
-//                    } else if (moviePosterUrl != null && !moviePosterUrl.equals("")) {
-//                        movieData.put("imageUrl", moviePosterUrl);
-//                    } else {
-//                        movieData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
-//                        Toast.makeText(getContext(), "No movie poster detected", Toast.LENGTH_SHORT).show();
-//                    }
-//                    Firestore.collection("usersAuth").document("Suggested Additions").collection("movies").add(movieData).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<DocumentReference> task) {
-//                            Toast.makeText(getContext(), "Movie has been recommended for global adoption.", Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
-//                } else {
-//                    Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
 
+        // Set OMDB API functionality
         getSuggestionsTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -238,47 +180,48 @@ public class AddMovieFragment extends Fragment{
                                             if (response.getString("Response").equals("False")) {
                                                 Toast.makeText(getContext(), "No movies found", Toast.LENGTH_SHORT).show();
                                             } else {
+                                                // Set title, genre, and poster
                                                 movieTitleEditText.setText(response.getString("Title"));
                                                 movieGenreEditText.setText(response.getString("Genre"));
                                                 moviePosterUrl = response.getString("Poster");
 
-                                                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
-                                                String dateString = response.getString("Released");
-
+                                                // Set movie release date
+                                                SimpleDateFormat formatForJSONReturnValue = new SimpleDateFormat("dd MMM yyyy", Locale.US);
+                                                String returnedDateAsString = response.getString("Released");
                                                 try {
-                                                    Date date = sdf.parse(dateString);
+                                                    Date movieReleaseDate = formatForJSONReturnValue.parse(returnedDateAsString);
                                                     Calendar calendar = Calendar.getInstance();
-                                                    calendar.setTime(date);
-                                                    monthNumberPicker.setValue(calendar.get(Calendar.MONTH) + 1);
-                                                    dayNumberPicker.setValue(calendar.get(Calendar.DAY_OF_MONTH));
-                                                    yearNumberPicker.setValue(calendar.get(Calendar.YEAR));
+                                                    calendar.setTime(movieReleaseDate);
+                                                    AddEventsActivity.dateEntered = movieReleaseDate;
+                                                    dateTextView.setText(AddEventsActivity.dateFormatHumanReadable.format(AddEventsActivity.dateEntered));
                                                 } catch (ParseException e) {
                                                     e.printStackTrace();
                                                 }
 
+                                                // Set movie rating
                                                 switch (response.getString("Rated")) {
                                                     case "N/A":
-                                                        movieRatingSpinner.setSelection(0);
-                                                        ratingsSeekbar.setProgress(0);
+                                                        movieRatingSpinner.setSelection(RATING_NULL);
+                                                        ratingsSeekbar.setProgress(RATING_NULL);
                                                         break;
                                                     case "G":
-                                                        movieRatingSpinner.setSelection(1);
-                                                        ratingsSeekbar.setProgress(1);
+                                                        movieRatingSpinner.setSelection(RATING_G);
+                                                        ratingsSeekbar.setProgress(RATING_G);
                                                         break;
                                                     case "PG":
-                                                        movieRatingSpinner.setSelection(2);
-                                                        ratingsSeekbar.setProgress(2);
+                                                        movieRatingSpinner.setSelection(RATING_PG);
+                                                        ratingsSeekbar.setProgress(RATING_PG);
                                                         break;
                                                     case "PG-13":
-                                                        movieRatingSpinner.setSelection(3);
-                                                        ratingsSeekbar.setProgress(3);
+                                                        movieRatingSpinner.setSelection(RATING_PG_13);
+                                                        ratingsSeekbar.setProgress(RATING_PG_13);
                                                         break;
                                                     case "R":
-                                                        movieRatingSpinner.setSelection(4);
-                                                        ratingsSeekbar.setProgress(4);
-                                                        movieRatingIcons.getChildAt(4).animate().rotation(360).setDuration(500).start();
+                                                        movieRatingSpinner.setSelection(RATING_R);
+                                                        ratingsSeekbar.setProgress(RATING_R);
                                                         break;
                                                 }
+
                                                 alertDialog2.cancel();
                                             }
                                         } catch (JSONException e) {
@@ -308,4 +251,33 @@ public class AddMovieFragment extends Fragment{
         // Access the RequestQueue through your singleton class.
         //        MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
+
+    private void setCustomMovie(String folder) {
+        if (!movieTitleEditText.getText().toString().equals("") &&
+                !movieGenreEditText.getText().toString().equals("")) {
+            final Map<String, Object> movieData = new HashMap<>();
+            movieData.put("eventType", "movies");
+            movieData.put("genre", movieGenreEditText.getText().toString());
+            movieData.put("rating", movieRating);
+            movieData.put("title", movieTitleEditText.getText().toString());
+            movieData.put("eventCreator", currentUserId);
+            movieData.put("date", AddEventsActivity.dateFormatDatabaseFriendly.format(AddEventsActivity.dateEntered));
+
+            if (moviePosterUrl != null && !moviePosterUrl.equals("")) {
+                movieData.put("imageUrl", moviePosterUrl);
+            } else if (AddEventsActivity.moviePosterUrl != null && !AddEventsActivity.moviePosterUrl.equals("")) {
+                movieData.put("imageUrl", AddEventsActivity.moviePosterUrl);
+            } else {
+                movieData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
+                Toast.makeText(getContext(), "No movie poster detected", Toast.LENGTH_SHORT).show();
+            }
+            Firestore.collection("movies").document(folder).collection("movies").add(movieData);
+            String toastMessage = folder.equals("recommendations") ? "recommended for global adoption" : "added to your list of movies.";
+            Toast.makeText(getContext(), "Movie has been " + toastMessage, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 }

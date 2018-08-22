@@ -1,5 +1,6 @@
 package com.matthewtimmons.upcomingeventsapp.activities;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -8,11 +9,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.fragments.AddConcertFragment;
@@ -20,8 +22,11 @@ import com.matthewtimmons.upcomingeventsapp.fragments.AddGameFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.AddMovieFragment;
 import com.matthewtimmons.upcomingeventsapp.models.UserManager;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class AddEventsActivity extends AppCompatActivity {
     public static String moviePosterUrl;
@@ -29,7 +34,11 @@ public class AddEventsActivity extends AppCompatActivity {
     TextView addEventTypeTextView, getSuggestionsTextView;
     ImageView posterImageView;
     Button addToMyMoviesButton, addToAllMoviesButton;
-    NumberPicker monthNumberPicker, dayNumberPicker, yearNumberPicker;
+    DatePickerDialog.OnDateSetListener dateSetListener;
+
+    public static DateFormat dateFormatHumanReadable = new SimpleDateFormat("MMM dd, yyyy", Locale.US);
+    public static DateFormat dateFormatDatabaseFriendly = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+    public static Date dateEntered, todaysDate;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,7 +53,7 @@ public class AddEventsActivity extends AppCompatActivity {
 
         currentUserId = UserManager.getInstance().getCurrentUserId();
 
-        setDateNumberPicker();
+        setDatePickerDialog();
 
         final Spinner spinner = findViewById(R.id.add_event_spinner);
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
@@ -96,46 +105,47 @@ public class AddEventsActivity extends AppCompatActivity {
                         alertDialog.cancel();
                     }
                 });
+
+                getPhotoFromPhoneButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(AddEventsActivity.this, "This feature is not yet available", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }
 
-    private void setDateNumberPicker() {
-        Date date = Calendar.getInstance().getTime();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+    private void setDatePickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        todaysDate = calendar.getTime();
+        dateEntered = calendar.getTime();
+        calendar.setTime(todaysDate);
 
-        monthNumberPicker = findViewById(R.id.month_picker);
-        monthNumberPicker.setMinValue(1);
-        monthNumberPicker.setMaxValue(12);
-        monthNumberPicker.setDisplayedValues(new String[]{"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"});
+        final TextView dateTextView = findViewById(R.id.date_picker);
+        dateTextView.setText(dateFormatHumanReadable.format(todaysDate));
 
-        dayNumberPicker = findViewById(R.id.day_picker);
-        dayNumberPicker.setMinValue(1);
-        dayNumberPicker.setMaxValue(31);
-        dayNumberPicker.setWrapSelectorWheel(false);
-
-        yearNumberPicker = findViewById(R.id.year_picker);
-        yearNumberPicker.setMinValue(1950);
-        yearNumberPicker.setMaxValue(2028);
-        yearNumberPicker.setWrapSelectorWheel(false);
-
-        monthNumberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+        ImageView editDateIcon = findViewById(R.id.edit_date_icon);
+        editDateIcon.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onValueChange(NumberPicker numberPicker, int i, int i1) {
-                if (i1 == 2) {
-                    dayNumberPicker.setMaxValue(28);
-                } else if (i1 == 9 | i1 == 4 | i1 == 6 | i1 == 11) {
-                    dayNumberPicker.setMaxValue(30);
-                } else {
-                    dayNumberPicker.setMaxValue(31);
-                }
+            public void onClick(View view) {
+                calendar.setTime(dateEntered);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(AddEventsActivity.this,
+                        0, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.show();
             }
         });
 
-        monthNumberPicker.setValue(calendar.get(Calendar.MONTH) + 1);
-        dayNumberPicker.setValue(calendar.get(Calendar.DAY_OF_MONTH));
-        yearNumberPicker.setValue(calendar.get(Calendar.YEAR));
+        dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                calendar.set(year, month, day);
+                dateEntered = calendar.getTime();
+                String formattedDate = dateFormatDatabaseFriendly.format(dateEntered);
+                Toast.makeText(AddEventsActivity.this, formattedDate, Toast.LENGTH_SHORT).show();
+                dateTextView.setText(dateFormatHumanReadable.format(dateEntered));
+            }
+        };
     }
-
 }
