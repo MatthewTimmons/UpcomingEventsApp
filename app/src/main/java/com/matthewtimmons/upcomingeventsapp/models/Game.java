@@ -1,8 +1,10 @@
 package com.matthewtimmons.upcomingeventsapp.models;
 
+import android.content.res.Resources;
 import android.text.TextUtils;
 
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.matthewtimmons.upcomingeventsapp.R;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -41,6 +43,11 @@ public class Game extends Event implements Serializable {
 
     public void setRating(String rating) {
         this.rating = rating;
+    }
+
+    public String getFormattedRating(Resources res) {
+        if (!rating.equals("Rating Pending")) return res.getString(R.string.formatted_rating, rating);
+        else return rating;
     }
 
     //

@@ -1,6 +1,9 @@
 package com.matthewtimmons.upcomingeventsapp.models;
 
+import android.content.res.Resources;
+
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.matthewtimmons.upcomingeventsapp.R;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,6 +33,11 @@ public class Movie extends Event implements Serializable {
 
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    public String getFormattedRating(Resources res) {
+        if (!rating.equals("Rating Pending")) return res.getString(R.string.formatted_rating, rating);
+        else return rating;
     }
 
 //

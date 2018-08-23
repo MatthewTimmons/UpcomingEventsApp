@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.activities.DetailsActivity;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
+import com.matthewtimmons.upcomingeventsapp.manager.DateHelper;
 import com.matthewtimmons.upcomingeventsapp.models.Concert;
 import com.matthewtimmons.upcomingeventsapp.models.Event;
 import com.matthewtimmons.upcomingeventsapp.models.Game;
@@ -67,8 +68,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                 Game game = new Game(eventDocumentSnapshot);
                 viewHolder.optionalSecondEventInfoTextView.setVisibility(View.VISIBLE);
                 String releaseConsolesAsString = Game.fetchGameConsolesAsString(eventDocumentSnapshot);
-                formattedRating = viewHolder.itemView.getResources().getString(R.string.formatted_rating, game.getRating());
-                viewHolder.optionalSecondEventInfoTextView.setText(formattedRating);
+                viewHolder.optionalSecondEventInfoTextView.setText(game.getFormattedRating(viewHolder.itemView.getResources()));
                 setAllSharedFields(game, viewHolder);
                 viewHolder.thirdEventInfoTextView.setText(releaseConsolesAsString);
                 break;
@@ -77,8 +77,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                 Movie movie = new Movie(eventDocumentSnapshot);
                 setAllSharedFields(movie, viewHolder);
                 viewHolder.optionalSecondEventInfoTextView.setVisibility(View.VISIBLE);
-                formattedRating = viewHolder.itemView.getResources().getString(R.string.formatted_rating, movie.getRating());
-                viewHolder.optionalSecondEventInfoTextView.setText(formattedRating);
+                viewHolder.optionalSecondEventInfoTextView.setText(movie.getFormattedRating(viewHolder.itemView.getResources()));
                 viewHolder.thirdEventInfoTextView.setText(movie.getGenre());
                 break;
         }
@@ -115,7 +114,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
         Picasso.get().load(event.getImageUrl()).error(backupImage).into(viewHolder.eventPictureImageView);
         Picasso.get().load(event.getImageUrl()).error(backupImage).into(viewHolder.cardBackgroundImageView);
         viewHolder.titleTextView.setText(event.getTitle());
-        viewHolder.fourthEventInfoTextView.setText(event.getDate());
+        viewHolder.fourthEventInfoTextView.setText(DateHelper.getHumanReadableFormat(event.getDate()));
     }
 
     public void setBandNameValues(Concert concert, final EventViewHolder viewHolder) {

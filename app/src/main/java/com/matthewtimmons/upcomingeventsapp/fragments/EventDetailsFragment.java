@@ -1,5 +1,6 @@
 package com.matthewtimmons.upcomingeventsapp.fragments;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -9,16 +10,16 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -27,20 +28,23 @@ import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.matthewtimmons.upcomingeventsapp.R;
-import com.matthewtimmons.upcomingeventsapp.adapters.CustomCheckableSpinnerAdapter;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.controllers.ConcertsController;
 import com.matthewtimmons.upcomingeventsapp.controllers.GamesController;
 import com.matthewtimmons.upcomingeventsapp.controllers.MoviesController;
+import com.matthewtimmons.upcomingeventsapp.manager.DateHelper;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.matthewtimmons.upcomingeventsapp.models.Concert;
 import com.matthewtimmons.upcomingeventsapp.models.Event;
 import com.matthewtimmons.upcomingeventsapp.models.Game;
 import com.matthewtimmons.upcomingeventsapp.models.Movie;
+import com.matthewtimmons.upcomingeventsapp.models.User;
+import com.matthewtimmons.upcomingeventsapp.models.UserManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class EventDetailsFragment extends Fragment {
@@ -53,6 +57,7 @@ public class EventDetailsFragment extends Fragment {
     TextView titleTextView, subtitleTextView, optionalSecondSubtitleTextView, fourthTextView, fifthTextView;
     CheckBox optionalCheckbox, favoritesCheckbox;
     Spinner optionalSpinner;
+    User currentUser;
 
 
     public static EventDetailsFragment newInstance(String eventId, String eventKey) {
@@ -98,6 +103,8 @@ public class EventDetailsFragment extends Fragment {
             eventKey = bundle.getString(ARGS_EVENT_TYPE);
             isCustomEvent = bundle.getBoolean(ARGS_IS_CUSTOM_EVENT);
         }
+
+        currentUser = UserManager.getInstance().getCurrentUser();
 
         // Assign all views to variables
         eventPictureImageView = view.findViewById(R.id.wide_image);
@@ -199,36 +206,96 @@ public class EventDetailsFragment extends Fragment {
     }
 
 
-    public void setCheckmarkFunctionalityForObject(final String eventId, final FieldPath fieldpathToArray, final String console, final CheckBox checkBox) {
-        Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS)
-                .document(currentUserId).get();
-        task.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                final DocumentReference currentUserDocumentReference = task.getResult().getReference();
-                List<String> arrayOfAllInstances = (List<String>) task.getResult().get(fieldpathToArray);
-                checkBox.setChecked(arrayOfAllInstances != null);
-                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                        if (checked) {
-                            ArrayList<String> consoleValue = new ArrayList<>();
-                            consoleValue.add("Owned");
-                            consoleValue.add(console);
-                            currentUserDocumentReference.update(fieldpathToArray, consoleValue);
-                        } else {
-                            currentUserDocumentReference.update(fieldpathToArray, FieldValue.delete());
+    public void produceAlertDialog(final Game game, boolean b) {
+                    final List<String> allCheckedBoxes = new ArrayList<>();
+
+                    // Try adding all currently owned consoles if there are any
+                    if (!b) {
+                        try {
+                            Map<String, Object> ownedGames = currentUser.getGamesOwned();
+                            List<String> ownedConsolesForThisGame = (List<String>) ownedGames.get(game.getId());
+                            allCheckedBoxes.addAll(ownedConsolesForThisGame);
+                        } catch (Exception e) {
+                            Toast.makeText(getContext(), "App would have crashed", Toast.LENGTH_SHORT).show();
                         }
                     }
-                });
-            }
-        });
+
+                    android.support.v7.app.AlertDialog.Builder dialogBuilder = new android.support.v7.app.AlertDialog.Builder(getContext());
+                    View dialogView = getLayoutInflater().inflate(R.layout.dialog_checkboxes_and_confirm, null);
+
+                    LinearLayout checkboxesLinearLayout = dialogView.findViewById(R.id.checkboxes_linear_layout);
+                    Button confirmButton = dialogView.findViewById(R.id.confirm_button);
+                    Button cancelButton = dialogView.findViewById(R.id.cancel_button);
+
+                    for (final String console : game.getReleaseConsoles()) {
+                        CheckBox checkBox = new CheckBox(getContext());
+                        checkBox.setText(console);
+                        checkBox.setChecked(allCheckedBoxes.contains(console));
+                        checkboxesLinearLayout.addView(checkBox);
+
+                        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                                if (b) allCheckedBoxes.add(console);
+                                else allCheckedBoxes.remove(console);
+                            }
+                        });
+                    }
+
+                    dialogBuilder.setView(dialogView);
+                    final android.support.v7.app.AlertDialog alertDialog = dialogBuilder.create();
+                    alertDialog.show();
+
+                    confirmButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (!allCheckedBoxes.equals(currentUser.getGamesOwned().get(game.getId()))) {
+                                if (!allCheckedBoxes.isEmpty()) {
+                                    Firestore.updateFirestoreDocument("users/" + currentUserId, "gamesOwned." + game.getId(), allCheckedBoxes);
+                                    currentUser.getGamesOwned().put(game.getId(), allCheckedBoxes);
+                                    UserManager.getInstance().setCurrentUser();
+                                    currentUser = UserManager.getInstance().getCurrentUser();
+                                } else {
+                                    Firestore.updateFirestoreDocument("users/" + currentUserId, "gamesOwned." + game.getId(), FieldValue.delete());
+                                    currentUser.getGamesOwned().put(game.getId(), null);
+                                    UserManager.getInstance().setCurrentUser();
+                                    currentUser = UserManager.getInstance().getCurrentUser();
+                                }
+                            }
+                            alertDialog.dismiss();
+                        }
+                    });
+
+                    cancelButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            alertDialog.dismiss();
+                        }
+                    });
+
+                    alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            optionalCheckbox.setOnCheckedChangeListener(null);
+                            optionalCheckbox.setChecked(currentUser.getGamesOwned().get(game.getId()) != null);
+                            optionalCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                @Override
+                                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                                    produceAlertDialog(game, b);
+                                }
+                            });
+                        }
+                    });
+
+//                } else {
+//                    Firestore.updateFirestoreDocument("users/" + currentUserId, "gamesOwned." + game.getId(), FieldValue.delete());
+//                }
     }
 
     void presentEvent(Event event, @DrawableRes int backupImageId) {
         Picasso.get().load(event.getImageUrl()).error(backupImageId).into(eventPictureImageView);
         titleTextView.setText(event.getTitle());
-        fifthTextView.setText(event.getDate());
+        fifthTextView.setText(DateHelper.getHumanReadableFormat(event.getDate()));
         setCheckmarkFunctionality(event.getId(), FieldPath.of("myFavorites", eventKey), favoritesCheckbox, true);
     }
 
@@ -254,38 +321,39 @@ public class EventDetailsFragment extends Fragment {
         fourthTextView.setText(game.getReleaseConsolesAsString());
 
         // Set rating TextView
-        String formattedRating = getResources().getString(R.string.formatted_rating, game.getRating());
         optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);
-        optionalSecondSubtitleTextView.setText(formattedRating);
+        optionalSecondSubtitleTextView.setText(game.getFormattedRating(getResources()));
+
+        // Set Owned Checkbox functionality
+        optionalCheckbox.setVisibility(View.VISIBLE);
+        optionalCheckbox.setText("Owned");
+        final boolean gameAlreadyOwned = currentUser.getGamesOwned().containsKey(game.getId());
+        if (gameAlreadyOwned) optionalCheckbox.setChecked(true);
 
         if (game.getReleaseConsoles().size() > 1) {
-            // Set Owned Spinner of checkable items
-            Firestore.collection("users").document(currentUserId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            optionalCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    ArrayList<String> allCurrentlyOwnedConsoles = (ArrayList<String>) documentSnapshot.get(FieldPath.of("gamesOwned", game.getId()));
-
-                    List<String> applicableConsoles = game.getReleaseConsoles();
-                    applicableConsoles.add(0, "Owned");
-                    optionalSpinner.setVisibility(View.VISIBLE);
-                    SpinnerAdapter adapter = new CustomCheckableSpinnerAdapter(applicableConsoles, getActivity(), currentUserId, game.getId(), allCurrentlyOwnedConsoles);
-                    optionalSpinner.setAdapter(adapter);
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    produceAlertDialog(game, b);
                 }
             });
         } else {
-            optionalCheckbox.setVisibility(View.VISIBLE);
-            optionalCheckbox.setText("Owned");
-            setCheckmarkFunctionalityForObject(game.getId(), FieldPath.of("gamesOwned", game.getId()), game.getReleaseConsoles().get(0),optionalCheckbox);
+            optionalCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (b) { Firestore.updateFirestoreDocument("users/" + currentUserId, "gamesOwned." + game.getId(), game.getReleaseConsoles().get(0)); }
+                    else { Firestore.updateFirestoreDocument("users/" + currentUserId, "gamesOwned." + game.getId(), FieldValue.delete()); }
+                    UserManager.getInstance().setCurrentUser();
+                    currentUser = UserManager.getInstance().getCurrentUser();
+                }
+            });
         }
-
     }
 
     void presentMovie(Movie movie) {
         presentEvent(movie, R.drawable.ic_movies_blue);
         optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);
-        String formattedRating = getResources()
-                .getString(R.string.formatted_rating, movie.getRating());
-        optionalSecondSubtitleTextView.setText(formattedRating);
+        optionalSecondSubtitleTextView.setText(movie.getFormattedRating(getResources()));
         optionalCheckbox.setVisibility(View.VISIBLE);
         optionalCheckbox.setText("Seen");
         fourthTextView.setText(movie.getGenre());

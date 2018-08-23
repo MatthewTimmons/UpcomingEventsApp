@@ -23,7 +23,7 @@
         app:layout_constraintTop_toBottomOf="@id/movie_title_edit_text"/>
 
     <LinearLayout
-        android:id="@+id/movie_rating_icons"
+        android:id="@+id/game_rating_icons"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="16dp"
@@ -88,15 +88,9 @@
         android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"
         android:max="4"
-        app:layout_constraintTop_toBottomOf="@id/movie_rating_icons"
+        app:layout_constraintTop_toBottomOf="@id/game_rating_icons"
         style="@style/WhiteSeekbar"
         app:tickMarkTint= "@color/white"
         />
-
-    <Spinner
-        android:id="@+id/movie_rating_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/rating_seekbar"/>
 
 </android.support.constraint.ConstraintLayout>

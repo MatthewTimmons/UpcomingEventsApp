@@ -20,49 +20,54 @@ import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.fragments.AddConcertFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.AddGameFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.AddMovieFragment;
+import com.matthewtimmons.upcomingeventsapp.manager.DateHelper;
 import com.matthewtimmons.upcomingeventsapp.models.UserManager;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 public class AddEventsActivity extends AppCompatActivity {
-    public static String moviePosterUrl;
-    String currentUserId;
-    TextView addEventTypeTextView, getSuggestionsTextView;
-    ImageView posterImageView;
-    Button addToMyMoviesButton, addToAllMoviesButton;
-    DatePickerDialog.OnDateSetListener dateSetListener;
+    public static String eventPosterUrl;
 
-    public static DateFormat dateFormatHumanReadable = new SimpleDateFormat("MMM dd, yyyy", Locale.US);
-    public static DateFormat dateFormatDatabaseFriendly = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+    String currentUserId;
+    TextView addEventTypeTextView, getSuggestionsTextView, dateTextView;
+    ImageView posterImageView, editDateIcon;
+    Button addToMyEventsButton, addToAllEventsButton;
+    Spinner eventTypeSpinner;
+
     public static Date dateEntered, todaysDate;
+    Calendar calendar = Calendar.getInstance();
+    DatePickerDialog.OnDateSetListener dateSetListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_events);
 
+        // Set views
+        eventTypeSpinner = findViewById(R.id.add_event_spinner);
         addEventTypeTextView = findViewById(R.id.add_event_type);
         getSuggestionsTextView = findViewById(R.id.get_suggestions_button);
         posterImageView = findViewById(R.id.poster_image_view);
-        addToMyMoviesButton = findViewById(R.id.add_to_my_movies_button);
-        addToAllMoviesButton = findViewById(R.id.add_to_all_movies_button);
+        addToMyEventsButton = findViewById(R.id.add_to_my_events_button);
+        addToAllEventsButton = findViewById(R.id.add_to_all_events_button);
+        dateTextView = findViewById(R.id.date_picker);
+        editDateIcon = findViewById(R.id.edit_date_icon);
 
         currentUserId = UserManager.getInstance().getCurrentUserId();
 
-        setDatePickerDialog();
+        setDatePickerDialog(dateTextView, editDateIcon);
 
-        final Spinner spinner = findViewById(R.id.add_event_spinner);
+        // Set up spinner in toolbar
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
                 getResources().getStringArray(R.array.names));
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(spinnerAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        eventTypeSpinner.setAdapter(spinnerAdapter);
+        eventTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                dateTextView.setText(DateHelper.dateFormatHumanReadable.format(todaysDate));
+                dateEntered = todaysDate;
 
                 if (i == 0) {
                     addEventTypeTextView.setText("Add New Movie");
@@ -85,11 +90,14 @@ public class AddEventsActivity extends AppCompatActivity {
             }
         });
 
+        // Set up functionality to add custom poster via URL or upload from phone
         posterImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(AddEventsActivity.this);
-                final View dialogView = getLayoutInflater().inflate(R.layout.dialog_submit_photo, null);
+                View dialogView = getLayoutInflater().inflate(R.layout.dialog_submit_photo, null);
+
+                // Set Dialog internal views
                 final EditText moviePosterURLEditText = dialogView.findViewById(R.id.image_url_edit_text);
                 Button submitButton = dialogView.findViewById(R.id.submit_url_button);
                 Button getPhotoFromPhoneButton = dialogView.findViewById(R.id.get_photo_from_phone_button);
@@ -101,7 +109,7 @@ public class AddEventsActivity extends AppCompatActivity {
                 submitButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        moviePosterUrl = moviePosterURLEditText.getText().toString();
+                        eventPosterUrl = moviePosterURLEditText.getText().toString();
                         alertDialog.cancel();
                     }
                 });
@@ -116,16 +124,10 @@ public class AddEventsActivity extends AppCompatActivity {
         });
     }
 
-    private void setDatePickerDialog() {
-        final Calendar calendar = Calendar.getInstance();
+    private void setDatePickerDialog(final TextView dateTextView, ImageView editDateIcon) {
         todaysDate = calendar.getTime();
         dateEntered = calendar.getTime();
-        calendar.setTime(todaysDate);
 
-        final TextView dateTextView = findViewById(R.id.date_picker);
-        dateTextView.setText(dateFormatHumanReadable.format(todaysDate));
-
-        ImageView editDateIcon = findViewById(R.id.edit_date_icon);
         editDateIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,9 +144,7 @@ public class AddEventsActivity extends AppCompatActivity {
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 calendar.set(year, month, day);
                 dateEntered = calendar.getTime();
-                String formattedDate = dateFormatDatabaseFriendly.format(dateEntered);
-                Toast.makeText(AddEventsActivity.this, formattedDate, Toast.LENGTH_SHORT).show();
-                dateTextView.setText(dateFormatHumanReadable.format(dateEntered));
+                dateTextView.setText(DateHelper.dateFormatHumanReadable.format(dateEntered));
             }
         };
     }

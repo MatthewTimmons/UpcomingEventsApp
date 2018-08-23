@@ -12,17 +12,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FieldPath;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.AddEventsActivity;
 import com.matthewtimmons.upcomingeventsapp.adapters.CustomRemovableSpinnerAdapter;
+import com.matthewtimmons.upcomingeventsapp.manager.DateHelper;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.matthewtimmons.upcomingeventsapp.models.UserManager;
 import com.squareup.picasso.Picasso;
@@ -32,12 +28,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AddConcertFragment extends Fragment {
-    TextView welcomeTextView, getSuggestionsTextView;
+    TextView getSuggestionsTextView;
     ImageView posterImageView;
     EditText addBandNameEditText, concertLocationEditText;
     Button addBandNameButton, addToMyConcertsButton, addToAllConcertsButton;
     String currentUserId, concertPosterUrl;
-    NumberPicker monthNumberPicker, dayNumberPicker, yearNumberPicker;
 
     @Nullable
     @Override
@@ -48,14 +43,13 @@ public class AddConcertFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        welcomeTextView = getActivity().findViewById(R.id.add_event_type);
         getSuggestionsTextView = getActivity().findViewById(R.id.get_suggestions_button);
         posterImageView = getActivity().findViewById(R.id.poster_image_view);
         addBandNameButton = view.findViewById(R.id.add_band_name_button);
         addBandNameEditText = view.findViewById(R.id.add_band_name_edit_text);
         concertLocationEditText = view.findViewById(R.id.concert_location_edit_text);
-        addToMyConcertsButton = getActivity().findViewById(R.id.add_to_my_movies_button);
-        addToAllConcertsButton = getActivity().findViewById(R.id.add_to_all_movies_button);
+        addToMyConcertsButton = getActivity().findViewById(R.id.add_to_my_events_button);
+        addToAllConcertsButton = getActivity().findViewById(R.id.add_to_all_events_button);
         currentUserId = UserManager.getInstance().getCurrentUserId();
 
         getSuggestionsTextView.setVisibility(View.GONE);
@@ -100,13 +94,13 @@ public class AddConcertFragment extends Fragment {
                 !bandNames.isEmpty()) {
             final Map<String, Object> concertData = new HashMap<>();
             concertData.put("concertLocation", concertLocationEditText.getText().toString());
-            concertData.put("date", AddEventsActivity.dateFormatDatabaseFriendly.format(AddEventsActivity.dateEntered));
+            concertData.put("date", DateHelper.dateFormatDatabaseFriendly.format(AddEventsActivity.dateEntered));
             concertData.put("eventType", "concerts");
             concertData.put("imageUrl", concertPosterUrl);
             concertData.put("concertBandsArray", bandNames);
             concertData.put("eventCreator", currentUserId);
-            if (AddEventsActivity.moviePosterUrl != null && !AddEventsActivity.moviePosterUrl.equals("")) {
-                concertData.put("imageUrl", AddEventsActivity.moviePosterUrl);
+            if (AddEventsActivity.eventPosterUrl != null && !AddEventsActivity.eventPosterUrl.equals("")) {
+                concertData.put("imageUrl", AddEventsActivity.eventPosterUrl);
             } else if (concertPosterUrl != null && !concertPosterUrl.equals("")) {
                 concertData.put("imageUrl", concertPosterUrl);
             } else {
