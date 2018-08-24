@@ -11,20 +11,8 @@ import com.matthewtimmons.upcomingeventsapp.models.Movie;
 
 public class MoviesController {
 
-    public static void getMovie(String id, final GetMovieListener movieListener) {
-        FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_MOVIES).document(id)
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot documentSnapshot = task.getResult();
-                Movie movie = new Movie(documentSnapshot);
-                movieListener.onMovieRetrieved(movie);
-            }
-        });
-    }
-
-    public static void getCustomMovie(String id, String userId, final GetMovieListener movieListener) {
-        FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_MOVIES).document(userId).collection("movies").document(id)
+    public static void getMovie(String filePath, final GetMovieListener movieListener) {
+        FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_MOVIES).document(filePath)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

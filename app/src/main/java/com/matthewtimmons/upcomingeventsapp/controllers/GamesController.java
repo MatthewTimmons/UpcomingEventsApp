@@ -13,20 +13,8 @@ import com.matthewtimmons.upcomingeventsapp.models.Movie;
 
 public class GamesController {
 
-    public static void getGame(String id, final GetGameListener gameListener) {
-        FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_GAMES).document(id)
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot documentSnapshot = task.getResult();
-                Game game = new Game(documentSnapshot);
-                gameListener.onGameRetrieved(game);
-            }
-        });
-    }
-
-    public static void getCustomGame(String id, String userId, final GamesController.GetGameListener gameListener) {
-        FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_GAMES).document(userId).collection("games").document(id)
+    public static void getGame(String filePath, final GetGameListener gameListener) {
+        FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_GAMES).document(filePath)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

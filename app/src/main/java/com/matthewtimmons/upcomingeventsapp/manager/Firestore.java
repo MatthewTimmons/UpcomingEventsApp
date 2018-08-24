@@ -60,8 +60,8 @@ public class Firestore {
 
     // documentFieldPath should be in the form of "collectionId/documentId/collectionId/documentId/etc."
     // fieldPathToIntendedFieldValue should be in the form of "key.nestedKey.nestedKey.etc."
-    public static void updateFirestoreDocument(String documentFieldPath, String fieldValueFieldPath, Object updatedValue) {
-        FirebaseFirestore.getInstance().document(documentFieldPath).update(fieldValueFieldPath, updatedValue);
+    public static void updateFirestoreDocument(String documentFilePath, String fieldValueFieldPath, Object updatedValue) {
+        FirebaseFirestore.getInstance().document(documentFilePath).update(fieldValueFieldPath, updatedValue);
     }
 
 }

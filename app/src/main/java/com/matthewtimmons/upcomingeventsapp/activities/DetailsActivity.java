@@ -50,14 +50,6 @@ public class DetailsActivity extends AppCompatActivity {
         return intent;
     }
 
-    public static Intent newIntent(Context context, String eventId, String eventType) {
-        Intent intent = new Intent(context, DetailsActivity.class);
-        intent.putExtra(EXTRA_EVENT_ID, eventId);
-        intent.putExtra(EXTRA_EVENT_TYPE, eventType);
-        intent.putExtra(EXTRA_EVENT_CREATOR, false);
-        return intent;
-    }
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,17 +63,10 @@ public class DetailsActivity extends AppCompatActivity {
            eventCreator = getIntent().getStringExtra(EXTRA_EVENT_CREATOR);
         }
 
-        if (eventCreator.equals("global")) {
-            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, eventType);
-        } else {
-            eventDetailsFragment = EventDetailsFragment.newInstance(eventId, eventType, true);
-            if (eventCreator.equals(currentUserId)) {
-                setDeleteButtonFunctionality();
-            }
-        }
-
+        eventDetailsFragment = EventDetailsFragment.newInstance(eventId, eventType, !eventCreator.equals("global"));
         friendRecyclerViewFragment = FriendInfoFragment.newInstance(eventType, eventId);
         interestLevelSeekbarFragment = InterestLevelSeekbarFragment.newInstance(eventType, eventId);
+        if (eventCreator.equals(currentUserId)) setDeleteButtonFunctionality();
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.fragment_container, eventDetailsFragment);

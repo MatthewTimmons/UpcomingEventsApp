@@ -1,9 +1,13 @@
 package com.matthewtimmons.upcomingeventsapp.models;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.widget.Toast;
 
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -182,6 +186,51 @@ public class User implements Parcelable {
 
     public void setPendingFriendRequests(Map<String, Object> pendingFriendRequests) {
         this.pendingFriendRequests = pendingFriendRequests;
+    }
+
+    public List<String> getMyFavoritesOfEventType(String eventType) {
+        return (ArrayList<String>) myFavorites.get(eventType);
+    }
+
+    public void setMyFavoritesOfEventType(String eventType, String eventId, String actionToPerform) {
+        // Access the array
+        Map<String, Object> tempVersionOfMyFavorites = myFavorites;
+        ArrayList<String> myFavoritesOfThisType = (ArrayList<String>) getMyFavoritesOfEventType(eventType);
+
+        // Perform the alteration
+        switch (actionToPerform) {
+            case "add":
+                myFavoritesOfThisType.add(eventId);
+                break;
+            case "remove":
+                myFavoritesOfThisType.remove(eventId);
+                break;
+            case "delete":
+                myFavoritesOfThisType.clear();
+        }
+
+        // Put the data back on the current User
+        tempVersionOfMyFavorites.put(eventType, myFavoritesOfThisType);
+        setMyFavorites(tempVersionOfMyFavorites);
+    }
+
+    public DocumentReference getUserDocumentReference() {
+        return Firestore.collection("users").document(userId);
+    }
+
+    public void editGamesOwned(String gameId, List<String> releaseConsole, String actionToTake) {
+        Map<String, Object> tempGamesOwned = gamesOwned;
+
+        switch (actionToTake) {
+            case "update":
+                tempGamesOwned.put(gameId, releaseConsole);
+                break;
+            case "delete":
+                tempGamesOwned.remove(gameId);
+                break;
+        }
+
+        setGamesOwned(tempGamesOwned);
     }
 
     public static Creator<User> getCREATOR() {
