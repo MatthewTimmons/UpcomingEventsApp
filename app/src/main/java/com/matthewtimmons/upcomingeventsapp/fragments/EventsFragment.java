@@ -3,16 +3,20 @@ package com.matthewtimmons.upcomingeventsapp.fragments;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -20,11 +24,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.R;
+import com.matthewtimmons.upcomingeventsapp.activities.ProfileViewActivity;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventListAdapter;
+import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
 import com.matthewtimmons.upcomingeventsapp.manager.DevHelper;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
+import com.matthewtimmons.upcomingeventsapp.models.User;
+import com.matthewtimmons.upcomingeventsapp.models.UserManager;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -63,41 +73,45 @@ public class EventsFragment extends Fragment {
                 recyclerView = view.findViewById(R.id.events_recycler_view);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-                if (eventType.equals("movies")) {
-                    Firestore.collection("movies").document(currentUserId).collection(eventType).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                // This is the section I messed with, and it technically works, but it does not allow the user to click on other people's events
+                // Need to go into the adapter and add a rule that the file path for custom events is //movies/userID/movies/movieID
+                if (UserManager.getInstance().getCurrentUser() == null) {
+                    Firestore.collection("users").document(currentUserId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            List<DocumentSnapshot> allPersonalMovies = task.getResult().getDocuments();
-                            allPersonalMovies.addAll(eventDocumentSnapshots);
-                            allPersonalMovies = DevHelper.sortByDate(allPersonalMovies);
-                            eventListAdapter = new EventListAdapter(allPersonalMovies);
-                            recyclerView.setAdapter(eventListAdapter);
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            User currentUser = documentSnapshot.toObject(User.class);
+                            getEventsAndSetView(currentUserId, currentUser);
                         }
                     });
-                } else if (eventType.equals("games")) {
-                    Firestore.collection("games").document(currentUserId).collection(eventType).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            List<DocumentSnapshot> allPersonalGames = task.getResult().getDocuments();
-                            allPersonalGames.addAll(eventDocumentSnapshots);
-                            allPersonalGames = DevHelper.sortByDate(allPersonalGames);
-                            eventListAdapter = new EventListAdapter(allPersonalGames);
-                            recyclerView.setAdapter(eventListAdapter);
-                        }
-                    });
-                } else if (eventType.equals("concerts")) {
-                    Firestore.collection("concerts").document(currentUserId).collection(eventType).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            List<DocumentSnapshot> allPersonalConcerts = task.getResult().getDocuments();
-                            allPersonalConcerts.addAll(eventDocumentSnapshots);
-                            allPersonalConcerts = DevHelper.sortByDate(allPersonalConcerts);
-                            eventListAdapter = new EventListAdapter(allPersonalConcerts);
-                            recyclerView.setAdapter(eventListAdapter);
-                        }
-                    });
+                } else {
+                    getEventsAndSetView(currentUserId, UserManager.getInstance().getCurrentUser());
                 }
             }
         });
+    }
+
+    void getEventsAndSetView(String currentUserId, User currentUser) {
+        final List<DocumentSnapshot> allEvents = new ArrayList<>();
+        List<Query> listOfQueries = new ArrayList<>();
+        Query globalEvents = Firestore.collection(eventType).whereEqualTo("eventCreator", "global");
+        Query currentUserCustomEvents = Firestore.collection(eventType).whereEqualTo("eventCreator", currentUserId);
+
+        listOfQueries.add(globalEvents);
+        listOfQueries.add(currentUserCustomEvents);
+
+        for (String friendId : currentUser.getFriends()) {
+            listOfQueries.add(Firestore.collection(eventType).whereEqualTo("eventCreator", friendId));
+        }
+
+        for (Query query : listOfQueries) {
+            query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot documentSnapshots) {
+                    allEvents.addAll(documentSnapshots.getDocuments());
+                    eventListAdapter = new EventListAdapter(DevHelper.sortByDate(allEvents));
+                    recyclerView.setAdapter(eventListAdapter);
+                }
+            });
+        }
     }
 }

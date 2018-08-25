@@ -138,7 +138,7 @@ public class AddGameFragment extends Fragment{
         });
     }
 
-    public void setCustomGame(String folder) {
+    public void setCustomGame(String eventCreator) {
         if (!gameTitleEditText.getText().toString().equals("") &&
                 !releaseConsolesChecked.isEmpty()) {
             final Map<String, Object> gameData = new HashMap<>();
@@ -146,7 +146,7 @@ public class AddGameFragment extends Fragment{
             gameData.put("eventType", "games");
             gameData.put("title", gameTitleEditText.getText().toString());
             gameData.put("releaseConsoles", releaseConsolesChecked);
-            gameData.put("eventCreator", currentUserId);
+            gameData.put("eventCreator", eventCreator);
             gameData.put("rating", gameRating);
             if (AddEventsActivity.eventPosterUrl != null && !AddEventsActivity.eventPosterUrl.equals("")) {
                 gameData.put("imageUrl", AddEventsActivity.eventPosterUrl);
@@ -155,8 +155,8 @@ public class AddGameFragment extends Fragment{
             } else {
                 gameData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
             }
-            Firestore.collection("games").document(folder).collection("games").add(gameData);
-            String toastMessage = folder.equals("recommendations") ? "recommended for global adoption" : "added to your list of games.";
+            Firestore.collection("games").add(gameData);
+            String toastMessage = eventCreator.equals("recommendations") ? "recommended for global adoption" : "added to your list of games.";
             Toast.makeText(getContext(), "Game has been " + toastMessage, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getContext(), "Game title and consoles cannot be empty", Toast.LENGTH_SHORT).show();

@@ -64,7 +64,7 @@ public class RecyclerViewWithHeaderListAdapter extends RecyclerView.Adapter<Recy
         recyclerViewWithHeaderViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = DetailsActivity.newIntent(view.getContext(), eventDocumentSnapshot.getId(), eventDocumentSnapshot.getString("eventType"), eventDocumentSnapshot.getString("eventCreator"));
+                Intent intent = DetailsActivity.newIntent(view.getContext(), eventDocumentSnapshot.getId(), eventType, eventDocumentSnapshot.getString("eventCreator"));
                 view.getContext().startActivity(intent);
             }
         });

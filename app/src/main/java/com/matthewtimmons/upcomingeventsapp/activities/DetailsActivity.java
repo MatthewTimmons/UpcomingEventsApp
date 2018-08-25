@@ -63,7 +63,7 @@ public class DetailsActivity extends AppCompatActivity {
            eventCreator = getIntent().getStringExtra(EXTRA_EVENT_CREATOR);
         }
 
-        eventDetailsFragment = EventDetailsFragment.newInstance(eventId, eventType, !eventCreator.equals("global"));
+        eventDetailsFragment = EventDetailsFragment.newInstance(eventId, eventType);
         friendRecyclerViewFragment = FriendInfoFragment.newInstance(eventType, eventId);
         interestLevelSeekbarFragment = InterestLevelSeekbarFragment.newInstance(eventType, eventId);
         if (eventCreator.equals(currentUserId)) setDeleteButtonFunctionality();
@@ -100,7 +100,7 @@ public class DetailsActivity extends AppCompatActivity {
                 confirmButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        DocumentReference currentCustomMovieRef = Firestore.collection(eventType).document(currentUserId).collection(eventType).document(eventId);
+                        DocumentReference currentCustomMovieRef = Firestore.collection(eventType).document(eventId);
                         currentCustomMovieRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {

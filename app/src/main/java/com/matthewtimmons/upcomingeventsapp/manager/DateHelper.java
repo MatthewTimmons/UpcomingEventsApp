@@ -12,9 +12,8 @@ public class DateHelper {
     public static SimpleDateFormat formatForJSONReturnValue = new SimpleDateFormat("dd MMM yyyy", Locale.US);
 
     public static String getHumanReadableFormat(String dateAsString) {
-        Date date = null;
         try {
-            date = dateFormatDatabaseFriendly.parse(dateAsString);
+            Date date = dateFormatDatabaseFriendly.parse(dateAsString);
             return dateFormatHumanReadable.format(date);
         } catch (ParseException e) {
             e.printStackTrace();

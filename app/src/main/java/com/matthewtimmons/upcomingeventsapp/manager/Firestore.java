@@ -1,5 +1,8 @@
 package com.matthewtimmons.upcomingeventsapp.manager;
 
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
@@ -22,6 +25,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.security.auth.callback.Callback;
 
 import static com.firebase.ui.auth.ui.email.CheckEmailFragment.TAG;
 
@@ -63,5 +68,7 @@ public class Firestore {
     public static void updateFirestoreDocument(String documentFilePath, String fieldValueFieldPath, Object updatedValue) {
         FirebaseFirestore.getInstance().document(documentFilePath).update(fieldValueFieldPath, updatedValue);
     }
+
+
 
 }

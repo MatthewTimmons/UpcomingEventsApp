@@ -221,10 +221,6 @@ public class DevHelper {
                                             if (collapsed) {
                                                 RecyclerViewWithHeaderListAdapter recyclerViewWithHeaderListAdapter =
                                                 new RecyclerViewWithHeaderListAdapter(allFavoriteDocumentSnapshots);
-                                                StringBuilder stringBuilder = new StringBuilder();
-                                                for (DocumentSnapshot doc : allFavoriteDocumentSnapshots) {
-                                                    stringBuilder.append(doc.getString("title"));
-                                                }
                                                 recyclerView.setAdapter(recyclerViewWithHeaderListAdapter);
                                             } else {
                                                 EventListAdapter eventListAdapter = new EventListAdapter(allFavoriteDocumentSnapshots);

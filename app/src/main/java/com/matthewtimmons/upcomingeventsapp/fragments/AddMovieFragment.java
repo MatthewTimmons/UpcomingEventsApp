@@ -211,7 +211,7 @@ public class AddMovieFragment extends Fragment{
         //        MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
-    private void setCustomMovie(String folder) {
+    private void setCustomMovie(String eventCreator) {
         if (!movieTitleEditText.getText().toString().equals("") &&
                 !movieGenreEditText.getText().toString().equals("")) {
             final Map<String, Object> movieData = new HashMap<>();
@@ -219,7 +219,7 @@ public class AddMovieFragment extends Fragment{
             movieData.put("genre", movieGenreEditText.getText().toString());
             movieData.put("rating", movieRating);
             movieData.put("title", movieTitleEditText.getText().toString());
-            movieData.put("eventCreator", currentUserId);
+            movieData.put("eventCreator", eventCreator);
             movieData.put("date", DateHelper.dateFormatDatabaseFriendly.format(AddEventsActivity.dateEntered));
 
             if (moviePosterUrl != null && !moviePosterUrl.equals("")) {
@@ -230,8 +230,8 @@ public class AddMovieFragment extends Fragment{
                 movieData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
                 Toast.makeText(getContext(), "No movie poster detected", Toast.LENGTH_SHORT).show();
             }
-            Firestore.collection("movies").document(folder).collection("movies").add(movieData);
-            String toastMessage = folder.equals("recommendations") ? "recommended for global adoption" : "added to your list of movies.";
+            Firestore.collection("movies").add(movieData);
+            String toastMessage = eventCreator.equals("recommendations") ? "recommended for global adoption" : "added to your list of movies.";
             Toast.makeText(getContext(), "Movie has been " + toastMessage, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();

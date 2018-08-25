@@ -89,7 +89,7 @@ public class AddConcertFragment extends Fragment {
         });
     }
 
-    public void addCustomConcert(String folder, ArrayList<String> bandNames){
+    public void addCustomConcert(String eventCreator, ArrayList<String> bandNames){
         if (!concertLocationEditText.getText().toString().equals("") &&
                 !bandNames.isEmpty()) {
             final Map<String, Object> concertData = new HashMap<>();
@@ -98,7 +98,7 @@ public class AddConcertFragment extends Fragment {
             concertData.put("eventType", "concerts");
             concertData.put("imageUrl", concertPosterUrl);
             concertData.put("concertBandsArray", bandNames);
-            concertData.put("eventCreator", currentUserId);
+            concertData.put("eventCreator", eventCreator);
             if (AddEventsActivity.eventPosterUrl != null && !AddEventsActivity.eventPosterUrl.equals("")) {
                 concertData.put("imageUrl", AddEventsActivity.eventPosterUrl);
             } else if (concertPosterUrl != null && !concertPosterUrl.equals("")) {
@@ -107,8 +107,8 @@ public class AddConcertFragment extends Fragment {
                 concertData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
                 Toast.makeText(getContext(), "No concert poster detected", Toast.LENGTH_SHORT).show();
             }
-            Firestore.collection("concerts").document(folder).collection("concerts").add(concertData);
-            String toastMessage = folder.equals("recommendations") ? "recommended for global adoption" : "added to your list of concerts.";
+            Firestore.collection("concerts").add(concertData);
+            String toastMessage = eventCreator.equals("recommendations") ? "recommended for global adoption" : "added to your list of concerts.";
             Toast.makeText(getContext(), "Concert has been " + toastMessage, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();

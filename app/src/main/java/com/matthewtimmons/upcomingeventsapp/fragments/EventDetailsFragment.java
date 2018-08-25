@@ -44,22 +44,19 @@ import java.util.Map;
 public class EventDetailsFragment extends Fragment {
     private static final String ARGS_EVENT_ID = "ARGS_EVENT_ID";
     private static final String ARGS_EVENT_TYPE = "ARGS_EVENT_TYPE";
-    private static final String ARGS_IS_CUSTOM_EVENT = "ARGS_IS_CUSTOM_EVENT";
 
-    String currentUserId, eventId, eventKey, filePathToEventDocument;
-    Boolean isCustomEvent;
+    String currentUserId, eventId, eventKey;
     ImageView eventPictureImageView;
     TextView titleTextView, subtitleTextView, optionalSecondSubtitleTextView, fourthTextView, fifthTextView;
     CheckBox optionalCheckbox, favoritesCheckbox;
     Spinner optionalSpinner;
     User currentUser;
 
-    public static EventDetailsFragment newInstance(String eventId, String eventKey, Boolean isCustomEvent) {
+    public static EventDetailsFragment newInstance(String eventId, String eventKey) {
         EventDetailsFragment instance = new EventDetailsFragment();
         Bundle args = new Bundle();
         args.putString(ARGS_EVENT_ID, eventId);
         args.putString(ARGS_EVENT_TYPE, eventKey);
-        args.putBoolean(ARGS_IS_CUSTOM_EVENT, isCustomEvent);
         instance.setArguments(args);
         return instance;
     }
@@ -85,7 +82,6 @@ public class EventDetailsFragment extends Fragment {
         if (bundle != null) {
             eventId = bundle.getString(ARGS_EVENT_ID);
             eventKey = bundle.getString(ARGS_EVENT_TYPE);
-            isCustomEvent = bundle.getBoolean(ARGS_IS_CUSTOM_EVENT);
         }
 
         currentUser = UserManager.getInstance().getCurrentUser();
@@ -103,8 +99,7 @@ public class EventDetailsFragment extends Fragment {
 
         switch (eventKey) {
             case FirebaseConstants.COLLECTION_CONCERTS:
-                filePathToEventDocument = !isCustomEvent ? eventId : currentUserId + "/concerts/" + eventId;
-                ConcertsController.getConcert(filePathToEventDocument, new ConcertsController.GetConcertListener() {
+                ConcertsController.getConcert(eventId, new ConcertsController.GetConcertListener() {
                     @Override
                     public void onConcertRetrieved(Concert concert) {
                         presentConcert(concert);
@@ -112,8 +107,7 @@ public class EventDetailsFragment extends Fragment {
                 });
                 break;
             case FirebaseConstants.COLLECTION_GAMES:
-                filePathToEventDocument = !isCustomEvent ? eventId : currentUserId + "/games/" + eventId;
-                GamesController.getGame(filePathToEventDocument, new GamesController.GetGameListener() {
+                GamesController.getGame(eventId, new GamesController.GetGameListener() {
                     @Override
                     public void onGameRetrieved(Game game) {
                         presentGame(game);
@@ -121,8 +115,7 @@ public class EventDetailsFragment extends Fragment {
                 });
                 break;
             case FirebaseConstants.COLLECTION_MOVIES:
-                filePathToEventDocument = !isCustomEvent ? eventId : currentUserId + "/movies/" + eventId;
-                MoviesController.getMovie(filePathToEventDocument, new MoviesController.GetMovieListener() {
+                MoviesController.getMovie(eventId, new MoviesController.GetMovieListener() {
                     @Override
                     public void onMovieRetrieved(Movie movie) {
                         presentMovie(movie);
