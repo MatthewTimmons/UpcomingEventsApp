@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_constraintBottom_toBottomOf="parent">
+    app:layout_constraintBottom_toBottomOf="parent"
+    >
 
     <TextView
         android:id="@+id/interest_level"
@@ -13,8 +14,7 @@
         android:gravity="center"
         android:textSize="36sp"
         android:textStyle="italic"
-        android:textColor="@android:color/darker_gray"
-        android:background="@color/light_gray_tint"
+        android:textColor="@android:color/white"
         android:shadowColor="@android:color/black"
         android:shadowDx="1"
         android:shadowDy="1"
@@ -22,18 +22,21 @@
         app:layout_constraintBottom_toTopOf="@id/slider_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/colorPrimary"
         tools:text="Rating Scale" />
 
-    <SeekBar
+    <android.support.v7.widget.AppCompatSeekBar
         android:id="@+id/slider_bar"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/light_gray_tint"
         android:max="2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/colorPrimaryLight"
+        app:tickMarkTint= "@color/white"
+        style="@style/WhiteSeekbar"
+        />
 
 
 </android.support.constraint.ConstraintLayout>

@@ -61,33 +61,23 @@ public class EventsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        final String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         eventType = getArguments().getString(KEY_EVENT_TYPE);
 
-        final String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        recyclerView = view.findViewById(R.id.events_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        Query eventQuery = FirebaseFirestore.getInstance().collection(eventType).orderBy(FirebaseConstants.KEY_DATE);
-        eventQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                final List<DocumentSnapshot> eventDocumentSnapshots = task.getResult().getDocuments();
-                recyclerView = view.findViewById(R.id.events_recycler_view);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-                // This is the section I messed with, and it technically works, but it does not allow the user to click on other people's events
-                // Need to go into the adapter and add a rule that the file path for custom events is //movies/userID/movies/movieID
-                if (UserManager.getInstance().getCurrentUser() == null) {
-                    Firestore.collection("users").document(currentUserId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-                            User currentUser = documentSnapshot.toObject(User.class);
-                            getEventsAndSetView(currentUserId, currentUser);
-                        }
-                    });
-                } else {
-                    getEventsAndSetView(currentUserId, UserManager.getInstance().getCurrentUser());
+        if (UserManager.getInstance().getCurrentUser() == null) {
+            Firestore.collection("users").document(currentUserId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    User currentUser = documentSnapshot.toObject(User.class);
+                    getEventsAndSetView(currentUserId, currentUser);
                 }
-            }
-        });
+            });
+        } else {
+            getEventsAndSetView(currentUserId, UserManager.getInstance().getCurrentUser());
+        }
     }
 
     void getEventsAndSetView(String currentUserId, User currentUser) {

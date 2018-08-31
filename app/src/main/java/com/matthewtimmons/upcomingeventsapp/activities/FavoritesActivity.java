@@ -10,11 +10,11 @@ import com.google.firebase.firestore.DocumentReference;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.controllers.UserController;
 import com.matthewtimmons.upcomingeventsapp.manager.DevHelper;
+import com.matthewtimmons.upcomingeventsapp.models.User;
 import com.matthewtimmons.upcomingeventsapp.models.UserManager;
 
 public class FavoritesActivity extends AppCompatActivity {
-    private DocumentReference currentUserReference;
-    private String currentUserId;
+    private User currentUser;
     RecyclerView recyclerView;
 
 
@@ -23,11 +23,10 @@ public class FavoritesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
 
-        currentUserId = UserManager.getInstance().getCurrentUserId();
-        currentUserReference = UserController.getUserReference(currentUserId);
+        currentUser = UserManager.getInstance().getCurrentUser();
 
         recyclerView = findViewById(R.id.favorites_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        DevHelper.setFavoritesRecyclerViewAdapter(currentUserReference, recyclerView, false);
+        DevHelper.setFavoritesRecyclerViewAdapter(currentUser, recyclerView, false);
     }
 }

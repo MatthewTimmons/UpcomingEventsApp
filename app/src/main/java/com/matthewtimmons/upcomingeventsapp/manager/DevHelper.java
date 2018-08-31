@@ -9,29 +9,24 @@ import android.util.DisplayMetrics;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventListAdapter;
 import com.matthewtimmons.upcomingeventsapp.adapters.UsersListAdapterRows;
-import com.matthewtimmons.upcomingeventsapp.adapters.RecyclerViewWithHeaderListAdapter;
+import com.matthewtimmons.upcomingeventsapp.adapters.CollapsedEventListAdapter;
 import com.matthewtimmons.upcomingeventsapp.adapters.UsersListAdapterSquare;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.models.User;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class DevHelper {
-    //TODO: Implement method to get the current user
 
     public static List<DocumentSnapshot> sortByDate(List<DocumentSnapshot> list) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -157,7 +152,7 @@ public class DevHelper {
         return listOfSharedGames;
     }
 
-    public static HashMap<String, String> fetchSharedValues(Map<String, Object> allDataForUser, String eventType) {
+    public static HashMap<String, String> unwrapContainer(Map<String, Object> allDataForUser, String eventType) {
         HashMap<String, String> allEventValues = new HashMap<>();
         ArrayList<String> allEvents = (ArrayList<String>) allDataForUser.get(eventType);
         for (String id : allEvents) {
@@ -166,87 +161,13 @@ public class DevHelper {
         return allEventValues;
     }
 
-    public static HashMap<String, String> fetchSharedValues(HashMap<String, Map<String, ArrayList<String>>> allDataForUser, String eventType) {
-        HashMap<String, String> allEventValues = new HashMap<>();
-        ArrayList<String> allEvents = (ArrayList<String>) allDataForUser.get(eventType);
-        for (String id : allEvents) {
-            allEventValues.put(id, eventType);
-        }
-        return allEventValues;
-    }
+    public static void setFavoritesRecyclerViewAdapter(User user, final RecyclerView recyclerView, final boolean collapsed) {
+        final HashMap<String, Object> allFavoriteEventsMap = new HashMap<>();
+        Map<String, Object> allFavoriteEvents = user.getMyFavorites();
 
-    public static void setFavoritesRecyclerViewAdapter(final DocumentReference currentUserReference, final RecyclerView recyclerView, final boolean collapsed) {
-        currentUserReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                final HashMap<String, Object> allEventsMap = new HashMap<>();
-                Map<String, Object> allDataForUser = (Map<String, Object>) task.getResult().get("myFavorites");
-
-                allEventsMap.putAll(fetchSharedValues(allDataForUser, "concerts"));
-                allEventsMap.putAll(fetchSharedValues(allDataForUser, "games"));
-                allEventsMap.putAll(fetchSharedValues(allDataForUser, "movies"));
-
-                //Temp
-                final List<DocumentSnapshot> allDocumentSnapshots = new ArrayList<>();
-                final List<DocumentSnapshot> allFavoriteDocumentSnapshots = new ArrayList<>();
-
-                final CollectionReference collectionReferenceConcerts = FirebaseFirestore.getInstance().collection("concerts");
-                final CollectionReference collectionReferenceGames = FirebaseFirestore.getInstance().collection("games");
-                final CollectionReference collectionReferenceMovies = FirebaseFirestore.getInstance().collection("movies");
-                final CollectionReference collectionReferenceCustomMovies = currentUserReference.collection("movies");
-
-                collectionReferenceCustomMovies.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        allDocumentSnapshots.addAll(task.getResult().getDocuments());
-                        collectionReferenceConcerts.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            allDocumentSnapshots.addAll(task.getResult().getDocuments());
-                            collectionReferenceGames.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    allDocumentSnapshots.addAll(task.getResult().getDocuments());
-                                    collectionReferenceMovies.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                            allDocumentSnapshots.addAll(task.getResult().getDocuments());
-
-                                            // Extract only items that are favorited by the user
-                                            for (DocumentSnapshot documentSnapshot : allDocumentSnapshots) {
-                                                if (allEventsMap.keySet().contains(documentSnapshot.getId())) {
-                                                    allFavoriteDocumentSnapshots.add(documentSnapshot);
-                                                }
-                                            }
-                                            if (collapsed) {
-                                                RecyclerViewWithHeaderListAdapter recyclerViewWithHeaderListAdapter =
-                                                new RecyclerViewWithHeaderListAdapter(allFavoriteDocumentSnapshots);
-                                                recyclerView.setAdapter(recyclerViewWithHeaderListAdapter);
-                                            } else {
-                                                EventListAdapter eventListAdapter = new EventListAdapter(allFavoriteDocumentSnapshots);
-                                                recyclerView.setAdapter(eventListAdapter);
-                                            }
-                                        }
-                                    });
-                                    }
-                                });
-                                }
-                            });
-                        }
-                    });
-            }
-        });
-    }
-
-    public static void setFavoritesRecyclerViewAdapter(User user, final RecyclerView recyclerView, String profileUserId, final boolean collapsed) {
-        final HashMap<String, Object> allEventsMap = new HashMap<>();
-        Map<String, Object> allDataForUser = user.getMyFavorites();
-
-        if (allDataForUser != null) {
-            allEventsMap.putAll(fetchSharedValues(allDataForUser, "concerts"));
-            allEventsMap.putAll(fetchSharedValues(allDataForUser, "games"));
-            allEventsMap.putAll(fetchSharedValues(allDataForUser, "movies"));
-        }
+        allFavoriteEventsMap.putAll(unwrapContainer(allFavoriteEvents, "concerts"));
+        allFavoriteEventsMap.putAll(unwrapContainer(allFavoriteEvents, "games"));
+        allFavoriteEventsMap.putAll(unwrapContainer(allFavoriteEvents, "movies"));
 
         //Temp
         final List<DocumentSnapshot> allDocumentSnapshots = new ArrayList<>();
@@ -255,49 +176,38 @@ public class DevHelper {
         final CollectionReference collectionReferenceConcerts = FirebaseFirestore.getInstance().collection("concerts");
         final CollectionReference collectionReferenceGames = FirebaseFirestore.getInstance().collection("games");
         final CollectionReference collectionReferenceMovies = FirebaseFirestore.getInstance().collection("movies");
-        final CollectionReference collectionReferenceCustomMovies = FirebaseFirestore.getInstance().collection("users").document(profileUserId).collection("movies");
 
-        collectionReferenceCustomMovies.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        collectionReferenceConcerts.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 allDocumentSnapshots.addAll(task.getResult().getDocuments());
-                collectionReferenceConcerts.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    allDocumentSnapshots.addAll(task.getResult().getDocuments());
-                    collectionReferenceGames.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            allDocumentSnapshots.addAll(task.getResult().getDocuments());
-                            collectionReferenceMovies.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    allDocumentSnapshots.addAll(task.getResult().getDocuments());
+                collectionReferenceGames.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        allDocumentSnapshots.addAll(task.getResult().getDocuments());
+                        collectionReferenceMovies.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                allDocumentSnapshots.addAll(task.getResult().getDocuments());
 
-                                    // Extract only items that are favorited by the user
-                                    for (DocumentSnapshot documentSnapshot : allDocumentSnapshots) {
-                                        if (allEventsMap.keySet().contains(documentSnapshot.getId())) {
-                                            allFavoriteDocumentSnapshots.add(documentSnapshot);
-                                        }
-                                    }
-                                    if (collapsed) {
-                                        RecyclerViewWithHeaderListAdapter recyclerViewWithHeaderListAdapter =
-                                                new RecyclerViewWithHeaderListAdapter(allFavoriteDocumentSnapshots);
-                                        StringBuilder stringBuilder = new StringBuilder();
-                                        for (DocumentSnapshot doc : allFavoriteDocumentSnapshots) {
-                                            stringBuilder.append(doc.getString("title"));
-                                        }
-                                        recyclerView.setAdapter(recyclerViewWithHeaderListAdapter);
-                                    } else {
-                                        EventListAdapter eventListAdapter = new EventListAdapter(allFavoriteDocumentSnapshots);
-                                        recyclerView.setAdapter(eventListAdapter);
+                                // Extract only items that are favorited by the user
+                                for (DocumentSnapshot documentSnapshot : allDocumentSnapshots) {
+                                    if (allFavoriteEventsMap.keySet().contains(documentSnapshot.getId())) {
+                                        allFavoriteDocumentSnapshots.add(documentSnapshot);
                                     }
                                 }
-                            });
-                        };
-                    });
-                }
-            });
+                                if (collapsed) {
+                                    CollapsedEventListAdapter collapsedEventListAdapter =
+                                    new CollapsedEventListAdapter(allFavoriteDocumentSnapshots);
+                                    recyclerView.setAdapter(collapsedEventListAdapter);
+                                } else {
+                                    EventListAdapter eventListAdapter = new EventListAdapter(allFavoriteDocumentSnapshots);
+                                    recyclerView.setAdapter(eventListAdapter);
+                                }
+                            }
+                        });
+                    }
+                });
             }
         });
     }

@@ -89,8 +89,8 @@
         android:layout_marginLeft="20dp"
         android:max="4"
         app:layout_constraintTop_toBottomOf="@id/game_rating_icons"
-        style="@style/WhiteSeekbar"
         app:tickMarkTint= "@color/white"
+        style="@style/WhiteSeekbar"
         />
 
 </android.support.constraint.ConstraintLayout>

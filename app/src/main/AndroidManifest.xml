@@ -10,16 +10,17 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_horizon"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.matthewtimmons.upcomingeventsapp.activities.MainActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.matthewtimmons.upcomingeventsapp.activities.MainActivity" android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activities.DetailsActivity" android:screenOrientation="portrait"/>
         <activity android:name=".activities.FavoritesActivity" android:screenOrientation="portrait"/>
         <activity android:name=".activities.SharedGamesActivity" android:screenOrientation="portrait"/>
         <activity android:name=".activities.ProfileViewActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".activities.AddEventsActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.AddEventsActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activities.FriendsListActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".authorization.AuthorizeUserActivity" android:screenOrientation="portrait">
+        <activity android:name=".authorization.AuthorizeUserActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

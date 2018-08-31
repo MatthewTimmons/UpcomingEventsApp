@@ -1,5 +1,7 @@
 package com.matthewtimmons.upcomingeventsapp.models;
 
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -39,6 +41,6 @@ public class UserManager {
         if (currentUser != null) {
             return currentUser.getUserId();
         }
-        return null;
+        return "Error";
     }
 }

@@ -17,7 +17,7 @@ public class DateHelper {
             return dateFormatHumanReadable.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
+            return null;
         }
-        return "Error";
     }
 }

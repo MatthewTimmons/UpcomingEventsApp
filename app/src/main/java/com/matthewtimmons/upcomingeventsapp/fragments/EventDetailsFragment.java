@@ -126,20 +126,24 @@ public class EventDetailsFragment extends Fragment {
     }
 
     void presentEvent(Event event, @DrawableRes int backupImageId) {
+        boolean isFavorite = ((List<String>) currentUser.getMyFavorites().get(eventKey)).contains(eventId);
+
         Picasso.get().load(event.getImageUrl()).error(backupImageId).into(eventPictureImageView);
         titleTextView.setText(event.getTitle());
         fifthTextView.setText(DateHelper.getHumanReadableFormat(event.getDate()));
-        setCheckmarkFunctionality(FieldPath.of("myFavorites", eventKey), favoritesCheckbox, true);
+        setCheckmarkFunctionality(FieldPath.of("myFavorites", eventKey), favoritesCheckbox, isFavorite, true);
     }
 
     void presentMovie(Movie movie) {
+        boolean movieHasBeenSeen = currentUser.getMoviesSeenByMovieId().contains(eventId);
+
         presentEvent(movie, R.drawable.ic_movies_blue);
         optionalSecondSubtitleTextView.setVisibility(View.VISIBLE);
         optionalSecondSubtitleTextView.setText(movie.getFormattedRating(getResources()));
         optionalCheckbox.setVisibility(View.VISIBLE);
         optionalCheckbox.setText("Seen");
         fourthTextView.setText(movie.getGenre());
-        setCheckmarkFunctionality(FieldPath.of(FirebaseConstants.KEY_MOVIES_SEEN), optionalCheckbox, false);
+        setCheckmarkFunctionality(FieldPath.of(FirebaseConstants.KEY_MOVIES_SEEN), optionalCheckbox, movieHasBeenSeen, false);
     }
 
     void presentConcert(Concert concert) {
@@ -196,10 +200,10 @@ public class EventDetailsFragment extends Fragment {
         }
     }
 
-    public void setCheckmarkFunctionality(final FieldPath fieldpathToArray, final CheckBox checkBox, final boolean toggleImage) {
+    public void setCheckmarkFunctionality(final FieldPath fieldpathToArray, final CheckBox checkBox, boolean startChecked, final boolean isFavoritesCheckbox) {
         // Set checkbox as checked if already favorited
-        checkBox.setChecked(currentUser.getMyFavoritesOfEventType(eventKey).contains(eventId));
-        if (toggleImage) {
+        checkBox.setChecked(startChecked);
+        if (isFavoritesCheckbox) {
             if (checkBox.isChecked()) { checkBox.setButtonDrawable(R.drawable.ic_star); }
             else { checkBox.setButtonDrawable(R.drawable.ic_hollow_star); }
         }
@@ -209,13 +213,17 @@ public class EventDetailsFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                 if (checked) {
-                    currentUser.setMyFavoritesOfEventType(eventKey, eventId, "add");
                     currentUser.getUserDocumentReference().update(fieldpathToArray, FieldValue.arrayUnion(eventId));
-                    if (toggleImage) { compoundButton.setButtonDrawable(R.drawable.ic_star); }
+                    if (isFavoritesCheckbox) {
+                        compoundButton.setButtonDrawable(R.drawable.ic_star);
+                        currentUser.setMyFavoritesOfEventType(eventKey, eventId, "add");
+                    } else { currentUser.getMoviesSeenByMovieId().add(eventId); }
                 } else {
-                    currentUser.setMyFavoritesOfEventType(eventKey, eventId, "remove");
                     currentUser.getUserDocumentReference().update(fieldpathToArray, FieldValue.arrayRemove(eventId));
-                    if (toggleImage) { compoundButton.setButtonDrawable(R.drawable.ic_hollow_star); }
+                    if (isFavoritesCheckbox) {
+                        compoundButton.setButtonDrawable(R.drawable.ic_hollow_star);
+                        currentUser.setMyFavoritesOfEventType(eventKey, eventId, "remove");
+                    } else { currentUser.getMoviesSeenByMovieId().remove(eventId); }
                 }
             }
         });

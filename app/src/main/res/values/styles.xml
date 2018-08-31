@@ -1,15 +1,16 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@android:color/white</item>
     </style>
 
-    <style name="AppTheme.ActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
-
-
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="WhiteSeekbar" parent="@style/Widget.AppCompat.SeekBar.Discrete">
@@ -24,6 +25,16 @@
 
     <style name="BlueButton">
         <item name="android:backgroundTint">@color/colorPrimary</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="GreenButton">
+        <item name="android:backgroundTint">@color/green</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="RedButton">
+        <item name="android:backgroundTint">@color/red</item>
         <item name="android:textColor">@color/white</item>
     </style>
 

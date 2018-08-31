@@ -10,9 +10,9 @@ import com.matthewtimmons.upcomingeventsapp.fragments.EventsFragment;
 public class EventPagerAdapter extends FragmentPagerAdapter {
 
     private static final int COUNT_PAGES = 3;
-    public static final int INDEX_CONCERTS = 0;
+    public static final int INDEX_MOVIES = 0;
     public static final int INDEX_GAMES = 1;
-    public static final int INDEX_MOVIES = 2;
+    public static final int INDEX_CONCERTS = 2;
 
     public EventPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -22,14 +22,14 @@ public class EventPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int i) {
         Fragment fragment = null;
         switch (i) {
-            case INDEX_CONCERTS:
-                fragment = EventsFragment.newInstance(FirebaseConstants.COLLECTION_CONCERTS);
+            case INDEX_MOVIES:
+                fragment = EventsFragment.newInstance(FirebaseConstants.COLLECTION_MOVIES);
                 break;
             case INDEX_GAMES:
                 fragment = EventsFragment.newInstance(FirebaseConstants.COLLECTION_GAMES);
                 break;
-            case INDEX_MOVIES:
-                fragment = EventsFragment.newInstance(FirebaseConstants.COLLECTION_MOVIES);
+            case INDEX_CONCERTS:
+                fragment = EventsFragment.newInstance(FirebaseConstants.COLLECTION_CONCERTS);
                 break;
         }
         return fragment;

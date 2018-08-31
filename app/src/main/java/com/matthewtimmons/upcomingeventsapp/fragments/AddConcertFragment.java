@@ -1,5 +1,7 @@
 package com.matthewtimmons.upcomingeventsapp.fragments;
 
+import android.content.ContentResolver;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,15 +11,22 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.AddEventsActivity;
 import com.matthewtimmons.upcomingeventsapp.adapters.CustomRemovableSpinnerAdapter;
+import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.manager.DateHelper;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.matthewtimmons.upcomingeventsapp.models.UserManager;
@@ -32,7 +41,7 @@ public class AddConcertFragment extends Fragment {
     ImageView posterImageView;
     EditText addBandNameEditText, concertLocationEditText;
     Button addBandNameButton, addToMyConcertsButton, addToAllConcertsButton;
-    String currentUserId, concertPosterUrl;
+    String currentUserId;
 
     @Nullable
     @Override
@@ -89,29 +98,80 @@ public class AddConcertFragment extends Fragment {
         });
     }
 
-    public void addCustomConcert(String eventCreator, ArrayList<String> bandNames){
+    public void addCustomConcert(String eventCreator, ArrayList<String> bandNames) {
         if (!concertLocationEditText.getText().toString().equals("") &&
                 !bandNames.isEmpty()) {
-            final Map<String, Object> concertData = new HashMap<>();
-            concertData.put("concertLocation", concertLocationEditText.getText().toString());
-            concertData.put("date", DateHelper.dateFormatDatabaseFriendly.format(AddEventsActivity.dateEntered));
-            concertData.put("eventType", "concerts");
-            concertData.put("imageUrl", concertPosterUrl);
-            concertData.put("concertBandsArray", bandNames);
-            concertData.put("eventCreator", eventCreator);
-            if (AddEventsActivity.eventPosterUrl != null && !AddEventsActivity.eventPosterUrl.equals("")) {
-                concertData.put("imageUrl", AddEventsActivity.eventPosterUrl);
-            } else if (concertPosterUrl != null && !concertPosterUrl.equals("")) {
-                concertData.put("imageUrl", concertPosterUrl);
+            if (AddEventsActivity.imageNeedsToBeUploaded) {
+                uploadCustomImageFromPhone(eventCreator, bandNames);
             } else {
-                concertData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
-                Toast.makeText(getContext(), "No concert poster detected", Toast.LENGTH_SHORT).show();
+                uploadCustomConcert(eventCreator, bandNames);
             }
-            Firestore.collection("concerts").add(concertData);
-            String toastMessage = eventCreator.equals("recommendations") ? "recommended for global adoption" : "added to your list of concerts.";
-            Toast.makeText(getContext(), "Concert has been " + toastMessage, Toast.LENGTH_SHORT).show();
+
         } else {
             Toast.makeText(getContext(), "All fields must be entered", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void uploadCustomConcert(final String eventCreator, final ArrayList<String> bandNames) {
+        final Map<String, Object> concertData = new HashMap<>();
+        concertData.put("concertLocation", concertLocationEditText.getText().toString());
+        concertData.put("date", DateHelper.dateFormatDatabaseFriendly.format(AddEventsActivity.dateEntered));
+        concertData.put("eventType", "concerts");
+        concertData.put("concertBandsArray", bandNames);
+        concertData.put("eventCreator", eventCreator);
+        if (AddEventsActivity.eventPosterUrl != null && !AddEventsActivity.eventPosterUrl.equals("")) {
+            concertData.put("imageUrl", AddEventsActivity.eventPosterUrl);
+        } else {
+            concertData.put("imageUrl", "https://thewindowsclub-thewindowsclubco.netdna-ssl.com/wp-content/uploads/2018/06/Broken-image-icon-in-Chrome.gif");
+            Toast.makeText(getContext(), "No concert poster detected", Toast.LENGTH_SHORT).show();
+        }
+        Firestore.collection("concerts").add(concertData);
+        String toastMessage = eventCreator.equals("recommendations") ? "recommended for global adoption" : "added to your list of concerts.";
+        Toast.makeText(getContext(), "Concert has been " + toastMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    //------------------------------Photo methods--------------------------------------------//
+
+    private void uploadCustomImageFromPhone(final String eventCreator, final ArrayList<String> bandNames) {
+        Uri imageUri = AddEventsActivity.imageUri;
+            if (imageUri != null) {
+                StorageReference uploadsStorageReference = FirebaseConstants.getStorageReference("uploads");
+                final StorageReference fileStorageReference = uploadsStorageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
+                fileStorageReference.putFile(imageUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    String url = uri.toString();
+                                    AddEventsActivity.eventPosterUrl = url;
+
+                                    uploadCustomConcert(eventCreator, bandNames);
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getContext(), "Your photo could not be uploaded. Please try again", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        }
+                    });
+        }
+    }
+
+    private String getFileExtension (Uri uri){
+        ContentResolver cr = getActivity().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cr.getType(uri));
+    }
+
+    //----------------------------------------------------------------------------------------//
 }

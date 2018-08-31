@@ -19,38 +19,38 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-//This is an entirely generic RecyclerView that binds data to a list of events with the ViewHolder, RecyclerViewWithHeaderViewHolder //TODO: Change this to generic also
-
-public class RecyclerViewWithHeaderListAdapter extends RecyclerView.Adapter<RecyclerViewWithHeaderListAdapter.RecyclerViewWithHeaderViewHolder> {
+public class CollapsedEventListAdapter extends RecyclerView.Adapter<CollapsedEventListAdapter.CollapsedEventViewHolder> {
     List<DocumentSnapshot> viewItems;
-    String eventType;
+    String eventType, eventTitle;
     int eventTypeIcon;
 
-    public RecyclerViewWithHeaderListAdapter(List<DocumentSnapshot> viewItems) {
+    public CollapsedEventListAdapter(List<DocumentSnapshot> viewItems) {
         this.viewItems = viewItems;
     }
 
     @NonNull
     @Override
-    public RecyclerViewWithHeaderListAdapter.RecyclerViewWithHeaderViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public CollapsedEventViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.viewholder_event_collapsed, viewGroup, false);
-        return new RecyclerViewWithHeaderListAdapter.RecyclerViewWithHeaderViewHolder(v);
+        return new CollapsedEventViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerViewWithHeaderListAdapter.RecyclerViewWithHeaderViewHolder recyclerViewWithHeaderViewHolder, int i) {
+    public void onBindViewHolder(@NonNull CollapsedEventViewHolder collapsedEventViewHolder, int i) {
         final DocumentSnapshot eventDocumentSnapshot = viewItems.get(i);
         eventType = eventDocumentSnapshot.getString("eventType");
 
-//      TextView firstColumnNameTextView;
-        recyclerViewWithHeaderViewHolder.firstColumnNameTextView.setText(eventDocumentSnapshot.getString(FirebaseConstants.KEY_TITLE));
+        if (eventType.equals("concerts")) {
+            ArrayList<String> allBandNames = (ArrayList<String>) eventDocumentSnapshot.get(FirebaseConstants.KEY_CONCERT_BANDS_ARRAY);
+            eventTitle = TextUtils.join(", ", allBandNames);
+        } else {
+            eventTitle = eventDocumentSnapshot.getString(FirebaseConstants.KEY_TITLE);
+        }
 
-//      ImageView thirdColumnImageView;
+//      Set which icon to use
         switch (eventType) {
             case FirebaseConstants.COLLECTION_CONCERTS:
                 eventTypeIcon = R.drawable.ic_concerts;
-                ArrayList<String> allBandNames = (ArrayList<String>) eventDocumentSnapshot.get(FirebaseConstants.KEY_CONCERT_BANDS_ARRAY);
-                recyclerViewWithHeaderViewHolder.firstColumnNameTextView.setText(TextUtils.join(", ", allBandNames));
                 break;
             case FirebaseConstants.COLLECTION_GAMES:
                 eventTypeIcon = R.drawable.ic_games;
@@ -59,12 +59,16 @@ public class RecyclerViewWithHeaderListAdapter extends RecyclerView.Adapter<Recy
                 eventTypeIcon = R.drawable.ic_movies;
                 break;
         }
-        Picasso.get().load(eventTypeIcon).error(R.drawable.ic_default_profile_photo).into(recyclerViewWithHeaderViewHolder.thirdColumnImageView);
 
-        recyclerViewWithHeaderViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        // Set icon and title views
+        Picasso.get().load(eventTypeIcon).error(R.drawable.ic_default_profile_photo).into(collapsedEventViewHolder.thirdColumnImageView);
+        collapsedEventViewHolder.firstColumnNameTextView.setText(eventTitle);
+
+        // Set click listener
+        collapsedEventViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = DetailsActivity.newIntent(view.getContext(), eventDocumentSnapshot.getId(), eventType, eventDocumentSnapshot.getString("eventCreator"));
+                Intent intent = DetailsActivity.newIntent(view.getContext(), eventDocumentSnapshot.getId(), eventDocumentSnapshot.getString("eventType"), eventDocumentSnapshot.getString("eventCreator"));
                 view.getContext().startActivity(intent);
             }
         });
@@ -75,12 +79,12 @@ public class RecyclerViewWithHeaderListAdapter extends RecyclerView.Adapter<Recy
     @Override
     public int getItemCount() { return viewItems != null ? viewItems.size() : 0; }
 
-    public class RecyclerViewWithHeaderViewHolder extends RecyclerView.ViewHolder {
+    public class CollapsedEventViewHolder extends RecyclerView.ViewHolder {
         TextView firstColumnNameTextView;
 
         ImageView thirdColumnImageView;
 
-        public RecyclerViewWithHeaderViewHolder(@NonNull View itemView) {
+        public CollapsedEventViewHolder(@NonNull View itemView) {
             super(itemView);
             firstColumnNameTextView = itemView.findViewById(R.id.event_title);
 

@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -34,10 +35,10 @@ import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    Toolbar toolbar;
     FragmentPagerAdapter pagerAdapter;
     DrawerLayout navigationDrawerView;
     ViewPager viewPager;
-    Toolbar toolbar;
     NavigationView navigationView;
     BottomNavigationView bottomNavigationView;
     ImageView profilePhotoImageView;
@@ -49,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         currentUserId = firebaseAuth.getCurrentUser().getUid();
         currentUserDisplayname = firebaseAuth.getCurrentUser().getDisplayName();
 
@@ -57,10 +62,13 @@ public class MainActivity extends AppCompatActivity {
         navigationDrawerView = findViewById(R.id.nav_drawer);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         viewPager = findViewById(R.id.pager);
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         pagerAdapter = new EventPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
+
+        // Set up toolbar functionality
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, navigationDrawerView, toolbar, R.string.openingNavigationDrawer, R.string.closingNavigationDrawer);
+        navigationDrawerView.addDrawerListener(toggle);
+        toggle.syncState();
 
         View navHeader = navigationView.getHeaderView(0);
         profilePhotoImageView = navHeader.findViewById(R.id.nav_bar_profile_photo);
@@ -131,14 +139,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
-                    case R.id.action_concerts:
-                        viewPager.setCurrentItem(EventPagerAdapter.INDEX_CONCERTS);
+                    case R.id.action_movies:
+                        viewPager.setCurrentItem(EventPagerAdapter.INDEX_MOVIES);
                         break;
                     case R.id.action_games:
                         viewPager.setCurrentItem(EventPagerAdapter.INDEX_GAMES);
                         break;
-                    case R.id.action_movies:
-                        viewPager.setCurrentItem(EventPagerAdapter.INDEX_MOVIES);
+                    case R.id.action_concerts:
+                        viewPager.setCurrentItem(EventPagerAdapter.INDEX_CONCERTS);
                         break;
                 }
                 return true;
@@ -156,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                 View view;
                 switch(i) {
                     case 0:
-                        view = bottomNavigationView.findViewById(R.id.action_concerts);
+                        view = bottomNavigationView.findViewById(R.id.action_movies);
                         view.performClick();
                         break;
                     case 1:
@@ -164,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                         view.performClick();
                         break;
                     case 2:
-                        view = bottomNavigationView.findViewById(R.id.action_movies);
+                        view = bottomNavigationView.findViewById(R.id.action_concerts);
                         view.performClick();
                         break;
                 }
@@ -188,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.navbar_menu, menu);
         FirebaseFirestore.getInstance().document("users/" + currentUserId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -201,12 +208,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.nav_item_hamburger:
-                navigationDrawerView.openDrawer(GravityCompat.START);
-                return true;
+    protected void onResume() {
+        super.onResume();
+        if (navigationView.getCheckedItem() != null) {
+            navigationView.getCheckedItem().setChecked(false);
         }
-        return super.onOptionsItemSelected(item);
     }
 }

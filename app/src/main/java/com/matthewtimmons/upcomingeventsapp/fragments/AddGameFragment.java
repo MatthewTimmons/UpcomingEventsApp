@@ -1,5 +1,7 @@
 package com.matthewtimmons.upcomingeventsapp.fragments;
 
+import android.content.ContentResolver;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,21 +9,24 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.AddEventsActivity;
+import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.manager.DateHelper;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.matthewtimmons.upcomingeventsapp.models.UserManager;
@@ -108,37 +113,30 @@ public class AddGameFragment extends Fragment{
             }
         });
 
-//        // Set up rating spinner
-//        SpinnerAdapter adapter = ArrayAdapter.createFromResource(getContext(), R.array.gameRatings, android.R.layout.simple_list_item_1);
-//        gameRatingSpinner.setAdapter(adapter);
-//        gameRatingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                gameRating = (String) adapterView.getItemAtPosition(i);
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//            }
-//        });
-
         addToMyGamesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setCustomGame(currentUserId);
+                addCustomGame(currentUserId);
             }
         });
 
         addToAllGamesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setCustomGame("recommendations");
+                addCustomGame("recommendations");
             }
         });
     }
 
-    public void setCustomGame(String eventCreator) {
+    public void addCustomGame(String eventCreator) {
+        if (AddEventsActivity.imageNeedsToBeUploaded) {
+            uploadCustomImageFromPhone(eventCreator);
+        } else {
+            uploadCustomGame(eventCreator);
+        }
+    }
+
+    public void uploadCustomGame(String eventCreator) {
         if (!gameTitleEditText.getText().toString().equals("") &&
                 !releaseConsolesChecked.isEmpty()) {
             final Map<String, Object> gameData = new HashMap<>();
@@ -177,4 +175,50 @@ public class AddGameFragment extends Fragment{
                 return "Rating Pending";
         }
     }
+
+
+    //------------------------------Photo methods--------------------------------------------//
+
+    private void uploadCustomImageFromPhone(final String eventCreator) {
+        Uri imageUri = AddEventsActivity.imageUri;
+        if (imageUri != null) {
+            StorageReference uploadsStorageReference = FirebaseConstants.getStorageReference("uploads");
+            final StorageReference fileStorageReference = uploadsStorageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
+            fileStorageReference.putFile(imageUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    String url = uri.toString();
+                                    AddEventsActivity.eventPosterUrl = url;
+
+                                    uploadCustomGame(eventCreator);
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getContext(), "Your photo could not be uploaded. Please try again", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        }
+                    });
+        }
+    }
+
+    private String getFileExtension (Uri uri){
+        ContentResolver cr = getActivity().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cr.getType(uri));
+    }
+
+    //----------------------------------------------------------------------------------------//
 }

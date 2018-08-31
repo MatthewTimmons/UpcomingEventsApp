@@ -1,16 +1,19 @@
 package com.matthewtimmons.upcomingeventsapp.activities;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -27,6 +30,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.OnProgressListener;
@@ -48,8 +52,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ProfileViewActivity extends AppCompatActivity {
-    private StorageReference uploadsStorageReference;
-    int PICK_IMAGE_REQUEST = 1;
     FirebaseUser currentFirebaseUser;
     DocumentReference profileUserReference;
     User profileUserObject;
@@ -57,12 +59,9 @@ public class ProfileViewActivity extends AppCompatActivity {
     RecyclerView favoritesRecyclerView;
     TextView displayNameTextView;
     ImageView profilePhotoImageView, editIconImageView;
-    Button sendFriendRequestButton;
+    AppCompatButton sendFriendRequestButton;
     String currentUserId, profileUserId;
     boolean isCurrentUserViewer;
-    Uri imageUri;
-
-    Handler collectionHandler;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,7 +92,6 @@ public class ProfileViewActivity extends AppCompatActivity {
         // Get signed in user data
         currentUserId = UserManager.getInstance().getCurrentUserId();
         isCurrentUserViewer = currentUserId.equals(profileUserId);
-        uploadsStorageReference = FirebaseConstants.getStorageReference("uploads");
 
         // Set Friends header and recycler view
         Fragment friends = ListOfUsersFragment.newInstance(profileUserId);
@@ -105,26 +103,12 @@ public class ProfileViewActivity extends AppCompatActivity {
 
         //Set Favorite Events Recycler View
         favoritesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        DevHelper.setFavoritesRecyclerViewAdapter(profileUserObject, favoritesRecyclerView, profileUserId, true);
+        DevHelper.setFavoritesRecyclerViewAdapter(profileUserObject, favoritesRecyclerView,true);
 
         displayNameTextView.setText(profileUserObject.getDisplayName());
         try {
             Picasso.get().load(profileUserObject.getProfilePhotoURL()).error(R.drawable.ic_default_profile_photo).into(profilePhotoImageView);
         } catch (NullPointerException e) { }
-
-        profilePhotoImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isCurrentUserViewer) { openFileChooser(); }
-
-                findViewById(R.id.confirm_photo_change_button).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        uploadImageFile();
-                    }
-                });
-            }
-        });
 
         if (isCurrentUserViewer) {
             editIconImageView.setVisibility(View.VISIBLE);
@@ -172,74 +156,84 @@ public class ProfileViewActivity extends AppCompatActivity {
                     });
                 }
             });
+            profilePhotoImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Button confirmationButton = findViewById(R.id.confirm_photo_change_button);
+                    setPhotoFunctionality(ProfileViewActivity.this, profilePhotoImageView,
+                            confirmationButton, Firestore.collection("users").document(currentUserId),
+                            FieldPath.of("profilePhotoURL"),
+                            "Your profile photo has been uploaded and set.");
+                    }
+            });
+            sendFriendRequestButton.setVisibility(View.GONE);
         }
 
         // Set all rules for the button at the bottom of the screen when the current user is looking at another user's profile
         if(!isCurrentUserViewer) {
-            sendFriendRequestButton.setVisibility(View.VISIBLE);
             allFriendIds = UserManager.getInstance().getCurrentUser().getFriends();
             setFriendRequestButtonFunctionality(UserManager.getInstance().getCurrentUser());
         }
     }
 
-    private String getFileExtension(Uri uri) {
-        ContentResolver cr = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cr.getType(uri));
-    }
-
-    private void uploadImageFile() {
-        if (imageUri != null) {
-            final StorageReference fileStorageReference = uploadsStorageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
-            fileStorageReference.putFile(imageUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    String url = uri.toString();
-                                    profileUserReference.update("profilePhotoURL", url);
-                                    findViewById(R.id.confirm_photo_change_button).setVisibility(View.GONE);
-                                }
-                            });
-                            Toast.makeText(ProfileViewActivity.this, "Your profile photo has been uploaded and set.", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-
-                        }
-                    });
-        } else {
-            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void openFileChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null) {
-            imageUri = data.getData();
-
-            Picasso.get().load(imageUri).error(getResources().getDrawable(R.drawable.ic_default_profile_photo)).into(profilePhotoImageView);
-            findViewById(R.id.confirm_photo_change_button).setVisibility(View.VISIBLE);
-        }
-    }
+//    private String getFileExtension(Uri uri) {
+//        ContentResolver cr = getContentResolver();
+//        MimeTypeMap mime = MimeTypeMap.getSingleton();
+//        return mime.getExtensionFromMimeType(cr.getType(uri));
+//    }
+//
+//    private void uploadImageFile() {
+//        if (imageUri != null) {
+//            final StorageReference fileStorageReference = uploadsStorageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
+//            fileStorageReference.putFile(imageUri)
+//                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                        @Override
+//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                            taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                                @Override
+//                                public void onSuccess(Uri uri) {
+//                                    String url = uri.toString();
+//                                    profileUserReference.update("profilePhotoURL", url);
+//                                    findViewById(R.id.confirm_photo_change_button).setVisibility(View.GONE);
+//                                }
+//                            });
+//                            Toast.makeText(ProfileViewActivity.this, "Your profile photo has been uploaded and set.", Toast.LENGTH_SHORT).show();
+//                        }
+//                    })
+//                    .addOnFailureListener(new OnFailureListener() {
+//                        @Override
+//                        public void onFailure(@NonNull Exception e) {
+//
+//                        }
+//                    })
+//                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+//                        @Override
+//                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+//
+//                        }
+//                    });
+//        } else {
+//            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//
+//    private void openFileChooser() {
+//        Intent intent = new Intent();
+//        intent.setType("image/*");
+//        intent.setAction(Intent.ACTION_GET_CONTENT);
+//        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+//    }
+//
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+//                && data != null && data.getData() != null) {
+//            imageUri = data.getData();
+//
+//            Picasso.get().load(imageUri).error(getResources().getDrawable(R.drawable.ic_default_profile_photo)).into(profilePhotoImageView);
+//            findViewById(R.id.confirm_photo_change_button).setVisibility(View.VISIBLE);
+//        }
+//    }
 
     // All friend request button functionality
     void setFriendRequestButtonFunctionality(User currentUserObject) {
@@ -250,6 +244,7 @@ public class ProfileViewActivity extends AppCompatActivity {
                 setSendFriendRequestFunctionality(currentUserObject);
             } else if (profileUserObject.getPendingFriendRequests().containsKey(currentUserId)) {
                 sendFriendRequestButton.setText("Your friend request has been sent");
+                sendFriendRequestButton.setBackgroundColor(getResources().getColor(R.color.green));
                 //TODO Set Dialog to confirm the user wishes to revoke their friend request
             }
         } else {
@@ -257,6 +252,8 @@ public class ProfileViewActivity extends AppCompatActivity {
         }
     }
     void setSendFriendRequestFunctionality(final User currentUserObject) {
+        sendFriendRequestButton.setText("Send friend request");
+        sendFriendRequestButton.setBackgroundColor(getResources().getColor(R.color.green));
         sendFriendRequestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -271,6 +268,7 @@ public class ProfileViewActivity extends AppCompatActivity {
     }
     void setAcceptFriendRequestFunctionality(final User currentUserObject) {
         sendFriendRequestButton.setText("Accept friend request");
+        sendFriendRequestButton.setBackgroundColor(getResources().getColor(R.color.green));
         sendFriendRequestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -286,7 +284,6 @@ public class ProfileViewActivity extends AppCompatActivity {
         });
     }
     void setRemoveFunctionality(final User currentUserObject) {
-        sendFriendRequestButton.setVisibility(View.VISIBLE);
         sendFriendRequestButton.setText("Remove friend");
         sendFriendRequestButton.setBackgroundColor(getResources().getColor(R.color.red));
         sendFriendRequestButton.setOnClickListener(new View.OnClickListener() {
@@ -300,4 +297,96 @@ public class ProfileViewActivity extends AppCompatActivity {
             }
         });
     }
+
+    //------------------------------Photo variables--------------------------------------------//
+
+    Context context;
+    ImageView imageView;
+    Button confirmationButton;
+    DocumentReference documentReference;
+    FieldPath valueToUpdate;
+    String successToastMessage;
+
+    StorageReference uploadsStorageReference;
+    int PICK_IMAGE_REQUEST = 1;
+    Uri imageUri;
+
+    //----------------------------------------------------------------------------------------//
+
+    void setPhotoFunctionality(Context context, ImageView imageView, Button confirmationButton, DocumentReference documentReference, FieldPath valueToUpdate, String successToastMessage) {
+        this.context = context;
+        this.imageView = imageView;
+        this.confirmationButton = confirmationButton;
+        this.documentReference = documentReference;
+        this.valueToUpdate = valueToUpdate;
+        this.successToastMessage = successToastMessage;
+
+        openFileChooser();
+    }
+        public void openFileChooser() {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(intent, PICK_IMAGE_REQUEST);
+        }
+
+        @Override
+        protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+            if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                    && data != null && data.getData() != null) {
+                imageUri = data.getData();
+
+                Picasso.get().load(imageUri).error(getResources().getDrawable(R.drawable.ic_default_profile_photo)).into(imageView);
+                confirmationButton.setVisibility(View.VISIBLE);
+                confirmationButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        uploadImageFile();
+                    }
+                });
+            }
+        }
+
+        private void uploadImageFile() {
+            if (imageUri != null) {
+                uploadsStorageReference = FirebaseConstants.getStorageReference("uploads");
+                final StorageReference fileStorageReference = uploadsStorageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
+                fileStorageReference.putFile(imageUri)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        String url = uri.toString();
+                                        documentReference.update(valueToUpdate, url);
+                                        confirmationButton.setVisibility(View.GONE);
+                                    }
+                                });
+                                Toast.makeText(context, successToastMessage, Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(context, "Your photo could not be uploaded. Please try again", Toast.LENGTH_SHORT).show();
+                                confirmationButton.setVisibility(View.GONE);
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            }
+                        });
+            } else {
+                Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        private String getFileExtension(Uri uri) {
+            ContentResolver cr = getContentResolver();
+            MimeTypeMap mime = MimeTypeMap.getSingleton();
+            return mime.getExtensionFromMimeType(cr.getType(uri));
+        }
 }

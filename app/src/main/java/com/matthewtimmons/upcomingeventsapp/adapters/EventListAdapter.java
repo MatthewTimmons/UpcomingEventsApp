@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -67,10 +68,9 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
                 backupImage = R.drawable.ic_games_blue;
                 Game game = new Game(eventDocumentSnapshot);
                 viewHolder.optionalSecondEventInfoTextView.setVisibility(View.VISIBLE);
-                String releaseConsolesAsString = Game.fetchGameConsolesAsString(eventDocumentSnapshot);
                 viewHolder.optionalSecondEventInfoTextView.setText(game.getFormattedRating(viewHolder.itemView.getResources()));
                 setAllSharedFields(game, viewHolder);
-                viewHolder.thirdEventInfoTextView.setText(releaseConsolesAsString);
+                viewHolder.thirdEventInfoTextView.setText(game.getReleaseConsolesAsString());
                 break;
             case FirebaseConstants.COLLECTION_MOVIES:
                 backupImage = R.drawable.ic_movies_blue;
@@ -85,7 +85,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             viewHolder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = DetailsActivity.newIntent(view.getContext(), eventDocumentSnapshot.getId(), eventType, eventDocumentSnapshot.getString("eventCreator"));
+                    Intent intent = DetailsActivity.newIntent(view.getContext(), eventDocumentSnapshot.getId(), eventDocumentSnapshot.getString("eventType"), eventDocumentSnapshot.getString("eventCreator"));
                     view.getContext().startActivity(intent);
                 }
             });
@@ -132,9 +132,6 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.Even
             }
         }
     }
-
-
-
 
     @Override
     public int getItemCount() {

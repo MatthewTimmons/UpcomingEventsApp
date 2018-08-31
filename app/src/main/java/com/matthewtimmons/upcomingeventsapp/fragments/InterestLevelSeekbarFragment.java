@@ -55,7 +55,7 @@ public class InterestLevelSeekbarFragment extends Fragment {
         return interestLevelSeekbarFragment;
     }
 
-        @Nullable
+    @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_interest_level, container, false);
@@ -95,7 +95,6 @@ public class InterestLevelSeekbarFragment extends Fragment {
 
 
         public void updateText(int i) {
-        interestLevelTextView.setTextColor(getResources().getColor(R.color.white));
             switch(i) {
                 case INTEREST_LEVEL_LOW:
                     interestLevelTextView.setText(R.string.interest_level_display_name_low);
@@ -175,7 +174,6 @@ public class InterestLevelSeekbarFragment extends Fragment {
         }
 
         public void resetFontAndColorForTextView() {
-            interestLevelTextView.setTextColor(getResources().getColor(R.color.darker_gray));
-            interestLevelTextView.setBackgroundColor(getResources().getColor(R.color.light_gray_tint));
+            interestLevelTextView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         }
 }

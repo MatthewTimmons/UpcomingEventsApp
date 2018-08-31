@@ -1,11 +1,17 @@
 package com.matthewtimmons.upcomingeventsapp.activities;
 
 import android.app.DatePickerDialog;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -14,14 +20,23 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.matthewtimmons.upcomingeventsapp.R;
+import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.fragments.AddConcertFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.AddGameFragment;
 import com.matthewtimmons.upcomingeventsapp.fragments.AddMovieFragment;
 import com.matthewtimmons.upcomingeventsapp.manager.DateHelper;
+import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.matthewtimmons.upcomingeventsapp.models.UserManager;
+import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -29,11 +44,12 @@ import java.util.Date;
 public class AddEventsActivity extends AppCompatActivity {
     public static String eventPosterUrl;
 
-    String currentUserId;
+    String currentUserId, eventType;
     TextView addEventTypeTextView, getSuggestionsTextView, dateTextView;
     ImageView posterImageView, editDateIcon;
     Button addToMyEventsButton, addToAllEventsButton;
     Spinner eventTypeSpinner;
+    public static boolean imageNeedsToBeUploaded;
 
     public static Date dateEntered, todaysDate;
     Calendar calendar = Calendar.getInstance();
@@ -70,14 +86,17 @@ public class AddEventsActivity extends AppCompatActivity {
                 dateEntered = todaysDate;
 
                 if (i == 0) {
+                    eventType = "movies";
                     addEventTypeTextView.setText("Add New Movie");
                     AddMovieFragment addMovieFragment = new AddMovieFragment();
                     getSupportFragmentManager().beginTransaction().replace(R.id.add_event_fragment_container, addMovieFragment).commit();
                 } else if (i == 1) {
+                    eventType = "games";
                     addEventTypeTextView.setText("Add New Game");
                     AddGameFragment addGameFragment = new AddGameFragment();
                     getSupportFragmentManager().beginTransaction().replace(R.id.add_event_fragment_container, addGameFragment).commit();
                 } else if (i == 2) {
+                    eventType = "concerts";
                     addEventTypeTextView.setText("Add New Concert");
                     AddConcertFragment addConcertFragment = new AddConcertFragment();
                     getSupportFragmentManager().beginTransaction().replace(R.id.add_event_fragment_container, addConcertFragment).commit();
@@ -109,6 +128,7 @@ public class AddEventsActivity extends AppCompatActivity {
                 submitButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        imageNeedsToBeUploaded = false;
                         eventPosterUrl = moviePosterURLEditText.getText().toString();
                         alertDialog.cancel();
                     }
@@ -117,7 +137,8 @@ public class AddEventsActivity extends AppCompatActivity {
                 getPhotoFromPhoneButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(AddEventsActivity.this, "This feature is not yet available", Toast.LENGTH_SHORT).show();
+                        imageNeedsToBeUploaded = true;
+                        setPhotoFunctionality(alertDialog);
                     }
                 });
             }
@@ -147,5 +168,37 @@ public class AddEventsActivity extends AppCompatActivity {
                 dateTextView.setText(DateHelper.dateFormatHumanReadable.format(dateEntered));
             }
         };
+    }
+
+    //------------------------------Photo variables--------------------------------------------//
+
+    AlertDialog alertDialog;
+    int PICK_IMAGE_REQUEST = 1;
+    public static Uri imageUri;
+
+    //----------------------------------------------------------------------------------------//
+
+    void setPhotoFunctionality(AlertDialog alertDialog) {
+        this.alertDialog = alertDialog;
+
+        openFileChooser();
+    }
+
+    public void openFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
+            imageUri = data.getData();
+
+            Picasso.get().load(imageUri).error(getResources().getDrawable(R.drawable.ic_default_profile_photo)).into(posterImageView);
+            alertDialog.cancel();
+        }
     }
 }

@@ -4,10 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_concerts"
+        android:id="@+id/action_movies"
         android:enabled="true"
-        android:icon="@drawable/ic_concerts"
-        android:title="@string/events"
+        android:icon="@drawable/ic_movies"
+        android:title="@string/movies"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_games"
@@ -16,9 +16,9 @@
         android:title="@string/games"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/action_movies"
+        android:id="@+id/action_concerts"
         android:enabled="true"
-        android:icon="@drawable/ic_movies"
-        android:title="@string/movies"
+        android:icon="@drawable/ic_concerts"
+        android:title="@string/events"
         app:showAsAction="ifRoom"/>
 </menu>

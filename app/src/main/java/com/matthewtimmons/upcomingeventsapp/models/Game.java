@@ -20,11 +20,6 @@ public class Game extends Event implements Serializable {
         this.rating = documentSnapshot.getString("rating");
     }
 
-    public static String fetchGameConsolesAsString(DocumentSnapshot gameDocumentSnapshot) {
-        List<String> listOfGames = (List<String>) gameDocumentSnapshot.get("releaseConsoles");
-        return TextUtils.join(", ", listOfGames);
-    }
-
     public List<String> getReleaseConsoles() {
         return releaseConsoles;
     }

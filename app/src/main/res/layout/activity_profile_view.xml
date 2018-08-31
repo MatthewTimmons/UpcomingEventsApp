@@ -26,12 +26,12 @@
             android:id="@+id/confirm_photo_change_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/pastel_blue"
             android:visibility="gone"
             android:text="Confirm?"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/profile_photo"
+            style="@style/BlueButton"
             tools:visibility="visible"/>
 
         <TextView
@@ -95,8 +95,9 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:text="Send friend request"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintTop_toBottomOf="@id/profile_favorite_events_recycler_view"
+            android:textColor="@color/white"
             />
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

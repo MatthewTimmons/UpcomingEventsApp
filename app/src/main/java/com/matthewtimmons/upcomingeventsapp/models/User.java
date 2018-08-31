@@ -218,6 +218,10 @@ public class User implements Parcelable {
         return Firestore.collection("users").document(userId);
     }
 
+    public static Creator<User> getCREATOR() {
+        return CREATOR;
+    }
+
     public void editGamesOwned(String gameId, List<String> releaseConsole, String actionToTake) {
         Map<String, Object> tempGamesOwned = gamesOwned;
 
@@ -231,9 +235,5 @@ public class User implements Parcelable {
         }
 
         setGamesOwned(tempGamesOwned);
-    }
-
-    public static Creator<User> getCREATOR() {
-        return CREATOR;
     }
 }

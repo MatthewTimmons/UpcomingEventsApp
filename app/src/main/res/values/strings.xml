@@ -9,4 +9,7 @@
     <string name="movies">"Movies"</string>
     <string name="formatted_rating">"Rated %s"</string>
     <string name="game_rating_prompt">Select game rating</string>
+
+    <string name="openingNavigationDrawer">"Opening navigation drawer"</string>
+    <string name="closingNavigationDrawer">"Closing navigation drawer"</string>
 </resources>

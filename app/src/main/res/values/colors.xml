@@ -14,7 +14,7 @@
     <color name="light_gray_tint">#80B3B3B3</color>
     <color name="darker_gray">#999999</color>
     <color name="transparent">#80000000</color>
-    <color name="white">#FFFFFF</color>
+    <color name="white">#ffffff</color>
     <color name="LB100">#B3E5FC</color>
     <color name="LB200">#81D4FA</color>
     <color name="LB300">#4FC3F7</color>

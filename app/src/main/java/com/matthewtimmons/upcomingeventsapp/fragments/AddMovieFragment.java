@@ -1,5 +1,7 @@
 package com.matthewtimmons.upcomingeventsapp.fragments;
 
+import android.content.ContentResolver;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,8 +25,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.activities.AddEventsActivity;
+import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.manager.DateHelper;
 import com.matthewtimmons.upcomingeventsapp.manager.Firestore;
 import com.matthewtimmons.upcomingeventsapp.models.UserManager;
@@ -81,14 +90,14 @@ public class AddMovieFragment extends Fragment{
         addToMyMoviesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setCustomMovie(currentUserId);
+                addCustomMovie(currentUserId);
             }
         });
 
         addToAllMoviesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setCustomMovie("recommendations");
+                addCustomMovie("recommendations");
             }
         });
 
@@ -211,7 +220,7 @@ public class AddMovieFragment extends Fragment{
         //        MySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
-    private void setCustomMovie(String eventCreator) {
+    private void uploadCustomMovie(String eventCreator) {
         if (!movieTitleEditText.getText().toString().equals("") &&
                 !movieGenreEditText.getText().toString().equals("")) {
             final Map<String, Object> movieData = new HashMap<>();
@@ -252,4 +261,59 @@ public class AddMovieFragment extends Fragment{
                 return "Rating Pending";
         }
     }
+
+    public void addCustomMovie(String eventCreator) {
+        if (AddEventsActivity.imageNeedsToBeUploaded) {
+            uploadCustomImageFromPhone(eventCreator);
+        } else {
+            uploadCustomMovie(eventCreator);
+        }
+    }
+
+
+
+    //------------------------------Photo methods--------------------------------------------//
+
+    private void uploadCustomImageFromPhone(final String eventCreator) {
+        Uri imageUri = AddEventsActivity.imageUri;
+        if (imageUri != null) {
+            StorageReference uploadsStorageReference = FirebaseConstants.getStorageReference("uploads");
+            final StorageReference fileStorageReference = uploadsStorageReference.child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
+            fileStorageReference.putFile(imageUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    String url = uri.toString();
+                                    AddEventsActivity.eventPosterUrl = url;
+
+                                    uploadCustomMovie(eventCreator);
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getContext(), "Your photo could not be uploaded. Please try again", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        }
+                    });
+        }
+    }
+
+    private String getFileExtension (Uri uri){
+        ContentResolver cr = getActivity().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cr.getType(uri));
+    }
+
+    //----------------------------------------------------------------------------------------//
 }
