@@ -21,6 +21,7 @@ import com.matthewtimmons.upcomingeventsapp.R;
 import com.matthewtimmons.upcomingeventsapp.adapters.FriendInfoListAdapter;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
 import com.matthewtimmons.upcomingeventsapp.manager.DevHelper;
+import com.matthewtimmons.upcomingeventsapp.models.UserManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,16 +75,11 @@ public class FriendInfoFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 final List<DocumentSnapshot> allUsers = task.getResult().getDocuments();
-                FirebaseFirestore.getInstance().collection(FirebaseConstants.COLLECTION_USERS).document(currentUserId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                      @Override
-                      public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                          ArrayList<String> allFriendIds = (ArrayList<String>) task.getResult().get("friends");
-                          List<DocumentSnapshot> friends = DevHelper.fetchFilteredUsersList(allUsers, allFriendIds);
+                      ArrayList<String> allFriendIds = (ArrayList<String>) UserManager.getInstance().getCurrentUser().getFriends();
+                      List<DocumentSnapshot> friends = DevHelper.fetchFilteredUsersList(allUsers, allFriendIds);
 
-                          friendsListAdapter = new FriendInfoListAdapter(friends, eventType, eventId);
-                          recyclerView.setAdapter(friendsListAdapter);
-                    }
-                });
+                      friendsListAdapter = new FriendInfoListAdapter(friends, eventType, eventId);
+                      recyclerView.setAdapter(friendsListAdapter);
             }
         });
 

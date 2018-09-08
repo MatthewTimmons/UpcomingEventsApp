@@ -11,6 +11,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.matthewtimmons.upcomingeventsapp.adapters.EventListAdapter;
 import com.matthewtimmons.upcomingeventsapp.adapters.UsersListAdapterRows;
@@ -173,9 +174,9 @@ public class DevHelper {
         final List<DocumentSnapshot> allDocumentSnapshots = new ArrayList<>();
         final List<DocumentSnapshot> allFavoriteDocumentSnapshots = new ArrayList<>();
 
-        final CollectionReference collectionReferenceConcerts = FirebaseFirestore.getInstance().collection("concerts");
-        final CollectionReference collectionReferenceGames = FirebaseFirestore.getInstance().collection("games");
-        final CollectionReference collectionReferenceMovies = FirebaseFirestore.getInstance().collection("movies");
+        final Query collectionReferenceConcerts = FirebaseFirestore.getInstance().collection("concerts").orderBy("date", Query.Direction.ASCENDING);
+        final Query collectionReferenceGames = FirebaseFirestore.getInstance().collection("games").orderBy("date", Query.Direction.ASCENDING);
+        final Query collectionReferenceMovies = FirebaseFirestore.getInstance().collection("movies").orderBy("date", Query.Direction.ASCENDING);
 
         collectionReferenceConcerts.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override

@@ -32,15 +32,11 @@ public class DetailsActivity extends AppCompatActivity {
     private static final String EXTRA_EVENT_CREATOR = "EXTRA_EVENT_CREATOR";
 
     String currentUserId = UserManager.getInstance().getCurrentUserId();
-    String eventId;
-    String eventType;
-    String eventCreator;
+    String eventId, eventType, eventCreator;
 
     Button deleteCustomEventButton;
 
-    Fragment eventDetailsFragment = null;
-    Fragment friendRecyclerViewFragment = null;
-    Fragment interestLevelSeekbarFragment = null;
+    Fragment eventDetailsFragment, friendRecyclerViewFragment, interestLevelSeekbarFragment = null;
 
     public static Intent newIntent(Context context, String eventId, String eventType, String eventCreator) {
         Intent intent = new Intent(context, DetailsActivity.class);

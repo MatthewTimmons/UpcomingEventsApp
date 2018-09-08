@@ -13,6 +13,14 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="WhiteTextWithGreyShadow">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:shadowColor">@android:color/black</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">2</item>
+    </style>
+
     <style name="WhiteSeekbar" parent="@style/Widget.AppCompat.SeekBar.Discrete">
         <item name="android:progressTint">@color/white</item>
         <item name="android:thumbTint">@color/white</item>

@@ -20,6 +20,7 @@
         <activity android:name=".activities.ProfileViewActivity" android:screenOrientation="portrait"/>
         <activity android:name=".activities.AddEventsActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".activities.FriendsListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".activities.SettingsActivity" android:screenOrientation="portrait"/>
         <activity android:name=".authorization.AuthorizeUserActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

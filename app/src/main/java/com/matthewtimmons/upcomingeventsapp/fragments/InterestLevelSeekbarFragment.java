@@ -81,7 +81,6 @@ public class InterestLevelSeekbarFragment extends Fragment {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                interestLevelTextView.setVisibility(View.VISIBLE);
                 seekbarHandler.removeCallbacksAndMessages(null);
             }
 

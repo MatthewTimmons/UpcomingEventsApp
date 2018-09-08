@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.matthewtimmons.upcomingeventsapp.R;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.matthewtimmons.upcomingeventsapp.constants.FirebaseConstants;
@@ -17,6 +19,8 @@ import com.matthewtimmons.upcomingeventsapp.models.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAdapter.FriendInfoViewHolder> {
     List<DocumentSnapshot> friends;
@@ -40,6 +44,17 @@ public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAd
     @Override
     public void onBindViewHolder(@NonNull final FriendInfoViewHolder friendInfoViewHolder, int i) {
         DocumentSnapshot userDocumentSnapshot = friends.get(i);
+        updateView(userDocumentSnapshot, friendInfoViewHolder);
+
+        userDocumentSnapshot.getReference().addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                updateView(documentSnapshot, friendInfoViewHolder);
+            }
+        });
+    }
+
+    public void updateView(DocumentSnapshot userDocumentSnapshot, FriendInfoViewHolder friendInfoViewHolder) {
         final User user = userDocumentSnapshot.toObject(User.class);
         try {
             friendsInterestLevel = (userDocumentSnapshot.get(FieldPath.of(FirebaseConstants.KEY_INTEREST_LEVELS_USER, eventType, eventId))).toString();
@@ -59,8 +74,10 @@ public class FriendInfoListAdapter extends RecyclerView.Adapter<FriendInfoListAd
                 friendInfoViewHolder.friendCheckbox.setImageResource(R.drawable.ic_checked_checkbox);
             } else {
                 friendInfoViewHolder.friendCheckbox.setVisibility(View.VISIBLE);
+                friendInfoViewHolder.friendCheckbox.setImageResource(R.drawable.ic_unchecked_checkbox);
             }
         }
+        // Check checkbox if game is owned
         if (eventType.equals(FirebaseConstants.COLLECTION_GAMES)) {
             Map<String, Object> gamesOwned = user.getGamesOwned();
             if (gamesOwned.containsKey(eventId)) {

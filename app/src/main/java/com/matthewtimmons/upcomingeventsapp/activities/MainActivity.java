@@ -126,6 +126,10 @@ public class MainActivity extends AppCompatActivity {
                              }
                          });
                          return true;
+                     case R.id.nav_drawer_settings:
+                         Intent intentToSettingsActivity = new Intent(MainActivity.this, SettingsActivity.class);
+                         startActivity(intentToSettingsActivity);
+                         return true;
                      case R.id.nav_drawer_add_events_activity:
                          Intent intentToAddEventsActivity = new Intent(MainActivity.this, AddEventsActivity.class);
                          startActivity(intentToAddEventsActivity);
